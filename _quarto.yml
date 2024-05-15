@@ -1,0 +1,123 @@
+project:
+  type: book
+
+book:
+  title: "An R Companion to Applied Regression"
+  author: "Peter Baumgartner"
+  date: last-modified
+  date-format: YYYY-MM-DD HH:mm
+  favicon: "img/favicon_io/apple-touch-icon.png"
+  site-url: https://bookdown.org/pbaumgartner/car-fox-weisberg/
+  repo-url: https://github.com/petzi53/car-fox-weisberg
+  repo-branch: main
+  repo-actions: [edit, issue]
+
+  chapters:
+    - index.qmd
+    - 01-intro.qmd
+    - 95-references.qmd
+  appendices:
+    - 96-packages-used.qmd
+
+bibliography:
+    - references.bib
+# reference-section-title: References
+# citeproc: true
+
+
+format:
+  html:
+    theme: cosmo
+    css:
+     - quarto.css
+     - glossary.css
+    number-sections: true
+    toc-depth: 5
+    toc-expand: 4
+    toc_float: true
+    code-fold: true
+    code-tools: true
+    code-link: true
+    code-overflow: scroll
+    df-print: default
+
+filters:
+   - include-code-files
+#   - section-bibliographies
+
+knitr:
+  opts_chunk:
+    comment: "#>"
+    R.options:
+      knitr.graphics.auto_pdf: true
+
+editor: source
+
+execute:
+    freeze: auto
+
+lightbox: true
+
+
+
+crossref:
+  appendix-title: "Appendix"
+  appendix-delim: ":"
+  custom:
+    - kind: float
+      reference-prefix: Important
+      key: imp
+    - kind: float
+      reference-prefix: Commitment
+      key: com
+    - kind: float
+      reference-prefix: Report
+      key: rep
+    - kind: float
+      reference-prefix: Resource
+      key: res
+    - kind: float
+      reference-prefix: Package Profile
+      key: pak
+    - kind: float
+      reference-prefix: Bullet List
+      key: bul
+    - kind: float
+      reference-prefix: Numerical List
+      key: num
+    - kind: float
+      reference-prefix: Note
+      key: not
+    - kind: float
+      reference-prefix: Explanation
+      key: exp
+    - kind: float
+      reference-prefix: Tip
+      key: tip
+
+
+
+tip-cap-location: top
+pak-cap-location: top
+bul-cap-location: bottom
+
+language:
+   crossref-cnj-title: "R Code"      # replaces "Conjecture"
+   crossref-cor-title: "Assessment"  # replaces "Corollary"
+   crossref-def-title: "Experiment"  # replaces "Definition"
+   crossref-exm-title: "Example"     # remains  "Example"
+   crossref-exr-title: "Exercise"    # remains  "Exercise"
+   crossref-fig-title: "Graph"       # replaces "Figure"
+   crossref-lem-title: "Solution"    # replaces "Lemma"
+   crossref-lst-title: "Listing"     # remains  "Listing" inside code chunk
+   crossref-prp-title: "Procedure"   # replaces "Proposition"
+   crossref-tbl-title: "Table"       # remains  "Table"
+   crossref-thm-title: "Formula"     # replaces "Theorem"
+#   crossref-int-title: "Interpretation"
+
+# https://github.com/quarto-dev/quarto-cli/blob/main/src/resources/language/_language.yml
+   callout-tip-title: "Report"           # green
+   callout-note-title: "Note"            # blue
+   callout-warning-title: "Watch out!"   # orange
+   callout-important-title: "Important"  # red
+   callout-caution-title: "Typo"         # yellow

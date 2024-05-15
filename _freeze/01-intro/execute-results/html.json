@@ -1,0 +1,15 @@
+{
+  "hash": "1e5ff4a30fd40b98528c15c26bddf463",
+  "result": {
+    "engine": "knitr",
+    "markdown": "# Introdcution {#sec-chap01}\n\n\n\n\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

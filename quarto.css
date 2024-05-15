@@ -1,0 +1,904 @@
+
+.listing {
+    font-weight: bold;
+}
+
+
+.figure-caption {
+    font-weight: bold;
+    font-size: var(--bs-body-font-size);
+    text-align: center;
+}
+
+figcaption {
+    font-weight: bold;
+    font-size: var(--bs-body-font-size);
+    text-align: center;
+}
+
+.quarto-layout-panel > figure > figcaption {
+    margin-top: -10pt;
+}
+
+
+
+iframe {
+  border: 1px solid black;
+  width: 100%; /* takes precedence over the width set with the HTML width attribute */
+}
+
+/* #######################################################################  */
+/*                                                                          */
+/*                           Theorems and friends                           */
+/*  https://www.andreashandel.com/posts/2023-06-13-custom-callouts-quarto/  */
+/*                                                                          */
+/* #######################################################################  */
+
+/* ##############   Assessment   ############# */
+
+.my-assessment {
+  margin: 1em 0;
+  border: 2px solid #2F4F4F;
+  border-left: 10px solid #2F4F4F;
+  border-radius: 10px;
+}
+
+.my-assessment-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  15px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: #8DEEEE;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/check-64.png");
+}
+
+.my-assessment-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
+
+
+/* ##############   Checklist / ToDo  ############# */
+
+.my-checklist {
+  margin: 1em 0;
+  border: 2px solid #838B8B;  /* azure4 */
+  border-left: 10px solid #838B8B;
+  border-radius: 10px;
+}
+
+.my-checklist-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  15px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: #E0EEEE; /* azure2 */
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/checklist-80.png");
+}
+
+.my-checklist-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
+
+/* ##############   Definition   ############# */
+
+.my-definition {
+  margin: 1em 0;
+  border: 2px solid #8B3A62;
+  border-left: 10px solid #8B3A62;
+  border-radius: 10px;
+}
+
+.my-definition-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  15px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: hotpink;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/dictionary-64.png");
+}
+
+.my-definition-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
+
+
+/* ##############   Example   ############# */
+
+.my-example {
+  margin: 1em 0;
+  border: 2px solid gray;
+  border-left: 10px solid #36648B;
+  border-radius: 10px;
+}
+
+.my-example-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  15px;
+  padding-bottom: 0.1em;
+  color: white;
+  background-color: #5CACEE;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/example-64.png");
+}
+
+
+.my-example-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
+/* ##############   Exercise   ############# */
+
+.my-exercise {
+  margin: 1em 0;
+  border: 2px solid darkseagreen;
+  border-left: 10px solid #698B69;
+  border-radius: 10px;
+}
+
+.my-exercise-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  15px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: #C1FFC1;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/thinking-face-48.png");
+}
+
+.my-exercise-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
+
+/* ##############   Experiment   ############# */
+
+.my-experiment {
+  margin: 1em 0;
+  border: 2px solid #5D478B;
+  border-left: 10px solid #5D478B;
+  border-radius: 10px;
+}
+
+.my-experiment-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  15px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: #e2d9f4;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/experiment-53.png");
+}
+
+.my-experiment-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
+/* ##############   Important   ############# */
+
+.my-important {
+  margin: 1em 0;
+  border: 2px solid #f90439;
+  border-left: 10px solid #f90439;
+  border-radius: 10px;
+}
+
+.my-important-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  15px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: #fee9ee;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/double-exclamation-48.png");
+}
+
+.my-important-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
+
+/* ##############   Objectives   ############# */
+
+.my-objectives {
+  margin: 1em 0;
+  border: 2px solid #548B54;
+  border-left: 10px solid #548B54;
+  border-radius: 10px;
+}
+
+.my-objectives-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  15px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: #eef9eb;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/bullseye-48.png");
+}
+
+.my-objectives-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
+
+/* ##############  Package (plum1 & plum4)  ############# */
+
+.my-package {
+  margin: 1em 0;
+  border: 2px solid #8B668B;
+  border-left: 10px solid #8B668B;
+  border-radius: 10px;
+}
+
+.my-package-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  15px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: #FFBBFF;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/package-48.png");
+}
+
+.my-package-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
+
+/* ##############   Procedure   ############# */
+
+.my-procedure {
+  margin: 1em 0;
+  border: 2px solid #8B7B8B;
+  border-left: 10px solid thistle;
+  border-radius: 10px;
+}
+
+.my-procedure-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  15px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: #FFE1FF;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/procedure-32.png");
+}
+
+.my-procedure-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
+
+/* ##############   Remark   ############# */
+
+.my-remark {
+  margin: 1em 0;
+  border: 2px solid #2780e3;
+  border-left: 10px solid #2780e3;
+  border-radius: 10px;
+}
+
+.my-remark-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  15px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: #ecf4fd;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/remark-48.png");
+}
+
+
+.my-remark-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
+
+/* ##############   R Code   ############# */
+
+.my-r-code {
+  margin: 1em 0;
+  border: 2px solid burlywood;
+  border-left: 10px solid #8B7355;
+  border-radius: 10px;
+}
+
+.my-r-code-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  15px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: #FFD39B;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/r-code.png");
+}
+
+.my-r-code-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
+
+/* ##############   Resources   ############# */
+
+.my-resource {
+  margin: 1em 0;
+  border: 2px solid gray;
+  border-left: 10px solid teal;
+  border-radius: 10px;
+}
+
+.my-resource-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  15px;
+  padding-bottom: 0.1em;
+  color: white;
+  background-color: rgb(123, 173, 173);
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/books-48.png");
+}
+
+.my-resource-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
+
+/* ##############   Solution   ############# */
+
+.my-solution {
+  margin: 1em 0;
+  border: 2px solid darkseagreen;
+  border-left: 10px solid #698B69;
+  border-radius: 10px;
+}
+
+.my-solution-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  15px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: #C1FFC1;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/solution-48.png");
+}
+
+.my-solution-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
+
+
+/* ##############   Tip / Hint   ############# */
+
+.my-tip {
+  margin: 1em 0;
+  border: 2px solid#008B00;
+  border-left: 10px solid #008B00;
+  border-radius: 10px;
+}
+
+.my-tip-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  15px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: #00CD00;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/tip-48.png");
+}
+
+.my-tip-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
+
+/* ##############   Theorem   ############# */
+
+.my-theorem {
+  margin: 1em 0;
+  border: 2px solid #8B8B00;
+  border-left: 10px solid #8B8B00;
+  border-radius: 10px;
+}
+
+.my-theorem-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  15px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: yellow;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/formula-fx-48.png");
+}
+
+.my-theorem-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
+/* ##############   Typo   ############# */
+
+.my-typo {
+  margin: 1em 0;
+  border: 2px solid #458B74;
+  border-left: 10px solid #458B74;
+  border-radius: 10px;
+}
+
+.my-typo-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  15px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: aquamarine;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/spelling-64.png");
+}
+
+.my-typo-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
+
+
+/* ##############   Watch out!   ############# */
+
+.my-watch-out {
+  margin: 1em 0;
+  border: 2px solid #8B5A2B;
+  border-left: 10px solid #CD853F;
+  border-radius: 10px;
+}
+
+.my-watch-out-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  15px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: orange;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/eyes-94.png");
+}
+
+.my-watch-out-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
+
+/* ##############  Bullet List   ############# */
+
+.my-bullet-list {
+  margin: 1em 0;
+  border: 2px solid#008B00;
+  border-left: 10px solid #008B00;
+  border-radius: 10px;
+}
+
+.my-bullet-list-header {
+  margin-left: 0;
+  padding-left:  60px;
+  padding-top:  15px;
+  padding-bottom: 0.1em;
+  color: black;
+  background-color: #00CD00;
+  border-top-right-radius: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  background-size: 40px;
+  background-repeat: no-repeat;
+  background-position: 15px center;
+  background-image: url("img/icons8/bullet-list.png");
+}
+
+.my-bullet-list-container {
+  padding-top: 5px;
+  padding-left: 10px;
+  color: black;
+  background-color: white;
+  border-bottom-right-radius: 10px;
+}
+
+
+
+/* ############### Colored text ################# */
+
+/* important */
+.imp {
+    color: red;
+}
+
+/* warning */
+.wrn {
+    color: darkorange;
+}
+
+/* caution */
+.cau {
+    color: darkgoldenrod;
+}
+
+/* tip */
+.tip {
+    color: darkgreen;
+}
+
+.nte {
+    color: blue;
+}
+
+/* ######################################################### */
+/*                                                           */
+/*               Custom Callout Box                          */
+/*     https://www.youtube.com/watch?v=DDQO_3R-q74  (Video)  */
+/*                                                           */
+/* ######################################################### */
+
+/* https://github.com/quarto-dev/quarto-cli/blob/main/src/resources/formats/html/styles-callout.html */
+
+/* #############    Solution      ################ */
+/* ############################################### */
+
+.solutionbox {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    border-radius: .25rem;
+    border-left: solid #acacac .3rem;
+    border-right: solid 1px silver;
+    border-top: solid 1px silver;
+    border-bottom: solid 1px silver;
+    border-left-color: #9834eb !important;
+}
+
+.solutionbox-icon {
+    height: 0.9rem;
+    width: 0.9rem;
+    display: inline-block;
+    content: "";
+    background-repeat: no-repeat;
+    background-size: 0.9rem 0.9rem;
+    margin-top: .4rem;
+    padding-right: 1.25rem;
+    background-image: url("img/icons8/report-100.png");
+}
+
+.solutionbox-header {
+    margin-bottom: 0.5em;
+    border-bottom: none;
+    font-weight: 600;
+    opacity: 85%;
+/*    font-size: 1em; */
+    font-size: 0.9rem;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    display: flex;
+/*    color: #6d7a86; */
+    background-color: #f5e8ff;
+    height: 2em;
+    overflow: hidden;
+}
+
+.solutionbox-header p {
+    padding-top: 0.2em;
+    padding-left: 0.3em;
+}
+
+.solutionbox-body {
+    font-size: 0.9rem;
+    font-weight: 400;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
+.solutionbox-body > :last-child {
+    padding-bottom: 0.5rem;
+    margin-bottom: 0;
+}
+
+
+/* #############    Bullet list      ################ */
+/* ############################################### */
+
+.my-bulletbox {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    border-radius: .25rem;
+    border-left: solid #acacac .3rem;
+    border-right: solid 1px silver;
+    border-top: solid 1px silver;
+    border-bottom: solid 1px silver;
+    border-left-color: #008B00 !important;
+}
+
+.my-bulletbox-icon {
+    height: 2rem;
+    width: 2rem;
+    display: inline-block;
+    content: "";
+    background-repeat: no-repeat;
+    background-size: 2rem 2rem;
+    margin-top: -.2rem;
+    padding-right: 1.5rem;
+    background-image: url("img/icons8/bullet-list.png");
+}
+
+.my-bulletbox-header {
+    margin-bottom: 0.5em;
+    padding-top: 0.3em;
+    border-bottom: none;
+    font-weight: 600;
+    opacity: 85%;
+    font-size: 1em;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    display: flex;
+    color: #6d7a86;
+    background-color: mediumspringgreen;
+    height: 2em;
+    overflow: hidden;
+}
+
+.my-bulletbox-body {
+    font-size: 1rem;
+    font-weight: 400;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
+.my-bulletbox-body > :last-child {
+    padding-bottom: 0.5rem;
+    margin-bottom: 0;
+}
+
+
+/* #############    Report      ################ */
+/* ############################################### */
+
+
+
+/* ######################################################### */
+
+.my-reportbox {
+    margin-left: 0;
+    padding-bottom: 0.1em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    opacity: 85%;
+
+    border-radius: .25rem;
+    border-left: solid #9834eb .3rem;
+    border-right: solid 1px #9834eb;
+    border-top: solid 1px #9834eb;
+    border-bottom: solid 1px #9834eb;
+    border-left-color: #9834eb !important;
+}
+
+.my-reportbox-header {
+    margin-left: 0;
+    padding-left:  60px;
+    padding-top:  15px;
+    padding-bottom: 0.1em;
+    display: flex;
+    color: #6d7a86;
+    background-color: #f6ebff;
+    border-top-right-radius: .25rem;
+    font-size: 1em;
+    font-weight: bold;
+    background-size: 40px;
+    background-repeat: no-repeat;
+    background-position: 15px center;
+    background-image: url("img/icons8/report-100.png");
+}
+
+.my-reportbox-body {
+    font-weight: 400;
+    margin-top: 5px;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
+
+.my-reportbox-body > :last-child {
+    padding-bottom: 0.5rem;
+    margin-bottom: 0;
+}
+
+
+
+/* ******************************************************* */
+
+
+div.callout-rep {
+  border-left-color: #9834eb !important;
+}
+
+div.callout-rep .callout-icon::before {
+  background-image: url('img/icons8/report-100.png');
+}
+
+div.callout-tip.callout-style-default .callout-title {
+  background-color: #f6ebff
+}

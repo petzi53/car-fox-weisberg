@@ -1,0 +1,264 @@
+# Preface {.unnumbered}
+
+::: {.callout-note style="color: blue;"}
+#### This is work in progress
+
+I have just started. So there is no content, because I am still preparing the structure of my notes.
+:::
+
+
+::: my-watch-out
+::: my-watch-out-header
+WATCH OUT: This is my personal learning material and is therefore
+neither an accurate replication nor an authoritative textbook.
+:::
+
+::: my-watch-out-container
+I am writing this book as a text for others to read because that forces me to
+become explicit and explain all my learning outcomes more carefully.
+Please keep in mind that this text is not written by an expert but by a
+learner.
+
+Text passages with content I am already familiar I have skipped. Section
+of the original text where I needed more in-depth knowledge I have
+elaborated and added my own comments resulted from my personal research.
+
+Be warned! In spite of replicating most of the content this Quarto book
+may contain many mistakes. All the misapprehensions and errors are of
+course my own responsibility.
+:::
+:::
+
+## Content and Goals of this Book {.unnumbered}
+
+This Quarto book collects my personal notes, trials and exercises of
+[An R Companion to Applied Regression](https://www.john-fox.ca/Companion/index.html) by
+John Fox and Sandford Weisberg [@fox2018].
+
+The *R companion* refers to a text or course on modern applied regression, such as "Applied Regression Analysis and Generalized Linear Models" [@fox2015] and "Applied Linear Regression" [@weisberg2013a].
+
+The *R companion* is associated with three R packages:
+
+- {**car**}: Companion to Applied Regression. It includes R functions (programs) for performing many tasks related to applied regression analysis, including a variety of regression graphics. (See: @pak-car)
+- {**effects**}: Effect Displays for Linear, Generalized Linear, and Other Models. It is useful for visualizing regression models of various sorts that have been fit to data. (See: @pak-effects)
+- {**carData**}: Companion to Applied Regression Data Sets. It provides convenient access to data sets used in the book. (See @pak-carData)
+
+
+## Text passages
+
+### Quotes and personal comments
+
+My text consists mostly of quotes from the third edition of *R companion*. Often I made minor editing (e.g., shorting the text) or put the content in my own wording. In this case I couldn't quote the text as it does not represent a specific annotation in the book. In any case most of the text in this Quarto book is not mine but coming from different resources (*R companion* book, R help files, websites). My own personal notes I have put either into a remark, resp. notes box or made it clear that it is my own thought.
+
+
+### Glossary
+
+I am using the {**glossary**} package to create links to glossary
+entries. (See @pak-glossary). [Glossaries for Markdown and Quarto Documents](https://cran.r-project.org/package=glossary)
+
+
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-load-glossary}
+: Load glossary
+:::
+:::
+
+::: my-r-code-container
+
+
+```{r}
+#| label: load-glossary
+#| lst-label: lst-preface-load-glossary
+#| lst-cap: "Install and load the glossary package with the appropriate glossary.yml file"
+
+
+## 1. Install the glossary package:
+## https://debruine.github.io/glossary/
+
+library(glossary)
+
+## If you want to use my glossary.yml file:
+
+## 1. fork my repo
+##    https://github.com/petzi53/glossary-pb
+
+## 2. Download the `glossary.yml` file from
+##    https://github.com/petzi53/glossary-pb/blob/master/glossary.yml)
+
+## 3. Store the file on your hard disk
+##    and change the following path accordingly
+
+glossary::glossary_path("../glossary-pb/glossary.yml")
+
+```
+
+
+:::
+:::
+
+If you hover with your mouse over the double underlined links it opens
+an window with the appropriate glossary text. Try this example: `r glossary("Z-Score")`.
+
+::: my-watch-out
+::: my-watch-out-header
+WATCH OUT! Use the glossary text at your own risk
+:::
+
+::: my-watch-out-container
+::: {layout="[10, 30]" layout-valign="center"}
+![](https://debruine.github.io/glossary/logo.png)
+
+I have added many of the glossary entries when I was working through
+other books either taking the text passage of these books I was reading
+or via an internet recherche from other resources. I have added the
+source of glossary entry. Sometimes I have used abbreviation, but I need
+still to provide a key what this short references mean.
+:::
+
+One of the books I have read (Statistics With R: Solving Problems Using Real-World Data, abbreviated `r glossary("SwR")`) by Jenine Harris [@harris2020] has collected its own glossary that I have used with copy and paste. But I have also used definitions from other books such as Statistical rethinking: a Bayesian course with examples in R and Stan by Richard McElreath [@mcelreath2020] or from websites such as Statistics How-To [@glenn.d] and Wikipedia [@wikipedia2024a].
+:::
+:::
+
+If you fork the [repository of this quarto
+book](https://github.com/petzi53/car-fox-weisberg) then the glossary will not
+work out of the box. Load down the `glossary.yml` file from [my
+glossary-pb GitHub
+repo](https://github.com/petzi53/glossary-pb/blob/master/glossary.yml),
+store it on your hard disk and change the path in the code chunk
+@lst-preface-load-glossary.
+
+In any case I am the only responsible person for this text, especially
+if I have used code from the resources wrongly or misunderstood a quoted
+text passage.
+
+## R Code and Datasets
+
+### Packages
+
+The three packages mentioned above ({**car**}, {**effects**}, and {**carData**}) I have downloaded from `r glossary("CRAN")` and installed on my machine. There is an additional package {**carEx**} with "Supplemental and Experimental Functions". These functions are meant to supplement those in the {**car**} package and experimental functions that may eventually be included in the {**car**} package. 
+
+I have downloaded this packages from `r glossary("R-Forge")` with the command `install.packages("carEx", repos="http://R-Forge.R-project.org")`. I got a warning, that the repository was not accessable but in the end my system installed the source package. 
+
+::: {.callout-important #imp-r-forge-package-binaries}
+##### Note for package binaries
+
+R-Forge provides binaries only for the most recent version of R, but not for older versions. In order to successfully install the packages provided on R-Forge, you have to switch to the most recent version of R or, alternatively, install from the package sources (`.tar.gz`).
+:::
+
+
+### Datasets
+
+#### R companion
+
+There is a page where one can [download the R scripts for every chapter](https://www.john-fox.ca/Companion/downloads.html). The files on this page can also be conveniently downloaded by the `car::carWeb()` function in the {**car**} package: see `?carWeb` for details.
+
+I have downloaded all the files with the command `car::carWeb(setup=TRUE)` and then stored away in my `_archive` folder that is ignored by Git.
+
+
+#### Referenced book
+
+The datasets for the referenced book "Applied Regression Analysis and Generalized Linear Models" as listed at the [Data Sets page](https://www.john-fox.ca/AppliedRegression/datasets/index.html) is included in the {**carData**} package. So there was no download necessary. But there are also [datasets available for the chapter exercises](https://www.john-fox.ca/AppliedRegression/exercises/index.html), which I have downloaded as .zip file and imported at the appropriate place in my note book.
+
+::: {.callout-note #nte-data-sets}
+##### Using own data sets
+
+There is an interested note on the page for downloading the datasets:
+
+> As a general matter, you should feel free to substitute appropriate data sets of interest to you for those suggested in the various data-analysis exercises. 
+
+I am not sure if this will turn out successfully in my learning path, but I will in any case try to follow this recommendation. It seems that it may be not only fun but also an occasion to apply the new knowledge on my own interesting subjects.
+
+
+:::
+
+#### Style guide
+
+I am using the [Tidyverse Style Guide](https://style.tidyverse.org/). I am going to use underscore (`_`) or [snake case](https://en.wikipedia.org/wiki/Snake_case) to replace
+spaces as studies has shown that it is easier to read [@sharif2010].
+
+But I will two addition from the [Google’s R Style
+Guide](https://google.github.io/styleguide/Rguide.html):
+
+-   Start the names of private functions with a dot.
+-   Qualify namespace.
+
+Especially the second point (qualifying namespace) is important for my
+learning. Besides preventing conflicts with functions of identical names
+from different packages it helps to learn (or remember) which function
+belongs to which package. I think this justifies the small overhead and
+helps to make R code chunks self-sufficient. (No previous package
+loading, or library calls in the setup chunk.) To foster learning the
+relation between function and package I embrace the package name with
+curly brakes and format it in bold.
+
+I am using the package name also for the default installation of base R.
+This wouldn't be necessary but it helps me to understand where the base
+R functions come from. What follows is a list of base R packages of the
+system library included into every installation and attached (opened) by
+default:
+
+-   {**base**}: The R Base Package
+-   {**datsets**}: The R Datasets Package
+-   {**graphics**}: The R Graphics Package
+-   {**grDevices**}: The R Graphics Devices and Support for Colours and Fonts
+-   {**methods**}: Formal Methods and Classes
+-   {**stats**}: The R Stats Package
+-   {**utils**}: The R Utils Package
+
+I am not using always the exact code snippets for my replications
+because I am not only replicating the code to see how it works but also
+to change the values of parameters to observe their influences.
+
+## Resources
+
+::: {.my-resource}
+::: {.my-resource-header}
+:::::: {#lem-index-book-resources}
+: Resources used for this Quarto book
+::::::
+:::
+
+::: {.my-resource-container}
+-   [SAGE book: An R Companion to Applied Regression](https://uk.sagepub.com/en-gb/eur/an-r-companion-to-applied-regression/book246125) [@fox2018]
+-   [SAGE student book: An R Companion to Applied Regression](https://www.john-fox.ca/Companion/index.html)
+-   [SAGE online Appendices](https://www.john-fox.ca/Companion/appendices.html)
+-   [R Scripts, Data Files](https://www.john-fox.ca/Companion/index.html)
+-   [R-Forge for experimental carEx package](https://r-forge.r-project.org/R/?group_id=531)
+-   [Applied Regression Analysis and Generalized Linear Models, Third Edition](https://www.john-fox.ca/AppliedRegression/index.html):
+    - [Answers to the odd-numbered exercises](https://www.john-fox.ca/AppliedRegression/Fox-AR3E-odd-exercise-answers.pdf)
+    - [Bonus chapter 25 on Bayesian Estimation of Regression Models](https://www.john-fox.ca/AppliedRegression/bayes.html) with odd-numbered exercises.
+    - [Bonus chapter 26 on Causal Inferences From Observational Data](https://www.john-fox.ca/AppliedRegression/dags.html): Directed Acyclic Graphs and Potential Outcomes with odd-numbered exercises.
+    - [Data Analysis Exercises](https://www.john-fox.ca/AppliedRegression/exercises/index.html). (The datasets for the book content are included in the {**carData**} package.)
+:::
+:::
+
+
+
+## Glossary
+
+```{r}
+#| label: glossary-table
+#| echo: false
+
+glossary_table()
+```
+
+------------------------------------------------------------------------
+
+## Session Info {.unnumbered}
+
+::: my-r-code
+::: my-r-code-header
+Session Info
+:::
+
+::: my-r-code-container
+```{r}
+#| label: session-info
+
+sessioninfo::session_info()
+```
+:::
+:::
+

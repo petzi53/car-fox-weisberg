@@ -1,0 +1,136 @@
+# Packages used {#sec-annex-a}
+
+## car
+
+:::::{.my-package}
+:::{.my-package-header}
+car: Companion to Applied Regression 
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-car}
+
+***
+
+{**car**}: [Companion to Applied Regression](https://www.john-fox.ca/Companion/index.html) [@car]
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/logoi/logo-car-min.png){width="176"}
+
+Functions to Accompany J. Fox and S. Weisberg, An R Companion to Applied Regression, Third Edition, Sage, 2019. [@fox2018]
+
+:::
+An R Companion to Applied Regression is a broad introduction to the R statistical computing environment in the context of applied regression analysis. The book provides a step-by-step guide to using the free statistical software R, and emphasizes integrating statistical computing in R with the practice of data analysis.  The R packages car and effects, written to facilitate the application and interpretation of regression analysis, are extensively covered in the book.
+
+{**car**}: Companion to Applied Regression
+:::
+
+***
+::::
+:::::
+
+## carData
+
+:::::{.my-package}
+:::{.my-package-header}
+carData: Datasets to accompany J. Fox and S. Weisberg, An R Companion to Applied Regression, Third Edition, Sage (2019). 
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-carData}
+
+***
+
+{**carData**}: [Datasets to accompany J. Fox and S. Weisberg, An R Companion to Applied Regression, Third Edition, Sage (2019).](https://www.john-fox.ca/Companion/index.html) [@carData]
+
+(*There is no hexagon logo for {**carData**} available*)
+
+Datasets to accompany J. Fox and S. Weisberg, An R Companion to Applied Regression, Third Edition, Sage (2019). [@fox2018]
+
+:::
+
+{**carData**}: Datasets to accompany J. Fox and S. Weisberg, An R Companion to Applied Regression, Third Edition, Sage (2019).
+:::
+
+<Other text not included in the package reference>
+
+***
+::::
+:::::
+
+
+
+## effects
+
+:::::{.my-package}
+:::{.my-package-header}
+effects: Effect Displays for Linear, Generalized Linear, and Other Models 
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-effects}
+
+***
+
+{**effects**}: [Effect Displays for Linear, Generalized Linear, and Other Models](https://www.john-fox.ca/AppliedRegression/index.html) [@effects]
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/logoi/logo-effects-min.png){width="176"}
+
+
+Graphical and tabular effect displays, e.g., of interactions, for various statistical models with linear predictors.
+
+:::
+
+{**effects**}: Effect Displays for Linear, Generalized Linear, and Other Models
+:::
+
+<Other text not included in the package reference>
+
+***
+::::
+:::::
+
+
+## glossary
+
+:::::{.my-package}
+:::{.my-package-header}
+glossary: Glossaries for Markdown and Quarto Documents 
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-glossary}
+
+***
+
+{**glossary**}: [Glossaries for Markdown and Quarto Documents](https://debruine.github.io/glossary/) [@glossary]
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/logoi/logo-glossary-min.png){width="176"}
+
+Add glossaries to markdown and quarto documents by tagging individual words. Definitions can be provided inline or in a separate file.
+
+
+:::
+
+There is a lot of necessary jargon to learn for coding. The goal of glossary is to provide a lightweight solution for making glossaries in educational materials written in quarto or R Markdown. This package provides functions to link terms in text to their definitions in an external glossary file, as well as create a glossary table of all linked terms at the end of a section.
+
+{**glossary**}: Glossaries for Markdown and Quarto Documents
+:::
+
+<Other text not included in the package reference>
+
+***
+::::
+:::::
+
+
