@@ -9,7 +9,7 @@ book:
   favicon: "img/favicon_io/apple-touch-icon.png"
   site-url: https://bookdown.org/pbaumgartner/car-fox-weisberg/
   repo-url: https://github.com/petzi53/car-fox-weisberg
-  repo-branch: main
+  repo-branch: master
   repo-actions: [edit, issue]
 
   chapters:
