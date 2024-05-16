@@ -2,6 +2,5 @@
 .Rhistory
 .RData
 .Ruserdata
-_archive/*
-
+_archive
 /.quarto/
