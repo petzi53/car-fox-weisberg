@@ -1,0 +1,525 @@
+# Getting started with R & RStudio {#sec-chap01}
+
+
+```{r}
+#| label: setup
+#| results: hold
+#| include: false
+
+base::source(file = "R/helper.R")
+ggplot2::theme_set(ggplot2::theme_bw())
+options(show.signif.stars = FALSE)
+
+```
+
+## Table of content for chapter 01
+
+::::: {#obj-chap01}
+:::: {.my-objectives}
+::: {.my-objectives-header}
+Chapter section list
+:::
+
+::: {.my-objectives-container}
+
+-   ~~Working with RStudio projects~~ (@sec-chap01-1)
+-   R Basics (@sec-chap01-2)
+-   Fixing errors and getting help (@sec-chap01-3)
+-   ~~Organizing your work and making it reproducible~~ (@sec-chap01-4)
+-   An Extended Illustration: Duncan's Occupational-Prestige Regression (@sec-chap01-5)
+
+
+
+:::
+::::
+:::::
+
+## Working with RStudio projects (empty) {#sec-chap01-1}
+
+## R Basics {#sec-chap01-2}
+
+- A novel feature of the R help system is the facility it provides to execute most examples in the help pages via the example() command: 
+$$example ('log')$$
+
+- A quick way to determine the arguments of an R function is to use the `args()` function:
+$$args ('log')$$
+
+::: {.callout-warning #wrn-help-generig-functions}
+The `args()` and `help()` functions may not be very helpful with generic functions.
+:::
+
+- For the full set of reserved symbols in R, see 
+$$help ('Reserved')$$
+
+- There are two types of logical operators: 
+    - vectorizes: $\&$ and $|$ vectorized resp. 
+    - single operand: $\&\&$ and $||$
+    
+The unvectorized versions of the *and* (&&) and *or* (||) operators are primarily useful for writing R programs and are not appropriate for indexing vectors.
+
+## Fixing errors and getting help {#sec-chap01-3}
+
+:::{.my-bulletbox}
+:::: {.my-bulletbox-header}
+::::: {.my-bulletbox-icon}
+:::::
+:::::: {#bul-getting-help}
+::::::
+: Getting help
+::::
+:::: {.my-bulletbox-body}
+- `base::traceback()` provides information about the sequence of function calls leading up to an error.
+- `utils::apropos('<searchString>')` searches for currently accessible objects whose names contain a particular character string. It returns a character vector giving the names of objects in the search list matching (as a regular expression)
+- `utils:find('<searchString>')` returns where objects of a given name can be found.
+- `??` or `help.search()` activates a broader search because it looks not only in the title fields but in other fields of the help pages as well.
+- `utils::RSiteSearch()` or the search engine at https://search.r-project.org/ needs an internet connection and starts a search even broader. It looks in all standard and CRAN packages, even those not installed on your system.
+- [CRAN task views](https://cran.r-project.org/web/views/) describe	resources in R for applications in specific areas.
+    - Views can be installed automatically via ctv::install.views("Bayesian") or ctv::update.views("Bayesian", coreOnly=TRUE)
+    - Query information about a particular task view on CRAN from within R for example with `ctv::ctv("MachineLearning")`
+    - Query to obtain the list of all task views available with `ctv::available.views()`
+- `help(package='<packageName>')` calls the index help page of an installed package in the RStudio Help tab, including the hyperlinked index of help topics documented in the package.
+- `r glossary("Vignette")`:
+    - `utils::vignette()` lists available vignettes in the packages installed on your system in the code window. 
+    - `utils::browseVignettes()` open a local web page listing vignettes in the packages installed on your system
+    - `utils::vignette(package='<packageName>')` displays the vignettes available in a particular installed package. 
+    - `vignette('vignetteName')` or vignette('<vignetteName>', package='<packageName>') opens a specific vignette.
+- *RStudio help*: 
+    - Menu "Help > R Help" opens  an overview page with R resources
+    - Search R help with shortcut CTRL-ALT-F1
+    - [Finding your way to R](https://education.rstudio.com/learn/) with three learning pathes: [Beginners](https://education.rstudio.com/learn/beginner/), [Intermediates](https://education.rstudio.com/learn/intermediate/) and [Experts](https://education.rstudio.com/learn/expert/)
+- *Google search*
+- `r glossary("StackOverflow")` and `r glossary("Cross Validated")`: 
+    - [Stack Overflow](https://stackoverflow.com/) is a question and answer site for professional and enthusiast programmers. 
+    - [Cross Validated](https://stats.stackexchange.com/) is a question and answer site for people interested in statistics, machine learning, data analysis, data mining, and data visualization.
+
+::::
+:::
+
+
+
+## Organizing your work and making it reproducible (empty) {#sec-chap01-4}
+
+## An Extended Illustration {#sec-chap01-5}
+
+### Getting, recoding and showing data
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap01-illustration}
+: Duncan's Occupational-Prestige Regression
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### get data
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-show-duncan-data}
+: Show Duncan raw data from {**carData**} package
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap01-get-duncan-data}
+```{r}
+#| label: show-duncan-data
+
+carData::Duncan
+```
+
+Duncan raw data from {**carData**} package
+
+:::
+
+***
+The row names contains data and have to be therefore a separate column.
+
+
+::::
+:::::
+
+
+###### recode 
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-recode-duncan-data}
+: Recode Duncan data
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap01-recode-duncan-data}    
+```{r}
+#| label: recode-duncan-data
+#| results: hold
+
+(d_01 <- carData::Duncan |> 
+    tibble::rownames_to_column("occupation"))
+
+save_data_file("chap01", d_01, "d_01.rds")
+```
+
+Duncan data recoded
+:::
+
+***
+
+Duncan was interested in how `prestige` is related to `income` and `education` in combination.
+
+::::
+:::::
+
+###### skim data
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-skim-duncan}
+: Skim Duncan data
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap01-skim-duncan}
+```{r}
+#| label: skim-duncan
+
+skimr::skim(d_01)
+```
+
+Look at the recoded Duncan data
+:::
+
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+### Explorative Data Analysis
+
+Duncan used a linear least-squares regression of `prestige` on `income` and `education` to predict the prestige of occupations for which the income and educational scores were known from the U.S. Census but for which there were no direct prestige ratings. He did not use occupational type in his analysis.
+
+A sensible place to start any data analysis, including a regression analysis, is to visualize the data using a variety of graphical displays. We need the following graphs:
+
+- Univariate distributions of the three variables
+- Pairwise or marginal relationships among them
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap01-eda}
+: Explorative Data Analysis (EDA) of Duncan data
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### hist prestige
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-hist-prestige}
+: Histogram of `prestige` variable
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap01-hist-prestige}
+```{r}
+#| label: hist-prestige
+
+d_01 |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = prestige)
+    ) +
+    ggplot2::geom_histogram(
+        bins = 10,
+        color = "white",
+        fill = "grey40")
+```
+Histogram of prestige variable
+:::
+
+***
+The distribution of `prestige` appears to be bimodal, with cases stacking up near the boundaries, as many occupations are either low prestige, near the lower boundary, or high prestige, near the upper boundary, with relatively fewer occupations in the middle bins of the histogram. Because `prestige` is a percentage, this behavior is not altogether unexpected. Variables such as this often need to be transformed, perhaps with a logit (log-odds) or similar transformation. But transforming `prestige` turns out to be unnecessary in this problem.
+
+::::
+:::::
+
+Before fitting a regression model to the data, we should also examine the distributions of the predictors education and income, along with the relationship between prestige and each predictor, and the relationship between the two predictors.
+
+###### hist education
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-hist-education}
+: Histogram of `education` variable
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap01-hist-education}
+```{r}
+#| label: hist-education
+
+d_01 |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = education)
+    ) +
+    ggplot2::geom_histogram(
+        bins = 10,
+        color = "white",
+        fill = "grey40")
+```
+Histogram of education variable
+:::
+
+***
+
+
+::::
+:::::
+
+###### hist income
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-hist-income}
+: Histogram of `income` variable
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap01-hist-income}
+```{r}
+#| label: hist-income
+
+d_01 |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = income)
+    ) +
+    ggplot2::geom_histogram(
+        bins = 10,
+        color = "white",
+        fill = "grey40")
+```
+Histogram of income variable
+:::
+
+***
+
+
+::::
+:::::
+
+
+###### scatterplotMatrix
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-scatterplot-matrix}
+: Numbered R Code Title (Tidyverse)
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap01-scatterplot-matrix}    
+```{r}
+#| label: scatterplot-matrix
+
+car::scatterplotMatrix(	~ prestige + education + income, 
+                        id = list(n = 3), data = d_01)
+```
+
+Scatterplot matrix for prestige, education, and income in Duncan’s data, identifying the three most unusual points in each panel. Nonparametric density estimates for the variables appear in the diagonal panels, with a rug-plot (one-dimensional scatterplot) at the bottom of each diagonal panel.
+:::
+
+***
+The `car::scatterplotMatrix()` function uses a one-sided formula to specify the variables to appear in the graph, where we read the formula `~ prestige + education + income` as “plot prestige and education and income.” 
+
+The argument `id = list(n = 3)` tells `scatterplotMatrix()` to identify the three most unusual points in each panel. This argument was added by the authors after examining a preliminary plot of the data.
+
+::: {.callout-warning #wrn-chap01-difference-in-scatterplot-matrix}
+In contrast to Figure 1.10 my graph shows the three most unusual points in each panel with a number and not with the name of the occupation. I believe that this difference is a result of my recoding (changing row names into a column).
+:::
+
+::::
+:::::
+
+- **Nonparametric density estimates** are using an adaptive-kernel estimator, and they appear by default in the diagonal panels, with a *rug-plot* (“one-dimensional scatterplot”) at the bottom of each panel, showing the location of the data values for the corresponding variable.
+- The **solid line** shows the marginal linear least-squares fit for the regression of the vertical-axis variable (y) on the horizontal-axis variable (x), ignoring the other variables. 
+- The **central broken line** is a nonparametric regression smooth, which traces how the average value of y changes as x changes without making strong assumptions about the form of the relationship between the two variables. 
+- The **outer broken lines** represent smooths of the conditional variation of the y values given x in each panel, like running quartiles.
+
+::: {.callout-note #nte-chap01-spm-pairs-ggpairs}
+##### Is there a tidyverse equivalent for car::scatterplotMatrix()?
+
+I believe that `car::scatterplotMatrix()` is a modified `graphics::pairs()` function. `GGally::ggpairs()` is a {**ggplot2**} generalized [pairs plot matrix](https://ggobi.github.io/ggally/articles/ggpairs.html) equivalent in the tidyverse tradition. I should try it out and see if I can reproduce @lst-chap01-scatterplot-matrix with {**GGally**}.
+:::
+
+Like `prestige`, `education` appears to have a bimodal distribution. The distribution of `income`, in contrast, is perhaps best characterized as irregular. The pairwise relationships among the variables seem reasonably linear, which means that as we move from left to right across the plot, the average y values of the points more or less trace out a straight line. The scatter around the regression lines appears to have reasonably constant vertical variability and to be approximately symmetric.
+
+In addition, two or three cases stand out from the others. In the scatterplot of `income` versus `education`, data point 6 (= ministers) are unusual in combining relatively low income with a relatively high level of education, and data point 16 (= conductors) and data point 27 (= railroad engineers) are unusual in combining relatively high levels of income with relatively low education. Because `education` and `income` are predictors in Duncan’s regression, these three occupations will have relatively high `r glossary("leverage")` on the regression coefficients. None of these cases, however, are `r glossary("outliers")` in the *univariate* distributions of the three variables.
+
+:::
+
+::::
+:::::
+
+### Regression Analysis
+
+Following Duncan, we next fit a linear least-squares regression to the data to model the joint dependence of prestige on the two predictors, under the assumption that the relationship of prestige to education and income is additive and linear.
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap01-ols-regression}
+: Compute OLS regression
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### fit lm.1
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-lm-1}
+: Fit linear model
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap01-lm-1}
+```{r}
+#| label: fit-lm1
+
+(
+    lm01.1 <- stats::lm(
+        formula = prestige ~  education + income,
+        data = d_01
+    )
+)
+
+
+```
+Regress `prestige` on `education` and `income`
+:::
+
+::::
+:::::
+
+
+###### summary lm.1
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-summary-lm-1}
+: Summary of lm01.1
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap01-summary-lm-1}    
+```{r}
+#| label: summary-lm1
+
+base::summary(lm01.1)
+```
+
+Summary of linear model where `prestige` is regressed on `education` and `income`
+:::
+
+***
+
+The	“statistical-significance” asterisks were suppressed with `options(show.signif.stars = FALSE)`.
+
+::::
+:::::
+
+Both education and income have large regression coefficients in the "Estimate" column of the coefficient table, with small two-sided p-values in the column labeled "Pr (>|t|)". For example, holding education constant, a 1% increase in higher income earners is associated on average with an increase of about 0.6% in high prestige ratings.
+
+:::
+
+::::
+:::::
+
+### Regression diagnostics
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap01-regression-diagnostics}
+: Regression diagnostics
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### density
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-density-estimate}
+: Nonparametric density	estimate of the distribution of Studentized residuals
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap01-density-estimate}
+```{r}
+#| label: density-estimate
+
+car::densityPlot(stats::rstudent(lm01.1))
+```
+Nonparametric density estimate for the distribution of the Studentized residuals from the regression of `prestige` on `education` and `income.`
+:::
+
+***
+If the errors in the regression are normally distributed with zero means and constant variance, then the Studentized residuals are each t-distributed with $n − k − 2$ degrees of freedom, where k is the number of coefficients in the model, excluding the regression constant, and n is the number of cases.
+
+::::
+:::::
+
+
+###### qqPlot
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-qq-plot}
+: Quantile-comparison plot for the Studentized residuals
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap01-qq-plot}    
+```{r}
+#| label: qq-plot
+#| cache: true
+
+car::qqPlot(lm01.1, id = list(n = 3))
+```
+
+Quantile-comparison plot for the Studentized residuals from the regression of prestige on education and income. The broken lines show a bootstrapped pointwise 95% confidence envelope for the points.
+:::
+***
+
+The `car::qqPlot()` function extracts the Studentized residuals and plots them against the quantiles of the appropriate t-distribution. If the Studentized residuals are t-distributed, then the plotted points should lie close to a straight line. The solid comparison line on the plot is drawn by default by robust regression. The argument `id = list (n = 3)` identifies the three most extreme Studentized residuals, and `qqPlot()` returns the (names and) row numbers of these cases.
+
+(In my case the functions returns only the row numbers.)
+
+- 6 : minister
+- 9 : reporter
+- 17: contractor
+
+::: {.callout-warning #wrn-chap01-bootstrap-waiting-time}
+Be patient! The computation of the bootstrapped pointwise 95% confidence envelope for the points takes some time.
+:::
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+***
+
+

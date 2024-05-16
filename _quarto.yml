@@ -14,7 +14,7 @@ book:
 
   chapters:
     - index.qmd
-    - 01-intro.qmd
+    - 01-getting-started.qmd
     - 95-references.qmd
   appendices:
     - 96-packages-used.qmd

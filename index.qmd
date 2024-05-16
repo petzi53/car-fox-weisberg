@@ -3,7 +3,7 @@
 ::: {.callout-note style="color: blue;"}
 #### This is work in progress
 
-I have just started. So there is no content, because I am still preparing the structure of my notes.
+I have just started: I am currently working on chapter 1.
 :::
 
 
