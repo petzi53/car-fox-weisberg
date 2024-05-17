@@ -1,0 +1,117 @@
+# Reading & Manipulating Data {#sec-chap02}
+
+
+```{r}
+#| label: setup
+#| results: hold
+#| include: false
+
+base::source(file = "R/helper.R")
+ggplot2::theme_set(ggplot2::theme_bw())
+options(show.signif.stars = FALSE)
+
+```
+
+## Table of content for chapter 02
+
+::::: {#obj-chap02}
+:::: {.my-objectives}
+::: {.my-objectives-header}
+Chapter section list
+:::
+
+::: {.my-objectives-container}
+
+- Data Input
+    - Accessing data from a package (@sec-chap02-1-1)
+    - ~~Entering a data frame directly (empty)~~ (@sec-chap02-1-2)
+    - ~~Reading	data from plain-text files (empty)~~ (@sec-chap02-1-3)
+    - ~~File and Paths (empty)~~ {#sec-chap02-1-4}
+    - ~~Exporting or saving a data frame to a file (empty)~~ {#sec-chap02-1-5}
+    - Reading and writing other file formats {#sec-chap02-1-6}
+- Other Approaches to Reading and Managing Data Sets in R {#sec-chap02-2}
+
+
+
+:::
+::::
+:::::
+
+
+## Data Input 
+
+### Accessing data from a package {#sec-chap02-1-1}
+
+There are two ways to access data from a package:
+
+- Loading the package with `base::library(<packageName>)`
+- Accessing with `utils::data("<dataName>", package = "<packageName>")` without first loading the package
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap02-load-data-display-extract}
+: Load data and display a data extract with different methods
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap02-load-data-display-extract}
+```{r}
+#| label: load-data-display-extract
+#| results: hold
+
+utils::data("Davis", package = "carData")
+
+glue::glue("---------------------------------------------------------------------")
+glue::glue("utils::str: Compactly Display the Structure of an Arbitrary R Object")
+glue::glue("---------------------------------------------------------------------")
+utils::str(Davis)
+
+glue::glue(" ")
+glue::glue("---------------------------------------------------------------------")
+glue::glue("car::brief: Print Abbreviated Ouput")
+glue::glue("---------------------------------------------------------------------")
+car::brief(Davis)
+
+glue::glue(" ")
+glue::glue("---------------------------------------------------------------------")
+glue::glue("my_glance_data: my own function")
+glue::glue("---------------------------------------------------------------------")
+my_glance_data(Davis)
+
+glue::glue(" ")
+glue::glue("---------------------------------------------------------------------")
+glue::glue("dplyr::glimpse: Get a glimpse of your data")
+glue::glue("---------------------------------------------------------------------")
+dplyr::glimpse(Davis)
+```
+Accessing data from a package and using different methods for displaying a data extract
+:::
+
+***
+
+There is a problem with the data files from the {**carData**} package: The files have relevant information in the row names. But row names are not part of the data frame. This can be easily seen by applying functions like `utils::str()` or `dplyr::glimpse()`.
+
+This is not a great deal here with the Davis data set as it only contains the index of the row numbers. But it is an annoying "feature" when it has important information that belong into a column of the data frame. We have already met such a data frame with `Duncan` in @lst-chap01-get-duncan-data. 
+
+::::
+:::::
+
+
+Some packages require that you call the `utils::data()` function to use data frames in the package, even when the package is loaded. Other packages, like {**carData**}, use R’s lazy data mechanism to provide direct access to data frames when the package is loaded. On a package’s help page, accessed, for example, by `help(package="carData")`, click on the link for the package `DESCRIPTION file`. Data frames are automatically available if the line `LazyData: yes` appears in the package description.
+
+### Entering a data frame directly (empty) {#sec-chap02-1-2}
+
+### Reading	data from plain-text files (empty) {#sec-chap02-1-3}
+
+### File and Paths (empty) {#sec-chap02-1-4}
+
+### Exporting or saving a data frame to a file (empty) {#sec-chap02-1-5}
+
+### Reading and writing other file formats {#sec-chap02-1-6}
+
+The {**car**} package includes a function named `car::Import()` that calls the `import()` function in {**rio**} but uses different defaults and arguments, more closely matching the specifications that we expect users of the car package to prefer. In particular: 
+
+1. **Row names**: The `rio::`import()` function does not support row names, while `car::Import()` allows you to convert a column in the input data file into row names. By default, `car::Import()` assumes that the first character column with unique values in the input data set represents row names. If you do not want `car::Import()` to use row names, set the argument `row.names = FALSE`. 
+2. **Conversion to factors**: The `rio::import()` function does not support automatic conversion of character data to factors, while `car::Import()` by default converts character variables to factors. To suppress converting character variables to factors, add the argument `stringsAsFactors = FALSE`.
+
+The `car::Export()` function similarly writes data files in various formats. `car::Export()` is identical in use to the `rio::export()` but `car::Export()` has an additional argument, `keep.row.names`: Setting `keep.row.names = TRUE` adds the row names in a data frame as an additional initial column of the output data set, with the column name `id`.
