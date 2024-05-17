@@ -3,7 +3,7 @@
 ::: {.callout-note style="color: blue;"}
 #### This is work in progress
 
-I have just started: I am currently working on chapter 1.
+I have just finished chapter 1 (about 12% of the book): I am currently working on chapter 2.
 :::
 
 

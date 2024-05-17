@@ -22,11 +22,17 @@ Chapter section list
 
 ::: {.my-objectives-container}
 
--   ~~Working with RStudio projects~~ (@sec-chap01-1)
+-   ~~Working with RStudio projects (empty)~~ (@sec-chap01-1)
 -   R Basics (@sec-chap01-2)
 -   Fixing errors and getting help (@sec-chap01-3)
--   ~~Organizing your work and making it reproducible~~ (@sec-chap01-4)
+-   ~~Organizing your work and making it reproducible (empty)~~ (@sec-chap01-4)
 -   An Extended Illustration: Duncan's Occupational-Prestige Regression (@sec-chap01-5)
+    - Getting, recoding and showing data (@sec-chap01-5-1)
+    - Explorative data analysis (@sec-chap01-5-2)
+    - Regression analysis (@sec-chap01-5-3)
+    - Regression diagnostics (@sec-chap01-5-4)
+- ~~R Functions for Basic Statistics (empty)~~ (@sec-chap01-6)
+- Generic functions and their methods (@sec-chap01-7)
 
 
 
@@ -101,7 +107,16 @@ The unvectorized versions of the *and* (&&) and *or* (||) operators are primaril
 
 ## An Extended Illustration {#sec-chap01-5}
 
-### Getting, recoding and showing data
+::: {.callout-warning #wrn-chap01-illustration-not-understanding}
+##### Only illustration --- not yet understanding
+
+I will follow all steps of the illustration with the Duncan data set. But be aware that I am still lacking understanding of all the procedures. Hopefully these gaps will filled with the next chapters. 
+
+I am planning whenever I find an explication of the routines that follow I will provide a link to cross reference illustration and explanation.
+:::
+
+
+### Getting, recoding and showing data {#sec-chap01-5-1}
 
 :::::{.my-example}
 :::{.my-example-header}
@@ -155,10 +170,10 @@ The row names contains data and have to be therefore a separate column.
 #| label: recode-duncan-data
 #| results: hold
 
-(d_01 <- carData::Duncan |> 
+(d01.1 <- carData::Duncan |> 
     tibble::rownames_to_column("occupation"))
 
-save_data_file("chap01", d_01, "d_01.rds")
+save_data_file("chap01", d01.1, "d01.1.rds")
 ```
 
 Duncan data recoded
@@ -184,7 +199,7 @@ Duncan was interested in how `prestige` is related to `income` and `education` i
 ```{r}
 #| label: skim-duncan
 
-skimr::skim(d_01)
+skimr::skim(d01.1)
 ```
 
 Look at the recoded Duncan data
@@ -199,7 +214,7 @@ Look at the recoded Duncan data
 ::::
 :::::
 
-### Explorative Data Analysis
+### Explorative Data Analysis {#sec-chap01-5-2}
 
 Duncan used a linear least-squares regression of `prestige` on `income` and `education` to predict the prestige of occupations for which the income and educational scores were known from the U.S. Census but for which there were no direct prestige ratings. He did not use occupational type in his analysis.
 
@@ -231,7 +246,7 @@ A sensible place to start any data analysis, including a regression analysis, is
 ```{r}
 #| label: hist-prestige
 
-d_01 |> 
+d01.1 |> 
     ggplot2::ggplot(
         ggplot2::aes(x = prestige)
     ) +
@@ -264,7 +279,7 @@ Before fitting a regression model to the data, we should also examine the distri
 ```{r}
 #| label: hist-education
 
-d_01 |> 
+d01.1 |> 
     ggplot2::ggplot(
         ggplot2::aes(x = education)
     ) +
@@ -295,7 +310,7 @@ Histogram of education variable
 ```{r}
 #| label: hist-income
 
-d_01 |> 
+d01.1 |> 
     ggplot2::ggplot(
         ggplot2::aes(x = income)
     ) +
@@ -328,7 +343,7 @@ Histogram of income variable
 #| label: scatterplot-matrix
 
 car::scatterplotMatrix(	~ prestige + education + income, 
-                        id = list(n = 3), data = d_01)
+                        id = list(n = 3), data = d01.1)
 ```
 
 Scatterplot matrix for prestige, education, and income in Duncan’s data, identifying the three most unusual points in each panel. Nonparametric density estimates for the variables appear in the diagonal panels, with a rug-plot (one-dimensional scatterplot) at the bottom of each diagonal panel.
@@ -366,7 +381,7 @@ In addition, two or three cases stand out from the others. In the scatterplot of
 ::::
 :::::
 
-### Regression Analysis
+### Regression Analysis {#sec-chap01-5-3}
 
 Following Duncan, we next fit a linear least-squares regression to the data to model the joint dependence of prestige on the two predictors, under the assumption that the relationship of prestige to education and income is additive and linear.
 
@@ -396,11 +411,11 @@ Following Duncan, we next fit a linear least-squares regression to the data to m
 (
     lm01.1 <- stats::lm(
         formula = prestige ~  education + income,
-        data = d_01
+        data = d01.1
     )
 )
 
-
+save_data_file("chap01", lm01.1, "lm01.1.rds")
 ```
 Regress `prestige` on `education` and `income`
 :::
@@ -442,7 +457,7 @@ Both education and income have large regression coefficients in the "Estimate" c
 ::::
 :::::
 
-### Regression diagnostics
+### Regression diagnostics {#sec-chap01-5-4}
 
 :::::{.my-example}
 :::{.my-example-header}
@@ -508,18 +523,530 @@ The `car::qqPlot()` function extracts the Studentized residuals and plots them a
 - 9 : reporter
 - 17: contractor
 
+By default, `car::qqPlot()` also produces a bootstrapped pointwise 95% confidence envelope for the Studentized residuals that takes account of the correlations among them (but, because the envelope is computed pointwise, does not adjust for simultaneous inference).
+
 ::: {.callout-warning #wrn-chap01-bootstrap-waiting-time}
 Be patient! The computation of the bootstrapped pointwise 95% confidence envelope for the points takes some time.
+
+The bootstrap procedure used by `car::qqPlot()` generates random samples, and so the plot that you see when you duplicate this command will not be identical to the graph shown in the text.
 :::
 
 ::::
 :::::
 
-:::
+The residuals stay nearly within the boundaries of the envelope at both ends of the distribution, with the exception of point 6, the occupation `minister`.
 
-::::
-:::::
+###### outlierTest
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-outlier-test}
+: Test based on the largest (absolute) Studentized residual
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap01-outlier-test}
+```{r}
+#| label: outlier-test
+
+car::outlierTest(lm01.1)
+```
+
+Outlier test: Studentized residuals with Bonferroni
+:::
 
 ***
+
+The outlier test suggests that the residual for ministers is not terribly unusual, with a Bonferroni-corrected p-value of 0.14.
+
+::::
+:::::
+
+###### influenceIndexPlot()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-influenctial-cases}
+: Checking for high-leverage and influential cases 
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap01-influenctial-cases}
+```{r}
+#| label: influenctial-cases
+#| fig-height: 7
+#| fig-width: 10
+
+car::influenceIndexPlot(
+    model = lm01.1, 
+    vars = c("Cook", "hat"),
+    id = list(n = 3)
+    )
+```
+
+Index plots of `r glossary("Cook’s D", "Cook’s distances")` and `r glossary("Y-hat", "hat-values")`, from the regression of `prestige` on `income` and `education.`
+:::
+
+
+
+::::
+:::::
+
+Because the cases in a regression can be *jointly* as well as individually influential, we also examine *added-variable plots* for the predictors, using `car::avPlots()`.
+
+###### avPlots
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-av-plots}
+: Added-variable plots
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap01-av-plots}
+```{r}
+#| label: av-plots
+
+car::avPlots(
+    model = lm01.1,
+    id = list(
+        cex = 0.75,
+        n = 3,
+        method = "mahal"
+        )
+)
+```
+
+Added-variable plots for education and income in Duncan’s occupational-prestige regression
+:::
+
+***
+
+The `id` argument, which has several components here, customizes identification of points in the graph:
+
+- `cex = 0.75` (where cex is a standard R argument for “character expansion”) makes the labels smaller, so that they fit better into the plots
+- `n = 3` identifies the three most unusual points in each plot
+- `method = "mahal"` indicates that unusualness is quantified by Mahalanobis distance from the center of the point-cloud.
+
+Mahalanobis	distances	from	the	center	of	the	data	take	account	of	the standard	deviations	of	the	variables	and	the	correlation	between	them. Each	added-variable	plot	displays	the	*conditional*,	rather	than	the	marginal, relationship	between	the	response	and	one	of	the	predictors.	Points	at	the extreme	left	or	right	of	the	plot	correspond	to	cases	that	have	high	leverage	on the	corresponding	coefficient	and	consequently	are	potentially	influential.
+
+::::
+:::::
+
+@lst-chap01-av-plots confirms	and	strengthens	our	previous	observations:	We	should	be concerned	about	the	occupations	minister (point 6)	and	conductor (point 16),	which	work	jointly	to increase	the	education	coefficient	and	decrease	the	income	coefficient. Occupation	RR.engineer (point 27)	has	relatively	high	leverage	on	these	coefficients	but	is more	in	line	with	the	rest	of	the	data.
+
+###### crPlots
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-cr-plots}
+: Component-plus-residual plots
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap01-cr-plots}
+```{r}
+#| label: cr-plots
+
+car::crPlots(lm01.1)
+```
+
+Component-plus-residual	plots	for	education	and	income	in Duncan’s	occupational-prestige	regression.	The	solid	line	in	each	panel	shows	a loess	nonparametric-regression	smooth;	the	broken	line	in	each	panel	is	the least-squares	line
+:::
+
+***
+
+Each	plot	includes	a least-squares	line,	representing	the	regression	plane	viewed	edge-on	in	the direction	of	the	corresponding	predictor,	and	a	loess	nonparametric-regression smooth.	
+
+::::
+:::::
+
+The	purpose	of	@lst-chap01-cr-plots	is	to	detect	nonlinearity,	evidence	of	which is	slightly	here.
+
+###### ncvTest
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-ncv-test}
+: Score	tests for nonconstant variance
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap01-ncv-test}
+```{r}
+#| label: ncv-test
+#| results: hold
+
+car::ncvTest(lm01.1)
+
+glue::glue(" ")
+
+car::ncvTest(
+    model = lm01.1,
+    var.formula = ~ income + education
+    )
+```
+
+Checking	for	an	association	of	residual variability	with	the	fitted	values	and	with	any	linear	combination	of	the predictors
+:::
+
+***
+Both	tests	yield	large	p-values,	indicating	that	the	assumption	of	constant variance	is	tenable
+
+
+
+::::
+:::::
+
+###### fit-lm2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-regress-lm01.2}
+: Linear regression without influential data of 6 and 16
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap01-regress-lm01.2}
+```{r}
+#| label: regress-lm2
+#| results: hold
+
+ d01.2 <- d01.1 |> 
+        dplyr::slice(-c(6, 16))
+ 
+lm01.2 <- stats::update(lm01.1, subset = -c(6, 16))
+
+base::summary(lm01.2)
+
+save_data_file("chap01", d01.2, "d01.2.rds")
+save_data_file("chap01", lm01.2, "lm01.2.rds")
+ 
+ 
+```
+
+Linear model version 2 without influential data points 6 and 16
+:::
+***
+
+Rather	than	respecifying	the	regression	model	from	scratch	with	`stats::lm()`,	we	refit	it using	the	`stats::update()`	function,	removing	the	two	potentially	problematic	cases	via the	subset	argument to	`update()`.	
+
+I didn't need `car::whichNames()` to get the row numbers to	be	removed, because I used these numbers already all the time. 
+
+::::
+:::::
+
+###### compareCoefs-1
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-compare-coefs}
+: Comparing	the	estimated coefficients of lm01.1 and lm01.2
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap01-compare-coefs}
+```{r}
+#| label: compare-coefs1
+
+car::compareCoefs(lm01.1, lm01.2)
+```
+
+Comparing	the	estimated	coefficients	and	their	standard	errors	across	the	two regressions	fit	to	the	data
+:::
+
+***
+
+The	coefficients	of	education	and	income	changed	substantially	with	the	deletion of	the	occupations	minister	and	conductor.	The	education	coefficient	is considerably	smaller	and	the	income	coefficient	considerably	larger	than	before.
+
+::::
+:::::
+
+###### fit-lm3
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-regress-lm01.3}
+: Linear regression without influential data of 6, 9, 16, and 27
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap01-regress-lm01.3}
+```{r}
+#| label: regress-lm3
+#| results: hold
+
+ d01.3 <- d01.1 |> 
+        dplyr::slice(-c(6, 9, 16, 27))
+ 
+lm01.3 <- stats::update(lm01.1, subset = -c(6, 9, 16, 27))
+
+base::summary(lm01.3)
+
+save_data_file("chap01", d01.3, "d01.3.rds")
+save_data_file("chap01", lm01.3, "lm01.3.rds")
+ 
+ 
+```
+
+Linear model version 3 without influential data points 6, 9, 16, and 27.
+:::
+
+::::
+:::::
+
+###### compareCoefs-2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-compare-coefs2}
+: Comparing	the	estimated coefficients of lm01.1 and lm01.3
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap01-compare-coefs2}
+```{r}
+#| label: compare-coefs2
+
+car::compareCoefs(lm01.2, lm01.3)
+```
+
+Comparing	the	estimated	coefficients	and	their	standard	errors	across	the	two regressions	fit	to	the	data
+:::
+
+***
+
+The	coefficients	of	education	and	income	changed not	substantially	with	the	additional deletion of	the	occupations	reporter (9) and RR.engineer (27).	The	education	coefficient in `lm01.3`	is only somewhat smaller	and	the	income	coefficient is only	a little	larger	than with `lm01.2`.
+
+::::
+:::::
+:::
+
+
+
+
+::::
+:::::
+
+## R Functions for Basic Statistics (empty) {#sec-chap01-6}
+
+## Generic Functions and Their Methods {#sec-chap01-7}
+
+
+::: {.callout-note #nte-chap01-generic-functions}
+##### Generic function and their methods: An important explanation for me
+
+The following text is almost completely copied from the R companion. It explains specific structures of the R language I already met in different situations but did not understand completely. This has changed now thanks to the explication in the R companion book.
+:::
+
+
+
+
+
+Many	of	the	most	commonly	used	functions	in	R,	such	as	`summary()`,	`print()`, and	`plot()`,	produce	different	results	depending	on	the	arguments	passed	to	the function. Enabling	the	same	*generic	function*,	such	as	`summary()`,	to	be	used	for	many purposes	is	accomplished	in	R	through	an	*object-oriented	programming technique*	called	*object	dispatch*.
+
+The	details	of	object	dispatch	are	implemented differently	in	the	S3	and	S4	object	systems,	so	named	because	they	originated	in Versions	3	and	4,	respectively,	of	the	original	S	language	on	which	R	is	based. There	is	yet	another	implementation	of	object	dispatch	in	R	for	the	more	recently introduced	system	of	reference	classes	(sometimes	colloquially	termed	“R5”). Almost	everything	created	in	R	is	an	object,	such	as	a	numeric	vector,	a	matrix,	a data	frame,	a	linear	regression	model,	and	so	on.	In	the	S3	object	system, described	in	this	section	and	used	for	most	R	object-oriented	programs,	each object	is	assigned	a	class,	and	it	is	the	class	of	the	object	that	determines	how generic	functions	process	the	object.	We	won’t	take	up	the	S4	and	reference-class	object	systems	in	this	book,	but	they	too	are	class	based	and	implement (albeit	more	complex)	versions	of	object	dispatch.
+
+Generic	functions	operate	on	their	arguments	indirectly	by	calling	specialized functions,	referred	to	as	method	functions	or,	more	compactly,	as	methods. Which	method	is	invoked	typically	depends	on	the	class	of	the	first	argument	to the	generic	function.
+
+In	contrast,	in	the	S4	object	system,	method	dispatch	can	depend	on	the classes	of	more	than	one	argument	to	a	generic	function. For	example,	the	generic	`summary()`	function	has	the	following	definition: 
+
+```
+- **summary** 
+- function	(object,	...) 
+- UseMethod	("summary") 
+-<bytecode:	0x000000001d03ba78> 
+- <environment:	namespace:base> 
+```
+The	generic	function	`summary()`	has	one	required	argument,	object, and	the	special	argument	`...`	(the	ellipses)	for	additional	arguments	that	could vary	from	one	`summary	()`	method	to	another.
+
+When	UseMethod	("summary")	is	called	by	the	`summary()`	generic,	and	the	first (object)	argument	to	`summary()`	is	of	class	"lm",	for	example,	R	searches	for	a method	function	named	`summary.lm()`,	and,	if	it	is	found,	executes	the command	`summary.lm(object,	...)`.	It	is,	incidentally,	perfectly	possible	to	call `summary.lm()`	directly.
+
+
+Although	the	generic	`summary()`	function	has	only	one	explicit	argument,	the method	function	`summary.lm()`	has	additional	arguments: 
+
+```
+- args("summary.lm") 
+- function(object,	correlation	=	FALSE,	symbolic.cor	=	FALSE, ...) 
+- NULL
+```
+
+Because	the	arguments	`correlation`	and	`symbolic.cor`	have	default	values (FALSE,	in	both	cases),	they	need	not	be	specified.	Thus,	for	example,	if	we enter	the	command	`summary(lm01.1,	correlation=TRUE)`,	the	argument `correlation=TRUE`	is	absorbed	by	`...`	in	the	call	to	the	generic	`summary()` function	and	then	passed	to	the	`summary.lm()`	method,	causing	it	to	print	a correlation	matrix	for	the	coefficient	estimates.
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-generic-function-additional-argument}
+: Example of the generic `summary()` function with additional argument
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap01-generic-function-additional-argument}
+```{r}
+#| label: generic-function-additional-argument
+
+summary.lm(lm01.1,	correlation = TRUE)
+```
+
+Generic function `summary()` with additional argument
+:::
+
+::::
+:::::
+
+In	this	instance,	we	can	call	`summary.lm()`	directly,	but	most	method	functions are	hidden	in	(not	“exported	from”)	the	namespaces	of	the	packages	in	which	the methods	are	defined	and	thus	cannot	normally	be	used	directly.	In	any	event,	it is	good	R	form	to	use	method	functions	only	indirectly	through	their	generics.	
+
+For	example,	the	`summary()`	method	`summary.boot()`,	for	summarizing	the results	of	bootstrap	resampling	is	hidden	in	the	namespace	of the	{**car**}	package.	To	call	this	function	directly	to	summarize	an	object	of	class "boot",	we	could	reference	the	function	with	the	unintuitive	package-qualified name	`car:::summary.boot()`,	but	calling	the	unqualified	method	`summary.boot()` directly	won’t	work.
+
+Suppose	that	we	invoke	the	hypothetical	generic	function	`fun()`,	defined	as: 
+
+```
+fun	<-	function(x,	...){ 
+    UseMethod	("fun") 
+    } 
+``` 
+
+with	real	argument	obj	of	class	"cls":	`fun	(obj)`.	If	there	is	no	method	function named	`fun.cls()`,	then	R	looks	for	a	method	named	`fun.default()`.	For	example, objects	belonging	to	classes	without	`summary()`	methods	are	summarized	by `summary.default()`.	If,	under	these	circumstances,	there	is	no	method	named `fun.default()`,	then	R	reports	an	error.
+
+We	can	get	a	listing	of	all	currently	accessible	methods	for	the	generic	`summary()`	function	using	the	`utils::methods()`	function,	with	hidden	methods	flagged	by asterisks.
+
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap01-generic-functions}
+: Generic functions and their methods
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### methods1
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-list-methods}
+: Listing for all the methods for a generic function
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap01-list-methods}
+```{r}
+#| label: list-methods
+
+utils::methods(summary)
+```
+
+List all the methods for the generic function `summary()`
+
+:::
+
+::::
+:::::
+
+You	can	also	determine	what	generic	functions	have	currently	available	methods for	objects	of	a	particular	class.
+
+###### methods-class1
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-list-class-methods}
+: List all available methods for a specific class
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap01-list-class-methods}  
+
+```{r}
+#| label: list-class-methods
+
+utils::methods(class = "lm")
+```
+
+List all available methods for a class = "lm"
+:::
+
+::::
+:::::
+
+In the above code chunk I have not loaded the {**car**} package which has many other methods for class "lm". (See next tab)
+
+###### methods-class2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-list-class-methods2}
+: List all available methods for a specific class with additional package loaded
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap01-list-class-methods2}
+
+```{r}
+#| label: list-class-methods2
+#| results: hold
+
+library(car)
+utils::methods(class = "lm")
+detach("package:car", unload = TRUE)
+detach("package:carData", unload = TRUE)
+```
+
+Example of using the `methods()` function with the {**car**} package loaded
+:::
+
+
+::::
+:::::
+
+Method	selection	is	slightly	more	complicated	for	objects	whose	class	is	a	vector of	more	than	one	element. Consider,	for	example,	an	object	returned	by	the	`glm()`	function	for	fitting	generalized	linear	models	(anticipating	a	logistic-regression	example).
+
+###### methods-class3
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap01-list-class-methods3}
+: List all available methods for a specific vector class
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap01-list-class-methods3}
+
+```{r}
+#| label: list-class-methods3
+#| results: hold
+
+library(car)
+
+mod.mroz <-	stats::glm(
+    lfp	~ ., 
+    family = binomial, 
+    data = Mroz)
+class(mod.mroz)
+
+detach("package:car", unload = TRUE)
+detach("package:carData", unload = TRUE)
+```
+
+List all available methods for a voectorized class 
+:::
+
+
+::::
+:::::
+
+The	`.`	on	the	right-hand	side	of	the	model	formula	indicates	that	the	response variable	`lfp`	is	to	be	regressed	on	all	of	the	other	variables	in	the	`Mroz`	data	set (which	is	accessible	because	it	resides	in	the	{**carData**}	package). If	we	invoke	a	generic	function	with	`mod.mroz`	as	its	argument,	say	`fun(mod. mroz)`,	then	the	R	interpreter	will	look	first	for	a	method	named	`fun.glm()`.	If	a function	by	this	name	does	not	exist,	then	R	will	search	next	for	`fun.lm()`	and finally	for	`fun.default()`.	We	say	that	the	object	`mod.mroz`	is	of	*primary	class* "glm"	and	*inherits*	from	class	"lm".
+
+:::
+
+::::
+:::::
+
+
+
+
+
+
+
+
 
 
