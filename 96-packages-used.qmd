@@ -1,5 +1,33 @@
 # Packages used {#sec-annex-a}
 
+## Amelia
+
+:::::{.my-package}
+:::{.my-package-header}
+Amelia: A Program for Missing Data 
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-Amelia}
+
+***
+
+{**Amelia**}: [A Program for Missing Data](https://gking.harvard.edu/amelia) [@Amelia]
+
+A tool that "multiply imputes" missing data in a single cross-section (such as a survey), from a time series (like variables collected for each year in a country), or from a time-series-cross-sectional data set (such as collected by years for each of several countries). {**Amelia**} II implements our bootstrapping-based algorithm that gives essentially the same answers as the standard IP or EMis approaches, is usually considerably faster than existing approaches and can handle many more variables. Unlike Amelia I and other statistically rigorous imputation software, it virtually never crashes (but please let us know if you find to the contrary!). The program also generalizes existing approaches by allowing for trends in time series across observations within a cross-sectional unit, as well as priors that allow experts to incorporate beliefs they have about the values of missing cells in their data. {**Amelia**} II also includes useful diagnostics of the fit of multiple imputation models. The program works from the R command line or via a graphical user interface that does not require users to know R.
+
+{**Amelia**}: A Program for Missing Data
+:::
+
+
+
+***
+::::
+:::::
+
+
 ## car
 
 :::::{.my-package}
@@ -97,6 +125,39 @@ Graphical and tabular effect displays, e.g., of interactions, for various statis
 ::::
 :::::
 
+## ggmice
+
+:::::{.my-package}
+:::{.my-package-header}
+ggmice: Visualizations for 'mice' with 'ggplot2' 
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-ggmice}
+
+***
+
+{**ggmice**}: [Visualizations for 'mice' with 'ggplot2'](https://amices.org/ggmice/) [@ggmice]
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/logoi/logo-ggmice-min.png){width="176"}
+
+Enhance a mice imputation workflow with visualizations for incomplete and/or imputed data. The ggmice functions produce ggplot objects which may be easily manipulated or extended. Use {**ggmice**} to inspect missing data, develop imputation models, evaluate algorithmic convergence, or compare observed versus imputed data.
+
+:::
+
+{**ggmice**}: Visualizations for 'mice' with 'ggplot2'
+:::
+
+<Other text not included in the package reference>
+
+***
+::::
+:::::
+
+
 
 ## glossary
 
@@ -134,3 +195,127 @@ There is a lot of necessary jargon to learn for coding. The goal of glossary is 
 :::::
 
 
+## mi
+
+:::::{.my-package}
+:::{.my-package-header}
+mi: Missing Data Imputation and Model Checking 
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-mi}
+
+***
+
+{**mi**}: [Missing Data Imputation and Model Checking](https://cran.r-project.org/package=mi) [@mi]
+
+
+The {**mi**} package provides functions for data manipulation, imputing missing values in an approximate Bayesian framework, diagnostics of the models used to generate the imputations, confidence-building mechanisms to validate some of the assumptions of the imputation algorithm, and functions to analyze multiply imputed data sets with the appropriate degree of sampling uncertainty.
+
+{**mi**}: Missing Data Imputation and Model Checking
+:::
+
+***
+::::
+:::::
+
+## mice
+
+:::::{.my-package}
+:::{.my-package-header}
+mice: Multivariate Imputation by Chained Equations 
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-mice}
+
+***
+
+{**mice**}: [Multivariate Imputation by Chained Equations](https://amices.org/mice/) [@mice]
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/logoi/logo-mice-min.png){width="176"}
+
+
+The {**mice**} package implements a method to deal with missing data. The package creates multiple imputations (replacement values) for multivariate missing data. The method is based on Fully Conditional Specification, where each incomplete variable is imputed by a separate model. The MICE algorithm can impute mixes of continuous, binary, unordered categorical and ordered categorical data. In addition, MICE can impute continuous two-level data, and maintain consistency between imputations by means of passive imputation. Many diagnostic plots are implemented to inspect the quality of the imputations.
+
+:::
+
+Multiple imputation using Fully Conditional Specification (FCS) implemented by the MICE algorithm [@buuren2011]. Each variable has its own imputation model. Built-in imputation models are provided for continuous data (predictive mean matching, normal), binary data (logistic regression), unordered categorical data (polytomous logistic regression) and ordered categorical data (proportional odds). MICE can also impute continuous two-level data (normal model, pan, second-level variables). Passive imputation can be used to maintain consistency between variables. Various diagnostic plots are available to inspect the quality of the imputations.
+
+{**mice**}: Multivariate Imputation by Chained Equations
+:::
+
+See also @pak-ggmice.
+
+***
+::::
+:::::
+
+
+## naniar
+
+:::::{.my-package}
+:::{.my-package-header}
+naniar: Data Structures, Summaries, and Visualisations for Missing Data 
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-naniar}
+
+***
+
+{**naniar**}: [https://github.com/njtierney/naniar](https://naniar.njtierney.com/) [@naniar]
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/logoi/logo-naniar-min.png){width="176"}
+
+
+{**naniar**} provides principled, tidy ways to summarise, visualise, and manipulate missing data with minimal deviations from the workflows in ggplot2 and tidy data.
+
+:::
+
+Missing values are ubiquitous in data and need to be explored and handled in the initial stages of analysis. {**naniar**} provides data structures and functions that facilitate the plotting of missing values and examination of imputations. This allows missing data dependencies to be  explored with minimal deviation from the common work patterns of 'ggplot2' and tidy data. The work is fully discussed in Tierney & Cook [-@tierney2023].
+
+{**naniar**}: https://github.com/njtierney/naniar
+:::
+
+
+***
+::::
+:::::
+
+
+## norm
+
+:::::{.my-package}
+:::{.my-package-header}
+norm: Analysis of Multivariate Normal Datasets with Missing Values 
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-norm}
+
+***
+
+{**norm**}: [Analysis of Multivariate Normal Datasets with Missing Values](https://cran.r-project.org/package=norm) [@norm]
+
+(*There is no hexagon logo for {**norm**} available*)
+
+An integrated set of functions for the analysis of multivariate normal datasets with missing values, including implementation of the EM algorithm, data augmentation, and multiple imputation.
+
+{**norm**}: Analysis of Multivariate Normal Datasets with Missing Values
+:::
+
+
+***
+::::
+:::::

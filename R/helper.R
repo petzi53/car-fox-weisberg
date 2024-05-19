@@ -1,7 +1,15 @@
 ##########################################################
 # Project: Some utility scripts for my Quarto books
 # Author: Peter Baumgartner
-# Edit date: May 15, 2024
+# Edit date: May 19, 2024
+# CONTENT:
+## - my_glance_data: glance at a specified number of random data
+## - my_qq_plot: create histogram with overlaid dnorm curve
+## - my_scatter: create scatterplot with lm and loess curve
+## - list_plotter: plot color list as a palette
+## - save_data_file: save data file
+## - pkgs_dl: package downloads
+## - t_col: transparent colors
 ##########################################################
 
 

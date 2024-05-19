@@ -1,6 +1,5 @@
 # Reading & Manipulating Data {#sec-chap02}
 
-
 ```{r}
 #| label: setup
 #| results: hold
@@ -14,46 +13,47 @@ options(show.signif.stars = FALSE)
 
 ## Table of content for chapter 02
 
-::::: {#obj-chap02}
-:::: {.my-objectives}
-::: {.my-objectives-header}
+::: {#obj-chap02}
+::: my-objectives
+::: my-objectives-header
 Chapter section list
 :::
 
-::: {.my-objectives-container}
-
-- Data Input
-    - Accessing data from a package (@sec-chap02-1-1)
-    - ~~Entering a data frame directly (empty)~~ (@sec-chap02-1-2)
-    - ~~Reading	data from plain-text files (empty)~~ (@sec-chap02-1-3)
-    - ~~File and Paths (empty)~~ {#sec-chap02-1-4}
-    - ~~Exporting or saving a data frame to a file (empty)~~ {#sec-chap02-1-5}
-    - Reading and writing other file formats {#sec-chap02-1-6}
-- Other Approaches to Reading and Managing Data Sets in R {#sec-chap02-2}
-
-
-
+::: my-objectives-container
+-   Data Input
+    -   Accessing data from a package (@sec-chap02-1-1)
+    -   ~~Entering a data frame directly (empty)~~ (@sec-chap02-1-2)
+    -   ~~Reading data from plain-text files (empty)~~ (@sec-chap02-1-3)
+    -   ~~File and Paths (empty)~~ {@sec-chap02-1-4}
+    -   ~~Exporting or saving a data frame to a file (empty)~~ (@sec-chap02-1-5)
+    -   Reading and writing other file formats (@sec-chap02-1-6)
+-   Other Approaches to Reading and Managing Data Sets in R (@sec-chap02-2)
+-   Working with data frames (@sec-chap02-3)
+    - ~~How the R interpreter finds objects (empty)~~ (@sec-chap02-3-1)
+    - Missing data (@sec-chap02-3-2)
 :::
-::::
-:::::
+:::
+:::
 
-
-## Data Input 
+## Data Input
 
 ### Accessing data from a package {#sec-chap02-1-1}
 
 There are two ways to access data from a package:
 
-- Loading the package with `base::library(<packageName>)`
-- Accessing with `utils::data("<dataName>", package = "<packageName>")` without first loading the package
+-   Loading the package with `base::library(<packageName>)`
+-   Accessing with
+    `utils::data("<dataName>", package = "<packageName>")` without first
+    loading the package
 
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap02-load-data-display-extract}
+::: my-r-code
+::: my-r-code-header
+::: {#cnj-chap02-load-data-display-extract}
 : Load data and display a data extract with different methods
-::::::
 :::
-::::{.my-r-code-container}
+:::
+
+::: my-r-code-container
 ::: {#lst-chap02-load-data-display-extract}
 ```{r}
 #| label: load-data-display-extract
@@ -84,24 +84,41 @@ glue::glue("dplyr::glimpse: Get a glimpse of your data")
 glue::glue("---------------------------------------------------------------------")
 dplyr::glimpse(Davis)
 ```
-Accessing data from a package and using different methods for displaying a data extract
+
+Accessing data from a package and using different methods for displaying
+a data extract
 :::
 
-***
+------------------------------------------------------------------------
 
-There is a problem with the data files from the {**carData**} package: The files have relevant information in the row names. But row names are not part of the data frame. This can be easily seen by applying functions like `utils::str()` or `dplyr::glimpse()`.
+There is a problem with the data files from the {**carData**} package:
+The files have relevant information in the row names. But row names are
+not part of the data frame. This can be easily seen by applying
+functions like `utils::str()` or `dplyr::glimpse()`.
 
-This is not a great deal here with the Davis data set as it only contains the index of the row numbers. But it is an annoying "feature" when it has important information that belong into a column of the data frame. We have already met such a data frame with `Duncan` in @lst-chap01-get-duncan-data. 
+This is not a great deal here with the Davis data set as it only
+contains the index of the row numbers. But it is an annoying "feature"
+when it has important information that belong into a column of the data
+frame. We have already met such a data frame with `Duncan` in
+@lst-chap01-get-duncan-data.
 
-::::
-:::::
+See @sec-chap02-2 for a more detailed treatment and why I need row names
+using the {**car**} package.
+:::
+:::
 
-
-Some packages require that you call the `utils::data()` function to use data frames in the package, even when the package is loaded. Other packages, like {**carData**}, use R’s lazy data mechanism to provide direct access to data frames when the package is loaded. On a package’s help page, accessed, for example, by `help(package="carData")`, click on the link for the package `DESCRIPTION file`. Data frames are automatically available if the line `LazyData: yes` appears in the package description.
+Some packages require that you call the `utils::data()` function to use
+data frames in the package, even when the package is loaded. Other
+packages, like {**carData**}, use R’s lazy data mechanism to provide
+direct access to data frames when the package is loaded. On a package’s
+help page, accessed, for example, by `help(package="carData")`, click on
+the link for the package `DESCRIPTION file`. Data frames are
+automatically available if the line `LazyData: yes` appears in the
+package description.
 
 ### Entering a data frame directly (empty) {#sec-chap02-1-2}
 
-### Reading	data from plain-text files (empty) {#sec-chap02-1-3}
+### Reading data from plain-text files (empty) {#sec-chap02-1-3}
 
 ### File and Paths (empty) {#sec-chap02-1-4}
 
@@ -109,9 +126,120 @@ Some packages require that you call the `utils::data()` function to use data fra
 
 ### Reading and writing other file formats {#sec-chap02-1-6}
 
-The {**car**} package includes a function named `car::Import()` that calls the `import()` function in {**rio**} but uses different defaults and arguments, more closely matching the specifications that we expect users of the car package to prefer. In particular: 
+The {**car**} package includes a function named `car::Import()` that
+calls the `import()` function in {**rio**} but uses different defaults
+and arguments, more closely matching the specifications that the authors
+expect users of the {**car**} package to prefer. In particular:
 
-1. **Row names**: The `rio::`import()` function does not support row names, while `car::Import()` allows you to convert a column in the input data file into row names. By default, `car::Import()` assumes that the first character column with unique values in the input data set represents row names. If you do not want `car::Import()` to use row names, set the argument `row.names = FALSE`. 
-2. **Conversion to factors**: The `rio::import()` function does not support automatic conversion of character data to factors, while `car::Import()` by default converts character variables to factors. To suppress converting character variables to factors, add the argument `stringsAsFactors = FALSE`.
+1.  **Row names**: The `rio::import()` function does not support row
+    names, while `car::Import()` allows you to convert a column in the
+    input data file into row names. By default, `car::Import()` assumes
+    that the first character column with unique values in the input data
+    set represents row names. If you do not want `car::Import()` to use
+    row names, set the argument `row.names = FALSE`.
+2.  **Conversion to factors**: The `rio::import()` function does not
+    support automatic conversion of character data to factors, while
+    `car::Import()` by default converts character variables to factors.
+    To suppress converting character variables to factors, add the
+    argument `stringsAsFactors = FALSE`.
 
-The `car::Export()` function similarly writes data files in various formats. `car::Export()` is identical in use to the `rio::export()` but `car::Export()` has an additional argument, `keep.row.names`: Setting `keep.row.names = TRUE` adds the row names in a data frame as an additional initial column of the output data set, with the column name `id`.
+The `car::Export()` function similarly writes data files in various
+formats. `car::Export()` is identical in use to the `rio::export()` but
+`car::Export()` has an additional argument, `keep.row.names`: Setting
+`keep.row.names = TRUE` adds the row names in a data frame as an
+additional initial column of the output data set, with the column name
+`id`.
+
+::: {#wrn-prefer-tidyverse .callout-warning}
+##### My preferences are {**readr**}, {**haven**} and {**foreign**}
+
+As I am trying to stick with the {**tidyverse**} approach and not to use
+different packages for the same task, I will neither use the {**rio**}
+nor the {**car**} file import/export commands.
+
+My preferences are {**readr**}, {**haven**} and {**foreign**} (in that
+order).
+:::
+
+## Other approaches to reading and managing data sets in R {#sec-chap02-2}
+
+Fox & Weisberg are not using the tidyverse file commands for two
+reasons:
+
+1.  {**tidyverse**} packages are actively antagonistic to the use of row
+    names.
+2.  {**tidyverse**} packages does not automatically convert character
+    variables to factors.
+
+Both arguments for the critics are not convinging for me:
+
+ad 1) **Why using row names for indiviual labelling?**
+
+> Avoiding	row	names	may	be	a reasonable	strategy	for	huge	data	sets	where	the	cases	don’t	have	individual identities	beyond	their	row	numbers,	but	automatic	labeling	of	individual cases	by	their	row	names	can	be	very	useful	in	regression	diagnostics	and for	other	methods	that	identify	unusual	or	influential	cases.
+
+Labelling individual cases are important information and should be incorparated into the data file as a column. The strategy to use these individual names could be fulfilled referencing this columns or applying a default value (for instance the first column in the data set).
+
+As things stand I need to use row names to use the advanced features of the {**car**} package. This excludes the use of tibbles: Whenever you add row names to a tibble it will loose it special features because it will be converted automatically to a data frame.
+
+::: {.callout-important #imp-row-names-tools}
+##### Working with row names
+
+There are several tools for working with row names (see: [Tools for working with row names](https://tibble.tidyverse.org/reference/rownames.html)) which will become important when applying the {**car**} package and trying still to be following the tidyverse approach as well as in any way possible:
+
+- `tibble::has_rownames(<dataFrame>)`
+- `remove_rownames(<dataFrame>)`
+- `rownames_to_column(<dataFrame>, var = "<rowNameColumn>")`
+- `rowid_to_column(<dataFrame>, var = "<rowNameId>")`
+- `column_to_rownames(.data, var = "<rowNameColumn>")`
+:::
+
+ad 2) **Why using `stringAsFactor = TRUE` as default?**
+
+Even R has with version 4.0.0 the default changed to `stringsAsFactors = FALSE`, and "hence by default [R] no longer convert strings to factors in calls to  `data.frame()` and `read.table()`" ([R 4.0.0 is released](https://stat.ethz.ch/pipermail/r-announce/2020/000653.html)).
+
+Besides it is easy to change this default. It is therefore no big deal in my opinion that justifies to decline the advantages of the {**tidyverse**} packages.
+
+:::::{.my-remark}
+:::{.my-remark-header}
+:::::: {#rem-chap02-car-tidyverse}
+: My strategy to harmonize {**car**} with {**tidyverse**}
+::::::
+:::
+::::{.my-remark-container}
+As far as I understand the {**car**} packages provides many important enhancement for the regression analysis that are not included in base R or other packages including {**tidyverse**}. But I trust the future development of the {**tidyverse**} approache more than the professors Fox and Weisberg, who both are already retired (professor emeritus).
+
+So what I am trying with the book:
+
+1. First of all to learn the regression tools in {**car**} for an advanced regression analysis.
+2. To look around if these tools could be incorporated in the {**tidyverse**} approach. Here I am thinking at the moment of two ways:
+    a) Are there packages following the {**tidyverse**} approach that already implement these advanced regression analysis tools? I am thinking here of the huge list of [ggplot2 extensions](https://exts.ggplot2.tidyverse.org/). Currently (2024-05-19) there are 133 registered extensions available to explore!
+    b) Is it possible to code the desired feature myself? At the moment I am not thinking of developing a new package. Maybe it is possible to add the feature with 2-3 lines of code into a seuqence of R commands? An example that inspired me is the formula by D.	Freedman and Diaconis [-@freedman1981a] that could be added in calls to `ggplot2::geom_histogram()`.
+::::
+:::::
+
+## Working with data frames {#sec-chap02-3}
+
+### How the R interpreter finds objects (empty) {#sec-chap02-3-1}
+
+### Missing data {#sec-chap02-3-2}
+
+:::::{.my-resource}
+:::{.my-resource-header}
+:::::: {#lem-missing-data}
+: Packages for working with missing data
+::::::
+:::
+::::{.my-resource-container}
+- Amelia [@Amelia]
+- ggmice [@ggmice]
+- mi [@mi]	
+- mice [@mice]
+- naniar [@naniar]
+- norm [@norm]
+
+***
+- See also the [CRAN task view about Missing Data](https://cran.r-project.org/view=MissingData)Flexible 
+- Flexible Imputation of Missing Data Imputation of Missing Data [@buuren2018]
+- Visualization and Imputation of Missing Values: With Applications in R [@templ2023]
+::::
+:::::
