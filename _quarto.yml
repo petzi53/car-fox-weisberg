@@ -109,8 +109,8 @@ language:
    crossref-exm-title: "Example"     # remains  "Example"
    crossref-exr-title: "Exercise"    # remains  "Exercise"
    crossref-fig-title: "Graph"       # replaces "Figure"
-   crossref-lem-title: "Solution"    # replaces "Lemma"
-   crossref-lst-title: "Listing"     # remains  "Listing" inside code chunk
+   crossref-lem-title: "Resource"    # replaces "Lemma"
+   crossref-lst-title: "Listing / Output"  # replaces  "Listing"
    crossref-prp-title: "Procedure"   # replaces "Proposition"
    crossref-tbl-title: "Table"       # remains  "Table"
    crossref-thm-title: "Formula"     # replaces "Theorem"

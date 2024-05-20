@@ -31,6 +31,15 @@ Chapter section list
 -   Working with data frames (@sec-chap02-3)
     - ~~How the R interpreter finds objects (empty)~~ (@sec-chap02-3-1)
     - Missing data (@sec-chap02-3-2)
+    - Modifying and transforming data (@sec-chap02-3-3)
+    - ~~Binding rows and columns (empty)~~ (@sec-chap02-3-4)
+    - ~~Aggregating data frames (empty)~~ (@sec-chap02-3-5)
+    - ~~Merging data frames (empty)~~ (@sec-chap02-3-6)
+    - ~~Reshaping data (empty)~~ (@sec-chap02-3-7)
+- ~~Working with matrices, arrays, and lists (empty)~~ (@sec-chap02-4)
+- ~~Dates and times (empty)~~ (@sec-chap02-5)
+- ~~Character data (empty)~~ (@sec-chap02-6)
+- ~~Large datasets in R (empty)~~ (@sec-chap02-7)
 :::
 :::
 :::
@@ -239,7 +248,84 @@ So what I am trying with the book:
 
 ***
 - See also the [CRAN task view about Missing Data](https://cran.r-project.org/view=MissingData)Flexible 
-- Flexible Imputation of Missing Data Imputation of Missing Data [@buuren2018]
+- [R-miss-tastic](https://rmisstastic.netlify.app/): A resource website on missing values - Methods and references for managing missing data
+- [Multiple Imputation of Missing Data](https://www.john-fox.ca/Companion/appendices/Appendix-Multiple-Imputation.pdf): An Appendix to An R Companion to Applied Regression [@fox2018b]
+- Flexible Imputation of Missing Data Imputation of Missing Data [@buuren2018]. There is also an  [online-version](https://stefvanbuuren.name/fimd/) [@buuren2018a].
+- [Welcome to amices](https://amices.org/): A place for people interested in solving missing data problems.
+- [Amelias II](https://gking.harvard.edu/amelia): Amelia II: A Program for Missing Data.
 - Visualization and Imputation of Missing Values: With Applications in R [@templ2023]
+
+***
+
+```{r}
+#| label: download-figures-missing-data
+
+pkgs_dl(c("Amelia", "ggmice", "mi", "mice", "naniar", "norm"))
+```
+
+***
+The top package of my package selection is {**mice**}. It also has the most extensive documentation.
+
+An interesting choice --- not mentioned in the {**car**} companion --- is {**naniar**}, because it implements NA imputation following the {**tidyverse**} approach.
+
 ::::
 :::::
+
+Missing data is a profound statistical issue concerning how best to use available information ("imputation of missing data") when missing data are encountered. I will ignore these issues here and postpone for later treatment (learning sessions). Here I will just list general commands to exclude missing data.
+
+
+::: {#bul-ignore-na-commands}
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Commands to exclude missing data (NA’s)
+:::
+::::{.my-bullet-list-container}
+- `na.rm`: Many R functions that calculate simple statistical summaries, such as `base::mean()`, `stats::var()`, `stats::sd()`, and `stats::quantile()`, have an `na.rm` argument to compute the summaries without NA's. The default value is always `na.rm = FALSE`  so you will get an NA result if you forgot to remove the missing values.
+- `na.action`: Most statistical-modeling functions in R have an `na.action` argument, which controls how missing data are handled: `na.action` is set to a function that takes a data frame as an argument and returns a similar data frame composed entirely of valid data. 
+    - `na.omit()`: Default value, which removes all cases with missing data on any variable in the computation. --- You can change the default `na.action` with the `options()` command. For example, `options(na.action="na.exclude")`
+    - `na.exclude()`: Similar to `na.omit()` but saves information about missing cases that are removed. This is the recommended option!
+    - `na.fail()`: Produces an error message.
+- `stats::complete.cases()`: Returns a logical vector indicating which cases are complete, i.e., have no missing values.
+- `tidyr::drop_na()`: Drops rows containing missing values. If no columns are mentioned then the function applies to the whole data set.
+
+***
+
+Don't forget that the proper way to test for missing values is `base::is.na()`. The equal operator `==` will not work!
+::::
+:::::
+Commands to exclude missing data (NA’s)
+:::
+
+### Modifying and transforming data {#sec-chap02-3-3}
+
+For modifying data I will rouintely use the {**dpylr**} package. Here I will only list other options to remind me if I will see these functions.
+
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Modifying and transforming data without using {**dpylr**}
+:::
+::::{.my-bullet-list-container}
+
+- `base::transform()`: Create or modify several variables in a data frame at once.
+- `base::cut()`: creates bins for numeric variables. (For this function I didn't find an equivalent in the {**tidyverse**} ecosysystem.)
+- `car::Recode()`: same as `base::cut()` but mor flexible.
+
+::::
+:::::
+
+### Binding rows and columns (empty) {#sec-chap02-3-4}
+
+### Aggregating data frames (empty) {#sec-chap02-3-5}
+
+### Merging data frames (empty) {#sec-chap02-3-6}
+
+### Reshaping data (empty) {#sec-chap02-3-7}
+
+## Working with matrices, arrays, and lists (empty) {#sec-chap02-4}
+
+## Dates and times (empty) {#sec-chap02-5}
+
+## Character data (empty) {#sec-chap02-6}
+
+## Large datasets in R (empty) {#sec-chap02-7}
+

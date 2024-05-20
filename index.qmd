@@ -3,7 +3,7 @@
 ::: {.callout-note style="color: blue;"}
 #### This is work in progress
 
-I have just finished chapter 1 (about 12% of the book): I am currently working on chapter 2.
+I have just finished chapter 2 (about 23% of the book): I am currently working on chapter 3.
 :::
 
 
@@ -32,7 +32,7 @@ course my own responsibility.
 ## Content and Goals of this Book {.unnumbered}
 
 This Quarto book collects my personal notes, trials and exercises of
-[An R Companion to Applied Regression](https://www.john-fox.ca/Companion/index.html) by
+[An R Companion to Applied Regression](https://www.john-fox.ca/Companion/) by
 John Fox and Sandford Weisberg [@fox2018].
 
 The *R companion* refers to a text or course on modern applied regression, such as "Applied Regression Analysis and Generalized Linear Models" [@fox2015] and "Applied Linear Regression" [@weisberg2013a].
@@ -221,7 +221,7 @@ to change the values of parameters to observe their influences.
 
 ::: {.my-resource-container}
 -   [SAGE book: An R Companion to Applied Regression](https://uk.sagepub.com/en-gb/eur/an-r-companion-to-applied-regression/book246125) [@fox2018]
--   [SAGE student book: An R Companion to Applied Regression](https://www.john-fox.ca/Companion/index.html)
+-   [SAGE student book: An R Companion to Applied Regression](https://www.john-fox.ca/Companion/)
 -   [SAGE online Appendices](https://www.john-fox.ca/Companion/appendices.html)
 -   [R Scripts, Data Files](https://www.john-fox.ca/Companion/index.html)
 -   [R-Forge for experimental carEx package](https://r-forge.r-project.org/R/?group_id=531)
