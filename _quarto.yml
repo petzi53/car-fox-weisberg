@@ -16,6 +16,7 @@ book:
     - index.qmd
     - 01-getting-started.qmd
     - 02-manipulating-data.qmd
+    - 03-exploring-data.qmd
     - 95-references.qmd
   appendices:
     - 96-packages-used.qmd

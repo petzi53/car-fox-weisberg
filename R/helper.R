@@ -49,31 +49,33 @@ first_and_last_row <-  function(df) {
         dplyr::filter(dplyr::row_number() %in% base::c(1, dplyr::n()))
 }
 
-##########################################################
-# : Create histogram with overlaid dnorm curve
+##############################################################
+# : Create histogram density estimate and overlaid dnorm curve
 # Purpose:
 # Compare histogram with normal distribution and density
 # Author: Peter Baumgartner
 # Used in my personal notes on "Statistics with R"
 # See: https://bookdown.org/pbaumgartner/swr-harris/
-##########################################################
+#############################################################
 
 # df        = data.frame or tibble
 # v         = character: numerical column of data.frame:
 #             syntax for call = df$v (NA's are allowed)
 # x_label   = character: title for x-axis
 # nbins     = numeric: number of bins
+#             default is the Freeman-Diaconis rule
 # col_fill  = character: fill color
 # col_color = character: border color of bins
 # col_dens  = character: color of density curve
 # col_dnorm = character: color of dnorm curve
 
-my_hist_dnorm <- function(df, v, n_bins = 30,
-                       col_fill = "gray90",
-                       col_color = "black",
-                       col_dnorm = "Normal",
-                       col_dens = "Density",
-                       x_label = "x") {
+my_hist_dnorm <- function(df, v,
+               n_bins = grDevices::nclass.FD(v),
+               col_fill = "gray90",
+               col_color = "black",
+               col_dnorm = "Normal",
+               col_dens = "Density",
+               x_label = "x") {
     p <- df |>
         ggplot2::ggplot(ggplot2::aes(v)) +
         ggplot2::geom_histogram(
@@ -123,7 +125,7 @@ my_hist_dnorm <- function(df, v, n_bins = 30,
 # x_label   = character: title for x-axis
 # y_label   = character: title for y-axis
 # col_qq    = character: color of data
-# line_qq.  = character: color of theoretical normal distribution
+# line_qq   = character: color of theoretical normal distribution
 
 
 my_qq_plot <- function(
