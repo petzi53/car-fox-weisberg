@@ -12,11 +12,12 @@ options(show.signif.stars = FALSE)
 
 ```
 
+## Chapter section list {.unnumbered}
 
 ::::: {#obj-chap03}
 :::: {.my-objectives}
 ::: {.my-objectives-header}
-Chapter section list
+Table of content (TOC)
 :::
 
 ::: {.my-objectives-container}
@@ -25,6 +26,9 @@ Chapter section list
     - Histograms (@sec-chap03-1-1)
     - Density estimation (@sec-chap03-1-2)
     - Quantile-comparison plots (@sec-chap03-1-3)
+    - Boxplots (@sec-chap03-1-4)
+- Examing relationships (@sec-chap03-2)
+    - Scatterplots (@sec-chap03-2-1)
     
 
 
@@ -71,6 +75,8 @@ $$ {#eq-chap03-FD}
 #| label: default-base-r-histogram
 
 Prestige <- carData::Prestige
+
+save_data_file("chap03", Prestige, "Prestige.rds")
 
 base::with(Prestige, graphics::hist(income))
 ```
@@ -501,10 +507,147 @@ My own function lacks the confidence interval cannot label the most extreme poin
 ::::
 :::::
 
+###### chi-square
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-chi-square-illustration}
+: car::qqPlot: Chi-square illustration
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-chi-square-illustration}
+```{r}
+#| label: chi-square-illustration
+
+base::set.seed(124) # for reproducibility
+car::qqPlot(
+    rchisq(100, 3), 
+    distribution = "chisq", df = 3,
+    id = FALSE)
+```
+
+Quantile-comparison plot of a sample of size n = 100 from the $χ^2(3)$ distribution against the distribution from which the sample was drawn.
+:::
+***
+
+The argument `df = 3` to `car::qqPlot()` is passed by it to the `stats::dchisq()` and `stats::qchisq()` functions. The points should, and do, closely match the straight line on the graph, with the fit a bit worse for the larger values in the sample. The confidence envelope suggests that these deviations for large values are to be expected, as they reflect the greater variability of sampled values in the long right tail of the $X^2(3)$ density function.
+
+::::
+:::::
+
+
 
 :::
 
 ::::
 :::::
 
+The `car::qqPlot()` function can be used to plot the data against any reference distribution for which there are `r glossary("quantile")` and density function in R. You have simply to specify the root word for the distribution. For	example, the root	for	the	normal distribution is "norm", with	density	function	`stats::dnorm()` and quantile function `stats::qnorm()`. See also [chapter 8](https://rstudio.github.io/r-manuals/r-intro/Probability-distributions.html) of the the Quarto manual of [An Introduction to R](https://rstudio.github.io/r-manuals/r-intro/). [@rcoreteam2024]
+
+![Probability functions in R](img/r-probability-functions.png){#fig-03-1 
+fig-alt='List of probability functions in R as a two part table with five columns: It shows the name of the "Distribution" (column 1), such as "normal" or "chi-square", the "Design or Mass Function" (column 2), such as "dnorm(x, mean = 0, sd = 1)" or "qchisq(n, df)", the "Quantile Function" (column 3), such as "qnorm(p, mean = 0, sd = 1)" the "Distribution Function" column 4), such as "pnorm(q, mean = 0, sd = 1)" or "pchisq(q, df)" and the "Random Number Function" (column 5), such as "rnorm(n, mean = 0, sd = 1)" or "rchisq(n, df)"' fig-align="center" 
+width="70%"}
+
+An illustration is shown with @lst-chap03-chi-square-illustration: The `rchisq()` function is used to generate a random sample from the chi-square distribution with three df (`r glossary("degrees of freedom")`) and then plotted the sample against the distribution from which it was drawn.
+
+### Boxplots {#sec-chap03-1-4}
+
+Although boxplots are most commonly used to compare distributions	among groups, they can also be drawn to summarize the distribution of a numeric variable in a single sample, providing a quick check of symmetry and the presence of outliers.
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap03-boxplot}
+: Boxplots
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### graphics::boxplot
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-boxplot-base-r}
+: graphics::boxplot(): Boxplot of income
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-boxplot-base-r}
+```{r}
+#| label: boxplot-base-r
+
+graphics::boxplot(Prestige$income)
+```
+Boxplot of income, plotted with base R `graphics::boxplot()`
+:::
+
+::::
+:::::
+
+
+###### car::Boxplot
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-boxplot-car}
+: car::Boxplot(): Boxplot of income
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-boxplot-car}    
+```{r}
+#| label: boxplot-car
+
+car::Boxplot(~ income, data = Prestige)
+```
+
+Boxplot of income, plotted with `car::Boxplot()`. Several outlying cases were labeled automatically.
+:::
+
 ***
+
+`car::Boxplot()` adds automatic identification of outlying values (by default, up to 10), points that are shown individually in the boxplot. Points identified as outliers are those beyond the *inner* fences, which are 1.5 times the interquartile range below the first quartile and above the third quartile.
+
+The	names shown	in the output are the cases that are labeled on the graph and are drawn from the row names of the `Prestige` data set.
+
+::::
+:::::
+
+###### ggplot2::geom_boxplot
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-boxplot-ggplot2}
+: ggplot2::geom_boxplot(): Boxplot of income
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-boxplot-ggplot2}
+```{r}
+#| label: boxplot-ggplot2
+
+Prestige |> 
+    ggplot2::ggplot(
+        ggplot2::aes(x = income)
+    ) +
+    ggplot2::geom_boxplot() +
+    ggplot2::coord_flip()
+```
+
+Boxplot of income, plotted with `ggplot2::geom_boxplot()`
+:::
+
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+## Examing relationships {#sec-chap03-2}
+
+### Scatterplots {#sec-chap03-2-1}
