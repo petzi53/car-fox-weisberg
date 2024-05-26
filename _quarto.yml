@@ -17,6 +17,7 @@ book:
     - 01-getting-started.qmd
     - 02-manipulating-data.qmd
     - 03-exploring-data.qmd
+    - 04-fitting-lm.qmd
     - 95-references.qmd
   appendices:
     - 96-packages-used.qmd
@@ -96,6 +97,9 @@ crossref:
     - kind: float
       reference-prefix: Tip
       key: tip
+    - kind: float
+      reference-prefix: Checklist
+      key: tdo
 
 
 

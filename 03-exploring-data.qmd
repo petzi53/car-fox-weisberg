@@ -29,6 +29,7 @@ Table of content (TOC)
     - Boxplots (@sec-chap03-1-4)
 - Examing relationships (@sec-chap03-2)
     - Scatterplots (@sec-chap03-2-1)
+    - Parallel boxplots (@sec-chap03-2-2)
     
 
 
@@ -75,8 +76,6 @@ $$ {#eq-chap03-FD}
 #| label: default-base-r-histogram
 
 Prestige <- carData::Prestige
-
-save_data_file("chap03", Prestige, "Prestige.rds")
 
 base::with(Prestige, graphics::hist(income))
 ```
@@ -651,3 +650,482 @@ Boxplot of income, plotted with `ggplot2::geom_boxplot()`
 ## Examing relationships {#sec-chap03-2}
 
 ### Scatterplots {#sec-chap03-2-1}
+
+Understanding and using scatterplots is at the heart of regression analysis!
+
+`r glossary("Scatterplot", "Scatterplots")` are useful for studying the mean and variance functions in the regression of the y-variable on the x-variable. In addition, scatterplots can help identify `r glossary("outliers")`, points that have values of the response far different from the expected value, and `r glossary("leverage")` points, cases with extremely large or small values on the x-axis.
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap03-scatterplot}
+: Scatterplots
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### graphics::plot()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-scatterplot-base-r}
+: Simple scatterplot using base R `graphics::plot()` function
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-scatterplot-base-r}
+```{r}
+#| label: scatterplot-base-r
+
+graphics::plot(prestige ~ income, data = Prestige)
+```
+Scatterplot of `prestige` versus `income` for the Canadian occupational-prestige data
+:::
+***
+
+The scatterplot in @lst-chap03-scatterplot-base-r is a *summary graph* for the regression problem in which `prestige` is the response and `income` is the predictor. As our eye moves from left to right across the graph, we see how the distribution of `prestige` changes as `income` increases. In technical terms, we are visualizing the *conditional distributions* of `prestige` given the value of `income`.
+
+::::
+:::::
+
+The overall story here is that as `income` increases, so does `prestige`, at least up to about $10,000, after which the value of `prestige` stays more or less fixed on average at about 80.
+
+
+###### car::scatterplot
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-scatterplot-car}
+: Enhanced scatterplot with `car::scatterplot()`
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-scatterplot-car}    
+```{r}
+#| label: scatterplot-car
+
+car::scatterplot(
+    prestige ~ income,
+    data = Prestige,
+    id = list(n = 4)
+    )
+```
+
+Enhanced scatterplot of prestige versus income produced by the `car::scatterplot()` function. Four points were identified using the `id` argument.
+:::
+
+***
+
+- **Points** correspond to the pairs of (`income`, `prestige`) values in the Prestige data frame, which is supplied in the data argument. 
+- **The thick solid straight line** in the scatterplot is the simple linear regression of `prestige` on `income` fit by ordinary least squares (`r glossary("OLS")`). 
+- **The dashed line** is fit using a nonparametric *scatterplot smoother*, and it provides an estimate of the mean function that does not depend on a parametric regression model, linear or otherwise. 
+- **The two dash-dotted lines** provide a nonparametric estimate of the square root of the variance function (i.e., the conditional standard deviation of the response), based on separately smoothing the positive and negative residuals from the fitted *nonparametric* mean function. 
+- Also shown on each axis are **marginal boxplots** of the plotted variables, summarizing the univariate distributions of x and y. 
+- The only optional argument is `id=list (n=4)`, to identify by row name the four **most extreme cases**, where by default “extreme” means farthest from the point of means using Mahalanobis distances.
+
+All these features, and a few others that are turned off by default, can be modified by the user, including the color, size, and symbol for points; the color, thickness, and type for lines; and inclusion or exclusion of the least-squares fit, the mean smooth, variance smooth, and marginal boxplots. See help ("scatterplot") for the available options.
+
+
+
+::::
+:::::
+
+In @lst-chap03-scatterplot-car the least squares line cannot match the obvious curve in the mean function that is apparent in the smooth fit. So modeling the relationship of `prestige` to `income` by simple linear regression is likely to be inappropriate.
+
+:::::{.my-resource}
+:::{.my-resource-header}
+:::::: {#lem-resource-text}
+: Nonparametric regression as an appendix to the R Companion
+::::::
+:::
+::::{.my-resource-container}
+@lst-chap03-scatterplot-car uses as an plot enhancement in the {**car**} package a smoother, designed to help us extract information from a graph. 
+
+*Nonparametric regression*, in which smoothers are substituted for more traditional regression models, is described in an [online appendix to the R Companion](https://www.john-fox.ca/Companion/appendices/Appendix-Nonparametric-Regression.pdf).
+::::
+:::::
+
+
+###### ggplot2::geom_point()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-scatterplot-ggplot2}
+: Scatterplot with `ggplot2::geom_point()`
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-scatterplot-ggplot2}
+```{r}
+#| label: scatterplot-ggplot2
+
+Prestige |> 
+    ggplot2::ggplot(
+        ggplot2::aes(
+            x = income,
+            y = prestige
+        )
+    ) +
+    ggplot2::geom_point(
+        shape = "circle open",
+        size = 2
+    ) +
+    ggplot2::stat_smooth(
+        formula = 'y ~ x',
+        method = "loess",
+        span = .75,
+        level = 0.95
+    ) +
+    ggplot2::stat_smooth(
+        formula = 'y ~ x',
+        method = "lm"
+    ) +
+    ggplot2::coord_cartesian(
+      xlim = c(0, 26000),
+      ylim = c(10, 90),
+      expand = TRUE,
+      default = FALSE,
+      clip = "on"
+)
+```
+
+Scatterplot of `prestige` versus `income` produced by different functions of the {**ggplot2**} package. 
+:::
+***
+
+The default smoother employed by `ggplot2::geom_smooth()` dpends on the size of the largest group. `stats::loess()` would have been used here because we have less than 1,000 observation. But I have applied the `loess() `function explicitly to prevent a arning message.
+
+The span in loess is the fraction of the data used to determine the fitted value of y at each x. A larger span therefore produces a smoother result, and too small a span produces a fitted curve with too much wiggle. The trick is to select the smallest span that produces a sufficiently smooth regression mean function. The default span of 2/3 works well most of the time but not always
+
+
+
+
+::::
+:::::
+
+Besides the labelled points and the marginal boxplots, I could not create smoother with the similar width as in the {**car**} example. I assume it has to do with "the *nonparametric estimate* of the square root of the variance function (i.e., the conditional standard deviation of the response), based on separately smoothing the positive and negative residuals from the fitted nonparametric mean function. "
+
+###### categorical
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-scatterplot-car-categorical}
+: Conditioning on a categorical variable
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-scatterplot-car-categorical}
+```{r}
+#| label: scatterplot-car-categorical
+
+Prestige$type <- factor(Prestige$type, levels = c("bc", "wc", "prof"))
+car::scatterplot(
+    prestige ~ income | type,
+    data = Prestige,
+    legend = list(coords = "bottomright", inset = 0.1),
+    smooth = list(span = 0.9),
+    col = ggokabeito::palette_okabe_ito(c(1, 3, 5))
+)
+
+
+xtabs( ~ type, data = Prestige)
+
+glue::glue(" ")
+glue::glue("bc = blue color, wc = white color, prof = professional")
+```
+
+Scatterplot of `prestige` versus `income`, coded with {**car**} by `type` of occupation. The span of the loess smoother is set to 0.9.
+:::
+***
+
+- **The variables** for the coded scatterplot are given in a formula as `y ~ x | g`, which is interpreted as plotting y on the vertical axis, x on the horizontal axis, and marking points according to the value of g (or “y versus x given g”).
+- **The legend** for the graph, automatically generated by the scatterplot () function, is placed by default above the plot; we specify the legend argument to move the legend to the lower-right corner of the graph.
+- We select a **larger span**, span=0.9, for the scatterplot smoothers than the default (span=2/3) because of the small numbers of cases in the occupational groups.
+- As **color palette** I used the colorblind friendly Okabe Ito scale from {**ggokabeito**} instead of the default colors from {**car**} .
+
+The default smoother employed by `car::scatterplot()` is the loess smoother. The span in loess is the fraction of the data used to determine the fitted value of y at each x. A larger span therefore produces a smoother result, and too small a span produces a fitted curve with too much wiggle. The trick is to select the smallest span that produces a sufficiently smooth regression mean function. The default span in {**car**} of 2/3 works well most of the time but not always. (In {**ggplot2**} the default span is 3/4.)
+
+::::
+:::::
+
+The nonlinear relationship in @lst-chap03-scatterplot-car has disappeared, and we now have three reasonably linear regressions with different slopes. The slope of the relationship between `prestige` and `income` looks steepest for blue-collar occupations and least steep for professional and managerial occupations.
+
+###### categorical2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-scatterplot-ggplot2-categorical}
+: Numbered R Code Title
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-scatterplot-ggplot2-categorical}
+```{r}
+#| label: scatterplot-ggplot2-categorical
+
+Prestige |> 
+    tidyr::drop_na(type) |> 
+    ggplot2::ggplot(
+        ggplot2::aes(
+            x = income,
+            y = prestige,
+            group = type,
+            color = type,
+            shape = type
+        ), 
+    ) +
+    ggplot2::geom_point(
+        size = 2
+    ) +
+    ggplot2::stat_smooth(
+        formula = 'y ~ x',
+        method = "lm",
+        se = FALSE
+    ) +
+    ggplot2::stat_smooth(
+        linetype = "dashed",
+        formula = 'y ~ x',
+        method = "loess",
+        se = FALSE, 
+        span = .95,
+    ) +
+    ggokabeito::scale_color_okabe_ito(
+        order = c(1, 3, 5, 2, 4, 6:9)
+    ) +
+    ggplot2::scale_shape_manual(values = 1:3)
+
+
+```
+
+Scatterplot of `prestige` versus `income`, coded with {**ggplot2**} by `type` of occupation. The span of the loess smoother is set to 0.95.
+:::
+
+:::::: {#tdo-chap03-scatterplot-ggplot2-categorical}
+:::::{.my-checklist}
+:::{.my-checklist-header}
+TODO: Better legend inside graphic panel
+:::
+::::{.my-checklist-container}
+- Add legend for linetype
+- Create legend of occupation type without line, just the shape
+- Put legend bottom right inside the graph panel
+::::
+:::::
+How to improve the legend of @lst-chap03-scatterplot-ggplot2-categorical
+:::
+
+
+::::
+:::::
+
+###### Jitter (car)
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-scatterplot-jitter-car}
+: Scatterplots of `vocabulary` by `education` using {**car**}
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-scatterplot-jitter-car}
+```{r}
+#| label: scatterplot-jitter-car
+#| cache: true
+
+Vocab <- carData::Vocab
+
+car::scatterplot(vocabulary ~ education, data = Vocab, main = "(a)")
+
+car::scatterplot(
+  vocabulary ~ education,
+  data = Vocab,
+  jitter = list(x = 2, y = 2),
+  cex = 0.01,
+  col = "darkgray",
+  smooth = list(
+    span = 1 / 3,
+    col.smooth = "black",
+    col.spread = "black"
+  ),
+  regLine = list(col = "black"),
+  main = "(b)"
+)
+```
+
+Scatterplots of vocabulary by education with {**car**}: (a) using defaults, (b) jittering the points.
+:::
+***
+
+- The argument `jitter=list (x=2, y=2)` adds small random numbers to the x and y coordinates of each plotted point. The values x=2 and y=2 specify the degree of jittering relative to the default amount, in this case twice as much jittering. The amounts of jitter used were determined by trial and error to find the choices that provide the most information. 
+- The argument `cex=0.01` reduces the size of the circles for the plotted points to 1% of their normal size, and `col="darkgray"` sets their color to gray, more appropriate choices when plotting more than 30,000 points. As a consequence of jittering and using smaller and lighter plotting symbols, we see clearly that the density of points for education = 12, high school graduates, is higher than for other years, and that the data for education < 8 are very sparse. 
+- We use the *smooth argument* to set the span for the default loess smoother to 1/3, half the default value of 2/3. Setting a smaller span uses less data to estimate the fitted curve at each value of education, allowing us to resolve greater detail in the regression function. Here we observe a dip in the regression function when education ≈ 11, so individuals who just missed graduating from high school perform somewhat worse than expected by a straight-line fit on the vocabulary test. Similarly, there is a small positive bulge in the regression function corresponding to college graduation, approximately 16 years of education. The specifications `col.smooth="black"` and `col.var="black"` set the color of the loess and variability lines, making them more visible in the graph; the default is the color of the points, now gray. 
+- Finally, as before, the *main argument* sets the title of the graph.
+
+::::
+:::::
+
+###### Jitter (ggplot2)
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-scatterplot-jitter-ggplot2}
+: Scatterplots of `vocabulary` by `education` using {**ggplot2**
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-scatterplot-jitter-ggplot2}
+```{r}
+#| label: scatterplot-jitter-ggplot2
+#| cache: true
+
+Vocab <- carData::Vocab
+
+Vocab |> 
+    ggplot2::ggplot(
+        ggplot2::aes(
+            x = education,
+            y = vocabulary
+        )
+    ) +
+    ggplot2::geom_jitter(
+        color = "grey",
+        size = .01,
+        alpha = 0.2
+    ) +
+    ggplot2::stat_smooth(
+        formula = 'y ~ x',
+        method = "loess",
+        span = .7,
+        level = 0.95
+    ) +
+    ggplot2::stat_smooth(
+        formula = 'y ~ x',
+        method = "lm"
+    ) 
+```
+
+Scatterplots of vocabulary by education with {**car**}
+:::
+
+***
+ 
+At first, using `span = 0.33` as in @lst-chap03-scatterplot-jitter-car I've got many warnings that I do not understand. (The same happened with the {**car**} approach, but these warnings did not appear in the outcome.) It seems that these warnings come when there are too many identical values, e.g. when the variable behaves more like a discrete variable than a continuous variable as it would be required for a proper smoothing (see: ).
+
+Despite the advice in a StackOverflow posting [R warnings, simpleLoess, pseudoinverse etc.](https://forum.posit.co/t/r-warnings-simpleloess-pseudoinverse-etc/8651) I changed span to 0.7 and the warnings disappeared. 
+
+> Increasing the `span` parameter has the effect of "squashing out", … the piles of repeated values where they occur. … I would definitely not increase span to achieve the squashing: it is a lot better to use a tiny amount of jitter for that purpose; span should be dictated by other considerations….
+
+Changing the width and/or height of jitter didn't remove the warnings, but I got the advise in the warnings that I should enlarge `span`.
+
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+The {**car**} packages has the ability to display "extreme" points, mostly defined by the `r glossary("Mahalanobis")` distance. Unlike simple Euclidean distances, which are inappropriate when the variables are scaled in different units, Mahalanobis distances take into account the variation and correlation of x and y.
+
+> The Mahalanobis distance (MD) is the distance between two points in multivariate space. In a regular Euclidean space, variables (e.g. x, y, z) are represented by axes drawn at right angles to each other; The distance between any two points can be measured with a ruler. For uncorrelated variables, the Euclidean distance equals the MD. However, if two or more variables are correlated, the axes are no longer at right angles, and the measurements become impossible with a ruler. In addition, if you have more than three variables, you can’t plot them in regular 3D space at all. The MD solves this measurement problem, as it measures distances between points, even correlated points for multiple variables. [@glenn2017]
+
+### Parallel boxplots {#sec-chap03-2-2}
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap03-parallel-boxplots}
+: Parallel boxplots
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### graphics::boxplot()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-parallel-boxplot-base-r}
+: Parallel boxplots with `graphics::boxplot()`
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-parallel-boxplot-base-r}
+```{r}
+#| label: parallel-boxplot-base-r
+
+Vocab <- carData::Vocab
+
+graphics::boxplot(vocabulary ~ education, data = Vocab)
+```
+Boxplots with `graphics::boxplot()` of `vocabulary` separately for each value of years of `education.`
+:::
+
+::::
+:::::
+
+
+###### car::Boxplot()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-parallel-boxplot-car}
+: Parallel boxplots with `car::Boxplot()`
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-parallel-boxplot-car}    
+```{r}
+#| label: parallel-boxplot-car
+
+car::Boxplot(vocabulary ~ education, data = Vocab, id = FALSE)
+```
+Boxplots with `car::Boxplot()` of `vocabulary` separately for each value of years of `education.`
+:::
+
+***
+Setting `id = FALSE` prevents labelling up to ten outliers, which would be very distracting because of the many boxplots. Therefore we get using `car::Boxplot()` an identical graph as in @lst-chap03-parallel-boxplot-base-r with the base R version of `graphics::boxplot()`.
+
+With `xtabs(~ education, data = Vocab)` we get the distribution of education:
+
+```{r}
+xtabs(~ education, data = Vocab)
+```
+
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+***
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-ID-text}
+: Numbered R Code Title
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chaplisting-ID}
+```{r}
+#| label: code-chunk-name
+
+Duncan <- carData::Duncan
+
+car::scatter3d(prestige	~ income + education,	
+               data = Duncan,	
+               id = list(n = 3)
+               )
+```
+
+Listing title
+:::
+
+::::
+:::::

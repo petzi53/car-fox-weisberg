@@ -3,7 +3,7 @@
 ::: {.callout-note style="color: blue;"}
 #### This is work in progress
 
-I have just finished chapter 2 (about 23% of the book): I am currently working on chapter 3.
+I am currently working on chapter 4 but have not finished chapter 3 because it is with its graphical displays and data transformation a digression of my interest to learn about regression.
 :::
 
 

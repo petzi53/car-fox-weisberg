@@ -1,0 +1,282 @@
+# Fitting linear models {#sec-chap04}
+
+
+```{r}
+#| label: setup
+#| results: hold
+#| include: false
+
+base::source(file = "R/helper.R")
+ggplot2::theme_set(ggplot2::theme_bw())
+options(show.signif.stars = FALSE)
+
+```
+
+## Table of content for chapter 04 {.unnumbered}
+
+
+::::: {#obj-chap04}
+:::: {.my-objectives}
+::: {.my-objectives-header}
+Chapter section list
+:::
+
+::: {.my-objectives-container}
+
+- The linear model (@sec-chap04-1)
+- Linear least-square regression (@sec-chap04-2)
+    - Simple linear regression (@sec-chap04-1)
+
+
+
+:::
+::::
+:::::
+
+## The linear model {#sec-chap04-1}
+
+:::{.my-bulletbox}
+:::: {.my-bulletbox-header}
+::::: {.my-bulletbox-icon}
+:::::
+:::::: {#bul-chap04-lm-assumptions}
+::::::
+: Assumption of the linear model
+::::
+:::: {.my-bulletbox-body}
+The assumptions of the linear models are:
+
+- **Continuous variable**: A numeric variable that is at least nominally continuous. (Qualitative response variables and count response variables require other regression models. See @sec-chap06.)
+- **Independence**: The observations of the variables for one case are independent of the observations for all other cases. (If cases are dependent, linear mixed-effects models may be more appropriate. See @sec-chap07.)
+- **Linearity**: The dependence of the response on the predictors is through the conditional expected value or *mean function*. (The {**car**} package contains many functions that can help you decide whether the assumption of linearity is reasonable in any given problem. See @sec-chap08.)
+- **Constant conditicional variance**: The conditional variance of the response given the regressors (or, equivalently, the predictors) is constant. (See @sec-chap05-1 --- @sec-chap05-3 and @sec-chap08-5 for diagnostics tools.)
+
+***
+
+Changing assumptions changes the model. For example, it is common to add a normality assumption, producing the *normal linear model*. Another common extension to the linear model is to modify the constant variance assumption producing the *weighted linear model*. 
+
+::::
+:::
+
+
+## Linear least-square regression {#sec-chap04-2}
+
+### Simple linear regressio9n {#sec-chap04-2-1}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-skim-Davis-data}
+: A quick look at the Davis data
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap04-skim-Davis-data}
+```{r}
+#| label: skim-Davis-data
+
+Davis <- carData::Davis
+
+skimr::skim(Davis)
+```
+
+Skim the Davis data set
+:::
+
+::::
+:::::
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap04-lm-davis}
+: Simple linear regression 
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### davis_lm0
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-print-davis-lm0}
+: Simple linear regression of Davis data
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap04-print-davis-lm0}
+```{r}
+#| label: print-davis-lm0
+#| results: hold
+
+(davis_lm0 <- lm(weight ~ repwt, data = Davis))
+
+glue::glue("")
+glue::glue("Suppressing the intercept to force the regression through the origin")
+lm(weight ~ -1 + repwt, data = Davis)
+```
+Simple	linear	regression	model of the Davis data
+:::
+
+***
+
+The `stats::lm()` function returns a linear-model object, which was assigned to the R variable `davis_lm0`. Printing this object just results in a relatively sparse output: Printing a linear-model object simply shows the command that produced the model along with the estimated regression coefficients.
+
+We can suppress the intercept to force the regression through the origin using `weight ~ -1 + repwt` or `weight ~ repwt - 1`. More generally, a minus sign removes a term, here the intercept, from the predictor. Using $0$ (zero) also suppresses the intercept. That $0$ is an equivalent of $-1$ can be seen in the repetition of the formula which uses $0$ although I have used in the formula $-1$.
+
+::: {.callout-caution style="color: darkgoldenrod;" #cau-chap04-without-intercept}
+##### Difference in coefficient without intercept
+
+There is a small difference in the coefficient with and without intercept. Where does this come from and what does it mean?
+
+Is this the result "to force the regression through the origin"?
+:::
+
+
+::::
+:::::
+
+
+
+###### stats::summary()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-summary-davis-lm0}
+: Summary of the linear model `davis_lm0`
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-listing-ID}    
+```{r}
+#| label: summary-davis-lm0
+
+summary(davis_lm0)
+```
+
+Using stats::summary() for the `davis_lm0` object
+:::
+
+::::
+:::::
+
+###### car::S()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-car-S-davis-lm0}
+: Default usage of the more sophisticated summary with `car::S()`
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap04-car-S-davis-lm0}
+```{r}
+#| label: S-davis-lm0
+
+car::S(davis_lm0)
+```
+
+Default summary output of `car::S()`
+:::
+
+***
+
+As a subset of the stats:summary() printout it does not report the residual distribution but adds  with AIC and BIC two diagnostics figures for compare and choose between different models.
+
+- **Call**: A brief header is printed first, repeating the command that created the regression model. 
+- **Coefficients**: The part of the output marked `Coefficients` provides basic information about the estimated regression coefficients. 
+    - The **row names** (=first column) lists the names of the regressors fit by `lm()`. 
+        - **Intercept**: The intercept, if present, is named `(Intercept)`. 
+        - **Estimate**: The column labeled `Estimate` provides the least-squares estimates of the regression coefficients. 
+        - **Std. Error**: The column marked `Std. Error` displays the standard errors of the estimated coefficients. The default standard errors are computed as $\sigma$ times a function of the regressors, as presented in any regression text, but the `car::S()` function also allows you to use other methods for computing standard errors. 
+        - **t-value**: The column marked `t value` is the ratio of each estimate to its standard error and is a `r glossary("Wald", "Wald test statistic")` for the null hypothesis that the corresponding population regression coefficient is equal to zero. If assumptions hold and the errors are normally distributed or the sample size is large enough, then these `r glossary("t-statistic", "t-statistics")` computed with the default `r glossary("standard error")` estimates are distributed under the null hypothesis as t random variables with `r glossary("degrees of freedom")` (df ) equal to the `r glossary("Residually", "residual")` degrees of freedom under the model. 
+        - **Pr (>|t|)**: The column marked `Pr (>|t|)` is the two-sided `r glossary("p-value")` for the null hypothesis assuming that $\beta_{0} = 0$	versus	$\beta_{0} \neq 0$ the t-distribution is appropriate. (*Example*: The hypothesis $\beta_{0} = 0$	versus	$\beta_{0} != 0$, with the value of $\beta_{1}$ unspecified, has a p-value of about .08, providing weak evidence against the null hypothesis that $\beta_{0} = 0$, if the assumptions of the model hold.)
+    - Below the coefficient table is additional summary information, including the **residual standard deviation**. (*Example*: This typical error in prediction is so large that, if correct, it is unlikely that the predictions of actual weight from reported weight would be of any practical value.)
+    - The **residual df** are n − 2 for simple regression, here 183 − 2 = 181, and we’re alerted to the fact that 17 cases are removed because of missing data. 
+    - The **Multiple R-squared**, $R^2 \approx 0.70$, is the square of the correlation between the response and the fitted values and is interpretable as the proportion of variation of the response variable around its mean accounted for by the regression. 
+    - **F-statistic**: The reported `r glossary("F-statistic")` provides a `r glossary("likelihood-ratio")` test of the general null hypothesis that all the population regression coefficients, except for the intercept, are equal to zero, versus the alternative that at least one of the $\beta_{j}$ is nonzero. If the errors are normal or n is large enough, then this test statistic has an F-distribution with the degrees of freedom shown. Because simple regression has only one parameter beyond the intercept, the F-test is equivalent to the t-test that $\beta_{1} = 0$, with $t_{2} = F$. (In other models, such as GLMs or normal nonlinear models, Wald tests and the generalization of the likelihood-ratio F-test may test the same hypotheses, but they need not provide the same inferences.) 
+    - The **AIC** and **BIC** values at the bottom of the output are, respectively, the Akaike Information Criterion and the Bayesian Information Criterion, statistics that are sometimes used for model selection.
+
+::::
+:::::
+
+
+
+
+###### car::brief()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-car-brief-davis-lm0}
+: Short summary of the lm object with `car::brief()`
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap04-car-brief-davis-lm0}
+```{r}
+#| label: car-brief-davis-lm0
+
+car::brief(davis_lm0)
+```
+
+Brief summary of the lm object with `car::brief()`
+:::
+
+::::
+:::::
+
+###### stats::confint()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-stats-confint-davis-lm0}
+: Confidence intervals for the estimates of `davis_lm0`  with `stats::confint()`
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap04-stats-confint-davis-lm0}
+```{r}
+#| label: stats-confint-davis-lm0
+
+stats::confint(davis_lm0)
+```
+
+Confidence intervals for the estimates of `davis_lm0` with `stats::confint()`
+:::
+
+::::
+:::::
+
+###### car::Confint()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-car-Confint-davis-lm0}
+: Confidence intervals for the estimates of `davis_lm0` with `car::Confint()`
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap04-car-Confint-davis-lm0}
+```{r}
+#| label: car-Confint-davis-lm0
+
+car::Confint(davis_lm0)
+```
+
+Confidence intervals for the estimates of `davis_lm0` with `car::Confint()`
+:::
+
+***
+
+Unlike `stats::confint()`, `car::Confint()` prints the coefficient estimates along with the confidence limits.
+
+::::
+:::::
+
+
+
+:::
+
+::::
+:::::
+
