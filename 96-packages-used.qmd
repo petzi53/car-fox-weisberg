@@ -125,6 +125,46 @@ Graphical and tabular effect displays, e.g., of interactions, for various statis
 ::::
 :::::
 
+## ggiraph
+
+:::::{.my-package}
+:::{.my-package-header}
+ggiraph: Make 'ggplot2' Graphics Interactive 
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-ggiraph}
+
+***
+
+{**ggiraph**}: [Make 'ggplot2' Graphics Interactive](https://davidgohel.github.io/ggiraph/) [@ggiraph]
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/logoi/logo-ggiraph-min.png){width="176"}
+
+
+{**ggiraph**} is a tool that allows you to create dynamic ggplot graphs. This allows you to add tooltips, hover effects and JavaScript actions to the graphics. The package also allows the selection of graphical elements when used in shiny applications.
+
+:::
+
+Interactivity is added to ggplot geometries, legends and theme elements, via the following aesthetics:
+
+- **tooltip**: tooltips to be displayed when mouse is over elements.
+- **onclick**: JavaScript function to be executed when elements are clicked.
+- **data_id**: id to be associated with elements (used for hover and click actions)
+
+{**ggiraph**}: Make 'ggplot2' Graphics Interactive
+:::
+
+<Other text not included in the package reference>
+
+***
+::::
+:::::
+
+
 ## ggmice
 
 :::::{.my-package}
@@ -152,6 +192,43 @@ Enhance a mice imputation workflow with visualizations for incomplete and/or imp
 :::
 
 <Other text not included in the package reference>
+
+***
+::::
+:::::
+
+## ggrepel
+
+:::::{.my-package}
+:::{.my-package-header}
+ggrepel: Automatically Position Non-Overlapping Text Labels with 'ggplot2' 
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-ggrepel}
+
+***
+
+{**ggrepel**}: [Automatically Position Non-Overlapping Text Labels with 'ggplot2'](https://ggrepel.slowkow.com/) [@ggrepel]
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/logoi/logo-ggrepel-min.png){width="176"}
+
+
+Provides text and label geoms for 'ggplot2' that help to avoid overlapping text labels. Labels repel away from each other and away from the data points.
+
+:::
+
+{**ggrepel**} provides two geoms for {**ggplot2**} to repel overlapping text labels:
+
+- `ggrepel::geom_text_repel()`
+- `ggrepel::geom_label_repel()`
+
+{**ggrepel**}: A Package for Automatically Position Non-Overlapping Text Labels with 'ggplot2'
+:::
+
 
 ***
 ::::
@@ -189,6 +266,40 @@ There is a lot of necessary jargon to learn for coding. The goal of glossary is 
 :::
 
 <Other text not included in the package reference>
+
+***
+::::
+:::::
+
+## glue
+
+:::::{.my-package}
+:::{.my-package-header}
+glue: Interpreted String Literals
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-glue}
+
+***
+
+{**glue**}: [Interpreted String Literals](https://glue.tidyverse.org/)
+
+An implementation of interpreted string literals, inspired by Python's Literal String Interpolation
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/logoi/logo-glue-min.png){width="176"}
+
+Glue offers interpreted string literals that are small, fast, and dependency-free. Glue does this by embedding R expressions in curly braces which are then evaluated and inserted into the argument string.
+
+:::
+
+{**glue**}: A Package for Interpreting Literal Strings
+:::
+
+
 
 ***
 ::::
@@ -315,6 +426,80 @@ An integrated set of functions for the analysis of multivariate normal datasets 
 {**norm**}: Analysis of Multivariate Normal Datasets with Missing Values
 :::
 
+
+***
+::::
+:::::
+
+## plotly
+
+:::::{.my-package}
+:::{.my-package-header}
+plotly: Create Interactive Web Graphics via 'plotly.js' 
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-plotly}
+
+***
+
+{**plotly**}: [Create Interactive Web Graphics via 'plotly.js'](https://plotly.com/r/) [@plotly]
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/logoi/logo-plotly-min.png){width="176"}
+
+Create interactive web graphics from 'ggplot2' graphs and/or a custom interface to the (MIT-licensed) JavaScript library 'plotly.js' inspired by the grammar of graphics.
+
+:::
+
+Plotly.js is a standalone Javascript data visualization library, and it also powers the Python and R modules named plotly in those respective ecosystems (referred to as Plotly.py and Plotly.R).
+
+Plotly.js can be used to produce dozens of chart types and visualizations, including statistical charts, 3D graphs, scientific charts, SVG and tile maps, financial charts and more.
+
+{**plotly**}: Create Interactive Web Graphics via 'plotly.js'
+:::
+
+<Other text not included in the package reference>
+
+***
+::::
+:::::
+ 
+
+
+## skimr
+
+
+
+:::::{.my-package}
+:::{.my-package-header}
+skimr: Compact and Flexible Summaries of Data
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-skimr}
+
+***
+
+{**skimr**}: [Compact and Flexible Summaries of Data](https://docs.ropensci.org/skimr/)
+
+::: {layout="[10, 30]" layout-valign="center"}
+![](img/logoi/logo-skimr-min.png){width="176"}
+
+A simple to use summary function that can be used with pipes and displays nicely in the console. The default summary statistics may be modified by the user as can the default formatting.  Support for data frames and vectors is included, and users can implement their own skim methods for specific object types as described in a vignette. Default summaries include support for inline spark graphs. Instructions for managing these on specific operating systems are given in the [Using skimr](https://docs.ropensci.org/skimr/articles/skimr.html) vignette and the [README](https://github.com/ropensci/skimr/#skimr-).
+
+
+:::
+
+At the moment I am just using the `skimr::skim()` function. I believe most of the many other functions for adaption are oriented to developers. But still: I need to have a closer look to this package.
+
+
+A Package for Compact and Flexible Summaries of Data
+:::
 
 ***
 ::::

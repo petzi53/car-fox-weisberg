@@ -1027,7 +1027,7 @@ detach("package:car", unload = TRUE)
 detach("package:carData", unload = TRUE)
 ```
 
-List all available methods for a voectorized class 
+List all available methods for a vectorized class 
 :::
 
 

@@ -61,7 +61,23 @@ Changing assumptions changes the model. For example, it is common to add a norma
 
 ## Linear least-square regression {#sec-chap04-2}
 
-### Simple linear regressio9n {#sec-chap04-2-1}
+### Simple linear regression {#sec-chap04-2-1}
+
+The Davis data set in the {**carData**} package contains the measured and selfreported heights and weights of 200 men and women engaged in regular exercise. A few of the data values are missing, and consequently there are only 183 complete cases for the variables that are used in the analysis reported below.
+
+The variables `weight` (measured weight) and `repwt` (reported weight) are in kilograms, and `height` (measured height) and `repht` (reported height) are in centimeters. We focus here on the regression of `weight` on `repwt.`
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap04-lm-davis}
+: Simple linear regression 
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### Davis
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
@@ -82,18 +98,12 @@ skimr::skim(Davis)
 Skim the Davis data set
 :::
 
+***
+
+Instead of using the `base::summary()` function I have applied the `skim()` function from the {**skimr**} package. See @pak-skimr.
+
 ::::
 :::::
-
-:::::{.my-example}
-:::{.my-example-header}
-:::::: {#exm-chap04-lm-davis}
-: Simple linear regression 
-::::::
-:::
-::::{.my-example-container}
-
-::: {.panel-tabset}
 
 ###### davis_lm0
 
@@ -109,9 +119,13 @@ Skim the Davis data set
 #| label: print-davis-lm0
 #| results: hold
 
+glue::glue("Standard call of the lm function")
 (davis_lm0 <- lm(weight ~ repwt, data = Davis))
 
+save_data_file("chap04", davis_lm0, "davis_lm0.rds")
+
 glue::glue("")
+glue::glue("################################################################")
 glue::glue("Suppressing the intercept to force the regression through the origin")
 lm(weight ~ -1 + repwt, data = Davis)
 ```
@@ -120,9 +134,15 @@ Simple	linear	regression	model of the Davis data
 
 ***
 
-The `stats::lm()` function returns a linear-model object, which was assigned to the R variable `davis_lm0`. Printing this object just results in a relatively sparse output: Printing a linear-model object simply shows the command that produced the model along with the estimated regression coefficients.
+A model formula consists of three parts: 
+ 
+- 1. **The left-hand side** of the model formula specifies the response variable; it is usually a variable name (`weight`, in the example) but may be an expression that evaluates to the response (e.g., `sqrt(weight)`, `log(income)`, or `income/hours.worked`). 
+- 2. **The tilde** is a separator. 
+- 3. **The right-hand side** is the most complex part of the formula. It is a special expression, including the names of the predictors, that R evaluates to produce the regressors for the model. **The arithmetic operators, +, -, *, /, and ^, have special meaning on the right-hand side of a model formula, but they retain their ordinary meaning on the left-hand side of the formula.** R will use any unadorned numeric predictor on the right-hand side of the model formula as a regressor, as is desired here for simple regression. The intercept $\beta_{0}$ is included in the model without being specified directly.
 
 We can suppress the intercept to force the regression through the origin using `weight ~ -1 + repwt` or `weight ~ repwt - 1`. More generally, a minus sign removes a term, here the intercept, from the predictor. Using $0$ (zero) also suppresses the intercept. That $0$ is an equivalent of $-1$ can be seen in the repetition of the formula which uses $0$ although I have used in the formula $-1$.
+
+The `stats::lm()` function returns a linear-model object, which was assigned to the R variable `davis_lm0`. Printing this object just results in a relatively sparse output: Printing a linear-model object simply shows the command that produced the model along with the estimated regression coefficients.
 
 ::: {.callout-caution style="color: darkgoldenrod;" #cau-chap04-without-intercept}
 ##### Difference in coefficient without intercept
@@ -156,6 +176,10 @@ summary(davis_lm0)
 
 Using stats::summary() for the `davis_lm0` object
 :::
+
+***
+
+For an explication of the different printed parts see @lst-chap04-car-S-davis-lm0.
 
 ::::
 :::::
@@ -200,6 +224,11 @@ As a subset of the stats:summary() printout it does not report the residual dist
 ::::
 :::::
 
+::: {.callout-note style="color: blue;" #nte-chap04-S-versus-summary}
+With the exception of the AIC and BIC values I cannot see any advantage in the default version of `car::S()` against `base::summary()`. I am curious what it means that car::S() "adds more functionality".
+
+One obviously is, that car::S() allows different methods to compute standard errors.
+:::
 
 
 
@@ -222,52 +251,37 @@ car::brief(davis_lm0)
 Brief summary of the lm object with `car::brief()`
 :::
 
+car::brief() for a `lm` object prints only the first two columns of the coefficients: `Estimate` and `Std. Error`.
+
 ::::
 :::::
 
-###### stats::confint()
+###### Confidence intervals
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-chap04-stats-confint-davis-lm0}
-: Confidence intervals for the estimates of `davis_lm0`  with `stats::confint()`
+:::::: {#cnj-chap04-confidence-intervals-davis-lm0}
+: Confidence intervals for the estimates of `davis_lm0`
 ::::::
 :::
 ::::{.my-r-code-container}
-::: {#lst-chap04-stats-confint-davis-lm0}
+::: {#lst-chap04-confidence-intervals-davis-lm0}
 ```{r}
-#| label: stats-confint-davis-lm0
+#| label: confidence-intervals-davis-lm0
+#| results: hold
 
+glue::glue("Confidence intervals with `stats::confint()`")
 stats::confint(davis_lm0)
+glue::glue(" ")
+glue::glue("#############################################")
+glue::glue("Cofidence intervals with `car::Confint()`")
+car::Confint(davis_lm0)
 ```
 
 Confidence intervals for the estimates of `davis_lm0` with `stats::confint()`
 :::
 
-::::
-:::::
-
-###### car::Confint()
-
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap04-car-Confint-davis-lm0}
-: Confidence intervals for the estimates of `davis_lm0` with `car::Confint()`
-::::::
-:::
-::::{.my-r-code-container}
-::: {#lst-chap04-car-Confint-davis-lm0}
-```{r}
-#| label: car-Confint-davis-lm0
-
-car::Confint(davis_lm0)
-```
-
-Confidence intervals for the estimates of `davis_lm0` with `car::Confint()`
-:::
-
 ***
-
 Unlike `stats::confint()`, `car::Confint()` prints the coefficient estimates along with the confidence limits.
 
 ::::
@@ -275,8 +289,269 @@ Unlike `stats::confint()`, `car::Confint()` prints the coefficient estimates alo
 
 
 
+The separate confidence intervals do not address the hypothesis that *simultaneously* $\beta_{0} = 0$ and $\beta_{1} = 1$ versus the alternative that either or both of the intercept and slope differ from these values.
+
+:::
+
+
+::::
+:::::
+
+We shoud have started with visualization of the data set! Always start with Exploratory Data Analysis (`r glossary("ExDA", "EDA")`)!
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap04-eda}
+: Exploratory Data Analysis of Davis data set
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### plot(davis_lm0)
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-scatterplot-davis-lm0}
+: Scatterplot of `davis_lm0` 
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap04-scatterplot-davis-lm0}
+```{r}
+#| label: scatterplot-davis-lm0
+
+Davis <- carData::Davis
+
+graphics::plot(weight ~ repwt, data = Davis)
+graphics::abline(0, 1, lty = "dashed", lwd = 2)
+graphics::abline(davis_lm0, lwd = 2)
+graphics::legend(
+  "bottomright",
+  c("Unbiased Reporting", "Least Squares"),
+  lty = c("dashed", "solid"),
+  lwd = 2,
+  inset = 0.02
+)
+base::with(Davis, car::showLabels(repwt, weight, n = 2, method = "mahal"))
+```
+Scatterplot of measured weight (`weight`) by reported weight (`repwt`) for Davis’s data. The solid line is the least-squares linear regression line, and the broken line is the line of unbiased reporting y = x.
+:::
+
+***
+
+- The `graphics::plot()` function draws the basic scatterplot, to which we use `graphics::abline()` to add the line of unbiased reporting (y = x, with intercept zero and slope 1, the broken line) and the least-squares line (the solid line). 
+- The `graphics::legend()` command adds a legend at the lower right of the plot, inset from the corner by 2% of the plot’s size. 
+- The `car::showLabels()` function identifies the two points with the largest `r glossary("Mahalanobis")` distances from the center of the data.
+
+::::
+:::::
+
+The resulting graph reveals an extreme outlier, Case 12. Case 21 has also unusually large values of both measured and reported weight but is in line with the rest of the data. 
+
+It seems bizarre that an individual who weighs more than 160 kg would report her weight as less than 60 kg, but there is a simple explanation: On data entry, Subject 12’s height in centimeters and weight in kilograms were inadvertently exchanged.
+
+
+###### update
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-update-davis}
+: Update linar model after deleting data point 12
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap04-update-davis}
+```{r}
+#| label: update-davis
+#| results: hold
+
+glue::glue("#####################################################")
+glue::glue("Updated linear model `davis_lm1`")
+glue::glue("#####################################################")
+(davis_lm1 <- update(davis_lm0, subset = -12))
+
+save_data_file("chap04", davis_lm1, "davis_lm1.rds")
+
+glue::glue("#####################################################")
+glue::glue("Display summary with `car::S()`")
+glue::glue("#####################################################")
+glue::glue(" ")
+car::S(davis_lm1)
+```
+
+Linear model of updated Davis data (`davis_lm1`)
 :::
 
 ::::
 :::::
 
+
+
+###### interactive
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-davis-intractive}
+: Simple linear regression of interactive Davis data
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap04-davis-intractive}    
+```{r}
+#| label: davis-interactive
+
+Davis <- carData::Davis
+
+gg_davis <- Davis |>
+  tidyr::drop_na(repwt) |>
+  tibble::rowid_to_column(var = "ID") |>
+  ggplot2::ggplot(
+        ggplot2::aes(
+          x = repwt,
+          y = weight
+        )
+  ) +
+  ggiraph::geom_point_interactive(
+    ggplot2::aes(
+      x = repwt,
+      y = weight,
+      tooltip = ID,
+      data_id = ID
+    ),
+    shape = 1,
+    size = 2
+  ) +
+  ggplot2::geom_smooth(
+    ggplot2::aes(
+      linetype = "solid"
+    ),
+    formula = y ~ x,
+    method = lm,
+    se = FALSE,
+    color = "black"
+  ) +
+    ggplot2::geom_smooth(
+      ggplot2::aes(
+        linetype = "dashed",
+      ),
+      formula = y ~ x,
+      method = loess,
+      se = FALSE,
+      color = "black"
+  ) +
+  ggplot2::scale_linetype_discrete(
+    name = "",
+    label = c(
+      "Least Squares",
+      "Unbiased Reporting   "
+    )
+  ) +
+  ggplot2::guides(
+    linetype = ggplot2::guide_legend(position = "inside")
+  ) +
+  ggplot2::theme(
+    legend.title = ggplot2::element_blank(),
+    legend.position.inside = c(.8, .15),
+    legend.box.background = ggplot2::element_rect(
+                              color = "black", 
+                              linewidth = 1
+                              )
+                 )
+
+ggiraph::girafe(ggobj = gg_davis)
+
+```
+
+Interactive equivalent for linear model of `weight` regresssed on `repwt` with Davis data set
+:::
+
+***
+
+This is my replication of the book’s Figure 4.1. There are two important qualification to make:
+
+**1. Producing an interactive graphics with {ggiraph}** 
+
+Instead of printing out the two points with the largest Mahalanobis distance I have applied functions from the {**ggiraph**} package to produce an interactive graphics. Click at a point in the plot to get a tooltip with the row number of this point. After you learned that the outlier is from row 12 you can delete it in the next step.
+
+I used {**ggiraph**} for two reasons:
+
+- I know I could use the {**ggrepel**} package (see @pak-ggrepel) to label the points but I didn't know how to calculate the two points with the largest Mahalanobis distance. There is in base R a `stats::mahalanobis()` function but I didn't succeed to provide the necessary parameter for the arguments.
+- {**ggiraph**} (see @pak-ggiraph) is easy to use because it sticks not even with the {**ggplot2**} structure but alsow with their names of commands. It wasn't necessary to invest much time for learning a new package as it would be the case for learning {**plotly**}, another package for creating interactive web graphics (see @pak-plotly).
+
+**2. New detailed specification for the {ggplot2} legend**
+
+This is the first time, that I have moved the legend inside the graoh and framed with a box. I used the https://tidyverse.or/blog article [ggplot2 3.5.0: legends](https://www.tidyverse.org/blog/2024/02/ggplot2-3-5-0-legends/) and an article from https://r-graph-gallery.com [Building a nice legend with R and ggplot2](https://r-graph-gallery.com/239-custom-layout-legend-ggplot2.html). Helpful were also hints from a [StackOverflow post](https://stackoverflow.com/a/47669217/7322615). 
+
+
+
+::::
+:::::
+
+###### interactive2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-davis-intractive2}
+: Simple linear regression of updated interactive Davis data
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap04-davis-intractive2}    
+```{r}
+#| label: davis-interactive2
+
+gg_davis <- Davis |>
+  tidyr::drop_na(repwt) |>
+  tibble::rowid_to_column(var = "ID") |>
+  dplyr::filter(ID != 12) |> 
+  ggplot2::ggplot(
+        ggplot2::aes(
+          x = repwt,
+          y = weight
+        )
+  ) +
+  ggiraph::geom_point_interactive(
+    ggplot2::aes(
+      x = repwt,
+      y = weight,
+      tooltip = ID,
+      data_id = ID
+    ),
+    shape = 1,
+    size = 2
+  ) +
+  ggplot2::geom_smooth(
+    formula = y ~ x,
+    method = lm,
+    se = FALSE,
+    color = "black"
+  ) +
+    ggplot2::geom_smooth(
+    formula = y ~ x,
+    method = loess,
+    se = FALSE,
+    linetype = "dashed",
+    color = "black"
+  )
+
+ggiraph::girafe(ggobj = gg_davis)
+
+```
+
+Interactive equivalent for updated linear model of `weight` regresssed on `repwt` with Davis data set
+:::
+
+***
+
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+***
