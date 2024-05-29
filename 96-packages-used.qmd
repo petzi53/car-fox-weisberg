@@ -145,7 +145,7 @@ ggiraph: Make 'ggplot2' Graphics Interactive
 ![](img/logoi/logo-ggiraph-min.png){width="176"}
 
 
-{**ggiraph**} is a tool that allows you to create dynamic ggplot graphs. This allows you to add tooltips, hover effects and JavaScript actions to the graphics. The package also allows the selection of graphical elements when used in shiny applications.
+Create interactive {**ggplot2**} graphics using {**htmlwidgets**}. {**ggiraph**} is a tool that allows you to create dynamic ggplot graphs. This allows you to add tooltips, hover effects and JavaScript actions to the graphics. The package also allows the selection of graphical elements when used in shiny applications.
 
 :::
 

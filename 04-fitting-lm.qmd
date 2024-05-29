@@ -334,7 +334,7 @@ graphics::legend(
   lwd = 2,
   inset = 0.02
 )
-base::with(Davis, car::showLabels(repwt, weight, n = 2, method = "mahal"))
+base::with(Davis, car::showLabels(repwt, weight, n = 3, method = "mahal"))
 ```
 Scatterplot of measured weight (`weight`) by reported weight (`repwt`) for Davis’s data. The solid line is the least-squares linear regression line, and the broken line is the line of unbiased reporting y = x.
 :::
@@ -488,6 +488,143 @@ This is the first time, that I have moved the legend inside the graoh and framed
 
 ::::
 :::::
+
+###### ggrepel
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-davis-ggrepel}
+: Simple linear regression	of	weight	on	repwt with {**ggplot2**} and {**ggrepel**}
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap04-davis-ggrepel}
+```{r}
+#| label: davis-ggrepel
+
+set.seed(42)
+df_temp <- carData::Davis |> 
+  dplyr::select(weight, repwt) |> 
+  tidyr::drop_na() 
+
+df <- df_temp |>
+  dplyr::mutate(mahal =
+        {
+          stats::mahalanobis(
+                df_temp,
+                base::colMeans(df_temp),
+                stats::cov(df_temp)
+                )
+        }
+  ) |>
+  dplyr::mutate(p =
+      pchisq(
+        q = mahal,
+        df = 1,
+        lower.tail = FALSE
+        )
+      ) |>
+  tibble::rownames_to_column(var = "ID") |>
+  dplyr::mutate(ID =
+        dplyr::case_when(p < .001 ~ ID,
+                         p >= .001 ~ "")
+  )
+  
+df |>
+  ggplot2::ggplot(
+        ggplot2::aes(
+                x = repwt,
+                y = weight,
+                color = factor(ID),
+                label = factor(ID)
+        )
+  ) +
+  ggplot2::geom_point(
+    shape = 1,
+    size = 2
+  ) +
+  ggrepel::geom_text_repel() +
+  ggplot2::stat_smooth(
+    ggplot2::aes(linetype = "solid"),
+    formula = y ~ x,
+    method = lm,
+    se = FALSE,
+    color = "black"
+  ) +
+    ggplot2::geom_smooth(
+      ggplot2::aes(
+          linetype = "dashed"
+        ),
+      formula = y ~ x,
+      method = loess,
+      se = FALSE,
+      color = "black"
+  ) +
+  ggplot2::scale_linetype_discrete(
+    name = "",
+    label = c(
+      "Least Squares",
+      "Unbiased Reporting   "
+    )
+  ) +
+  ggplot2::guides(
+    linetype = ggplot2::guide_legend(position = "inside")
+  ) +
+  ggplot2::theme(
+    legend.title = ggplot2::element_blank(),
+    legend.position.inside = c(.8, .15),
+    legend.box.background = ggplot2::element_rect(
+                              color = "black",
+                              linewidth = 1
+                              )
+                 )
+
+```
+
+Listing title
+:::
+
+::::
+:::::
+
+###### Anscombe
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-ID-text}
+: Numbered R Code Title
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chaplisting-ID}
+```{r}
+#| label: anscombe
+
+datasets::anscombe |> 
+  ggplot2::ggplot(
+    ggplot2::aes(
+      x = x3,
+      y = y3,
+      label = rownames(anscombe)
+    )
+  ) +
+  ggplot2::geom_point() +
+  ggplot2::geom_smooth(
+    formula = y ~ x,
+    se = FALSE,
+    method = lm
+  ) +
+  ggrepel::geom_text_repel()
+```
+
+Listing title
+:::
+
+::::
+:::::
+
+
+
 
 ###### interactive2
 
