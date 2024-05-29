@@ -535,8 +535,7 @@ df |>
         ggplot2::aes(
                 x = repwt,
                 y = weight,
-                color = factor(ID),
-                label = factor(ID)
+                label = ID
         )
   ) +
   ggplot2::geom_point(
