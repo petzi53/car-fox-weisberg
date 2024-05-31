@@ -25,7 +25,8 @@ Chapter section list
 
 - The linear model (@sec-chap04-1)
 - Linear least-square regression (@sec-chap04-2)
-    - Simple linear regression (@sec-chap04-1)
+    - Simple linear regression (@sec-chap04-2-1)
+    - Multiple linear regression (@sec-chap04-2-2)
 
 
 
@@ -387,20 +388,83 @@ Linear model of updated Davis data (`davis_lm1`)
 ::::
 :::::
 
-
-
-###### interactive
+###### compare models
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-chap04-davis-intractive}
-: Simple linear regression of interactive Davis data
+:::::: {#cnj-chap04-compare-models}
+: Compare coefficients and confidence intervals
 ::::::
 :::
 ::::{.my-r-code-container}
-::: {#lst-chap04-davis-intractive}    
+::: {#lst-chap04-compare-models}
 ```{r}
-#| label: davis-interactive
+#| label: compare-models
+#| results: hold
+
+glue::glue("############################################################")
+glue::glue("Compare estimated coefficients of both models")
+glue::glue("############################################################")
+glue::glue(" ")
+car::compareCoefs(davis_lm0, davis_lm1)
+
+glue::glue(" ")
+glue::glue("############################################################")
+glue::glue("Recomputing the confidence intervals for the coefficients")
+glue::glue("############################################################")
+glue::glue(" ")
+car::Confint(davis_lm1)
+
+```
+
+Using `car::compareCoefs()` to compare the estimated coefficients and their standard errors from the two fitted regressions, with and without Case 12, and `car::Confint()` to recompute the confidence intervals for the coefficients
+:::
+
+
+
+::::
+:::::
+
+Both the intercept and the slope change, but not dramatically, when the outlier is removed. Case 12 is at a relatively *low-leverage point*, because its value for `repwt` is near the center of the distribution of the regressor. 
+
+In contrast, there is a major change in the residual standard deviation, reduced from an unacceptable 8.4 kg to a possibly acceptable 2.2 kg.
+
+As a consequence, the coefficient standard errors are also much smaller when the outlier is removed, and the value of $R^2$ is greatly increased. Because the coefficient standard errors are now smaller, even though the estimated intercept $b_{0}$ is still close to zero and the estimated slope $b_{1}$ is close to 1, $b_{0} = 0$ and $b_{1} = 1$ are both outside of the recomputed 95% confidence intervals for the coefficients[^04-fitting-lm-1]
+
+[^04-fitting-lm-1]: The estimated regression coefficient replaces the Greek letter with the corresponding Roman letter, as in $b_{1}$ for $\beta_{1}$.
+
+:::
+
+::::
+:::::
+
+In the following experiment I am trying to reproduce book’s Figure 4.1. I have to solve two challenges:
+
+1. Calculating the Mahalanobis distances and returning the farest distances.
+2. Applying these values and printing out the rown names (ID numbers in this case) near the coordinates of the points the belong to.
+
+:::::{.my-experiment}
+:::{.my-experiment-header}
+:::::: {#def-chap04-replicating-books-figure-4-1}
+: Interactive plot and labelled Mahalanobis distances
+::::::
+:::
+::::{.my-experiment-container}
+
+::: {.panel-tabset}
+
+###### {ggiraph}
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap04-davis-ggiraph}
+: Simple linear regression of interactive Davis data produced with {ggiraph}
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap04-davis-ggiraph}    
+```{r}
+#| label: davis-ggiraph
 
 Davis <- carData::Davis
 
@@ -464,37 +528,49 @@ ggiraph::girafe(ggobj = gg_davis)
 
 ```
 
-Interactive equivalent for linear model of `weight` regresssed on `repwt` with Davis data set
+Interactive linear model of `weight` regresssed on `repwt` with Davis data set. Interactivity created with {**ggiraph**}.
 :::
 
 ***
 
-This is my replication of the book’s Figure 4.1. There are two important qualification to make:
+This was my first try to replicate the book’s Figure 4.1. There are two important qualification to make:
 
 **1. Producing an interactive graphics with {ggiraph}** 
 
-Instead of printing out the two points with the largest Mahalanobis distance I have applied functions from the {**ggiraph**} package to produce an interactive graphics. Click at a point in the plot to get a tooltip with the row number of this point. After you learned that the outlier is from row 12 you can delete it in the next step.
+Instead of printing out the two points with the largest `r glossary("Mahalanobis")` distance I have applied functions from the {**ggiraph**} package to produce an interactive plot. When you hover the cursor over data points you will get a tooltip with the row number of the point under your cursor. After you learned that the outlier with weight over 160kg is from row 12 you can delete this data point in the next step.
 
 I used {**ggiraph**} for two reasons:
 
-- I know I could use the {**ggrepel**} package (see @pak-ggrepel) to label the points but I didn't know how to calculate the two points with the largest Mahalanobis distance. There is in base R a `stats::mahalanobis()` function but I didn't succeed to provide the necessary parameter for the arguments.
-- {**ggiraph**} (see @pak-ggiraph) is easy to use because it sticks not even with the {**ggplot2**} structure but alsow with their names of commands. It wasn't necessary to invest much time for learning a new package as it would be the case for learning {**plotly**}, another package for creating interactive web graphics (see @pak-plotly).
+**(a) {**ggigraph**} is easy to use**
+
+- {**ggiraph**} (see @pak-ggiraph) uses the {**ggplot2**} structure and names of commands. There are only three changes for making a {**ggplot2**} graph interactive:
+
+  - 1. Instead of using `ggplot2::geom_point()`, use `ggiraph::geom_point_interactive()`
+  - 2. Provide at least one of the aesthetics `tooltip`, `data_id` and `onclick` to create interactive elements.
+  - 3. Call function `ggiraph::girafe()` with the ggplot object so that the graphic is translated as a web interactive graphics. 
+   
+   It wasn't therefore necessary to invest much time for learning a new package as it would have been the case for learning {**plotly**}, another package for creating interactive web graphics (see @pak-plotly).
+   
+**(b) At first I didn't know how to calculate `r glossary("Mahalanobis")` distances**
+   
+I knew I could use the {**ggrepel**} package (see @pak-ggrepel) to label the points but I didn't know how to calculate the two points with the largest Mahalanobis distance. ALthough I knew that there is in base R the `stats::mahalanobis()` function, but at first I didn't succeed to provide the necessary parameter for the arguments. Some days later I found the solution with @lst-chap04-davis-ggrepel.
+
 
 **2. New detailed specification for the {ggplot2} legend**
 
-This is the first time, that I have moved the legend inside the graoh and framed with a box. I used the https://tidyverse.or/blog article [ggplot2 3.5.0: legends](https://www.tidyverse.org/blog/2024/02/ggplot2-3-5-0-legends/) and an article from https://r-graph-gallery.com [Building a nice legend with R and ggplot2](https://r-graph-gallery.com/239-custom-layout-legend-ggplot2.html). Helpful were also hints from a [StackOverflow post](https://stackoverflow.com/a/47669217/7322615). 
+This is the first time, that I have moved the legend inside the graoh and framed with a box. I used the [https://tidyverse.or/blog](https://tidyverse.or/blog) article [ggplot2 3.5.0: legends](https://www.tidyverse.org/blog/2024/02/ggplot2-3-5-0-legends/) and an article from [https://r-graph-gallery.com](https://r-graph-gallery.com) [Building a nice legend with R and ggplot2](https://r-graph-gallery.com/239-custom-layout-legend-ggplot2.html). Helpful were also hints from a [StackOverflow post](https://stackoverflow.com/a/47669217/7322615). 
 
 
 
 ::::
 :::::
 
-###### ggrepel
+###### {ggrepel}
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
 :::::: {#cnj-chap04-davis-ggrepel}
-: Simple linear regression	of	weight	on	repwt with {**ggplot2**} and {**ggrepel**}
+: Simple linear regression	of	`weight`	on	`repwt` with labelled points of the biggest Mahalanobis distances using {**ggrepel**}
 ::::::
 :::
 ::::{.my-r-code-container}
@@ -502,7 +578,7 @@ This is the first time, that I have moved the legend inside the graoh and framed
 ```{r}
 #| label: davis-ggrepel
 
-set.seed(42)
+set.seed(420)
 df_temp <- carData::Davis |> 
   dplyr::select(weight, repwt) |> 
   tidyr::drop_na() 
@@ -534,15 +610,16 @@ df |>
   ggplot2::ggplot(
         ggplot2::aes(
                 x = repwt,
-                y = weight,
-                label = ID
+                y = weight
         )
   ) +
   ggplot2::geom_point(
     shape = 1,
     size = 2
   ) +
-  ggrepel::geom_text_repel() +
+  ggrepel::geom_text_repel(
+    ggplot2::aes(label = ID)
+  ) +
   ggplot2::stat_smooth(
     ggplot2::aes(linetype = "solid"),
     formula = y ~ x,
@@ -580,114 +657,43 @@ df |>
 
 ```
 
-Listing title
+Replication of book’s Figure 4.1 with {**ggplot2**} and {**ggrepel**}
 :::
-
-::::
-:::::
-
-###### Anscombe
-
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-ID-text}
-: Numbered R Code Title
-::::::
-:::
-::::{.my-r-code-container}
-::: {#lst-chaplisting-ID}
-```{r}
-#| label: anscombe
-
-datasets::anscombe |> 
-  ggplot2::ggplot(
-    ggplot2::aes(
-      x = x3,
-      y = y3,
-      label = rownames(anscombe)
-    )
-  ) +
-  ggplot2::geom_point() +
-  ggplot2::geom_smooth(
-    formula = y ~ x,
-    se = FALSE,
-    method = lm
-  ) +
-  ggrepel::geom_text_repel()
-```
-
-Listing title
-:::
-
-::::
-:::::
-
-
-
-
-###### interactive2
-
-:::::{.my-r-code}
-:::{.my-r-code-header}
-:::::: {#cnj-chap04-davis-intractive2}
-: Simple linear regression of updated interactive Davis data
-::::::
-:::
-::::{.my-r-code-container}
-::: {#lst-chap04-davis-intractive2}    
-```{r}
-#| label: davis-interactive2
-
-gg_davis <- Davis |>
-  tidyr::drop_na(repwt) |>
-  tibble::rowid_to_column(var = "ID") |>
-  dplyr::filter(ID != 12) |> 
-  ggplot2::ggplot(
-        ggplot2::aes(
-          x = repwt,
-          y = weight
-        )
-  ) +
-  ggiraph::geom_point_interactive(
-    ggplot2::aes(
-      x = repwt,
-      y = weight,
-      tooltip = ID,
-      data_id = ID
-    ),
-    shape = 1,
-    size = 2
-  ) +
-  ggplot2::geom_smooth(
-    formula = y ~ x,
-    method = lm,
-    se = FALSE,
-    color = "black"
-  ) +
-    ggplot2::geom_smooth(
-    formula = y ~ x,
-    method = loess,
-    se = FALSE,
-    linetype = "dashed",
-    color = "black"
-  )
-
-ggiraph::girafe(ggobj = gg_davis)
-
-```
-
-Interactive equivalent for updated linear model of `weight` regresssed on `repwt` with Davis data set
-:::
-
 ***
 
+This is my best attempt to replicate book’s Figure 4.1. Instead of using functions of tthe he {**car**} package I used packages from the {**tidyverse**} approach: {**gplot2**} and {**ggrepel**} (see @pak-ggrepel). 
+
+:::::{.my-resource}
+:::{.my-resource-header}
+:::::: {#lem-chap04-mahalanobis-distance}
+: Mahalanobis Distance
+::::::
+:::
+::::{.my-resource-container}
+
+I didn't know that `stats::mahalanobis()` requires as parameters the dataframe with the regression variables. Two almost identical blog articles showed me how to apply the base R function:
+
+- **Finnstats**: How to Calculate Mahalanobis Distance in R (I believe that this article was the original of the two.)
+- **Statology**: How to Calculate Mahalanobis Distance in R 
+
+The Mahalanobis distance is a distance measure of multivariate distributions and was developed 1936 by [Prasanta Chandra Mahalanobis.](https://en.wikipedia.org/wiki/Prasanta_Chandra_Mahalanobis) In contrast to the Euclidean distance which works fine as long as the dimensions are equally weighted and are independent of each other, the Mahalanobis distance takes into account different axis variances and correlation.
+
+Very instructive for me was the (German) article [Mahalanobis-Distanz](http://www.statistics4u.info/fundstat_germ/ee_mahalanobis_distance.html). It features an experiment where a graphic shows that the distances from different points on a circle with the center in the data cloud are not equal because of different standard deviations on different axes. Mahalanobis distance takes into account the different standard deviations along the axes of the n-dimensional space as well as the correlation (variances and covariances) between the axes.
 
 ::::
 :::::
+
+::::
+:::::
+
+During the work with {**ggrepel**} I encountered another difficulty receiving several {**ggplot2**} warnings. I could finally solve this problem after asking about [help on StackOverflow](https://stackoverflow.com/questions/78551672/ggplot2geom-smooth-drops-aesethetics-label-with-ggrepel/78552354?noredirect=1#comment138488632_78552354.
 
 :::
 
 ::::
 :::::
 
-***
+
+## Multiple linear regression {#sec-chap04-2-2}
+
+Multiple	regression	extends	simple	regression	to	more	than	one	predictor.
