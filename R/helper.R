@@ -111,6 +111,23 @@ my_hist_dnorm <- function(df, v,
 }
 
 ##########################################################
+# my_nbins: return number of bins according to the
+#           Freeman-Diaconis rule
+# Purpose:
+# Compute sensible number of bins to overwrite the {ggplot2} default (= 30)
+# Author: Peter Baumgartner
+# Used in my personal notes on "car-fox-weisenberg"
+# See: https://bookdown.org/pbaumgartner/car-fox-weisberg/
+##########################################################
+
+# vec      = numerical vector
+
+my_nbins <-  function(vec) {
+  return(grDevices::nclass.FD(vec))
+}
+
+
+##########################################################
 # my_qq_plot: Create q-q-plot
 # Purpose:
 # Generate check normality assumption

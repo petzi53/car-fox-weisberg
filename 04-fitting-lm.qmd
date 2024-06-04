@@ -553,7 +553,7 @@ I used {**ggiraph**} for two reasons:
    
 **(b) At first I didn't know how to calculate `r glossary("Mahalanobis")` distances**
    
-I knew I could use the {**ggrepel**} package (see @pak-ggrepel) to label the points but I didn't know how to calculate the two points with the largest Mahalanobis distance. ALthough I knew that there is in base R the `stats::mahalanobis()` function, but at first I didn't succeed to provide the necessary parameter for the arguments. Some days later I found the solution with @lst-chap04-davis-ggrepel.
+I knew I could use the {**ggrepel**} package (see @pak-ggrepel) to label the points but I didn't know how to calculate the two points with the largest Mahalanobis distance. Although I knew that there is in base R the `stats::mahalanobis()` function, but at first I didn't succeed to provide the necessary parameter for the arguments. Some days later I found the solution with @lst-chap04-davis-ggrepel.
 
 
 **2. New detailed specification for the {ggplot2} legend**
@@ -686,7 +686,7 @@ Very instructive for me was the (German) article [Mahalanobis-Distanz](http://ww
 ::::
 :::::
 
-During the work with {**ggrepel**} I encountered another difficulty receiving several {**ggplot2**} warnings. I could finally solve this problem after asking about [help on StackOverflow](https://stackoverflow.com/questions/78551672/ggplot2geom-smooth-drops-aesethetics-label-with-ggrepel/78552354?noredirect=1#comment138488632_78552354.
+During the work with {**ggrepel**} I encountered another difficulty receiving several {**ggplot2**} warnings. I could finally solve this problem after asking about [help on StackOverflow](https://stackoverflow.com/questions/78551672/ggplot2geom-smooth-drops-aesethetics-label-with-ggrepel/78552354?noredirect=1#comment138488632_78552354).
 
 :::
 

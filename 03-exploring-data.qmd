@@ -30,6 +30,19 @@ Table of content (TOC)
 - Examing relationships (@sec-chap03-2)
     - Scatterplots (@sec-chap03-2-1)
     - Parallel boxplots (@sec-chap03-2-2)
+    - More in the plot function
+- Examining multivariate data
+    - Three-dimenional plots
+    - Scatterplot Matrices
+- Transforming data
+    - Logarithms
+    - Power transformations
+    - Transformations and EDA
+    - Transforming resticted-range variables
+    - Other transformations
+- Point labelling and identification (@sec-chap03-5)
+    - The identify() function (@sec-chap03-5-1)
+    - Automatic point labelling with car::showLabels() (@sec-chap03-5-2)
     
 
 
@@ -206,6 +219,31 @@ Histogram with {**ggplot2**}. Bin number computed after Freedman and Diaconis [-
 ::::
 :::::
 
+A special type of histograms are *stem-and-leaf displays*, which are histograms that encode the numeric data directly in their bars. I do not find them very usefull, because they are different to interpret and do not have essential advantages. They may be helpful for small data sets as a kind of paper-and-pencil method for visualizing.
+
+Stem-and-leaf graphs can be produced with the `graphics::stem()` function or using the `aplpack::stem.leaf()` function. 
+
+:::::{.my-resource}
+:::{.my-resource-header}
+:::::: {#lem-chap03-aplpack}
+: Another Plot Package {aplpack}
+::::::
+:::
+::::{.my-resource-container}
+Looking at the {**aplpack**} package, I noticed that there are some interesting graphic funtions, which I should explore. For instance `aplpack::plotsummary()` is an interesting function that shows important characteristics of the variables of a data set. For each variable a plot is computed consisting of a barplot, an `r glossary("ecdf")`, a density trace and a boxplot. 
+
+See @pak-aplpack.
+::::
+:::::
+
+
+
+
+
+
+
+
+
 ### Density Estimation {#sec-chap03-1-2}
 
 *Nonparametric density estimation* often produces a more satisfactory representation of the distribution of a numeric variable than a traditional histogram. Unlike a histogram, a nonparametric density estimate is continuous and so it doesn’t dissect the range of a numeric variable into discrete bins.
@@ -375,7 +413,14 @@ Histogram with a kernel density estimate overlaid, which is a smoothed version o
 ::::
 :::::
 
-I didn't know how to include the adaptive kernel density estimation from the {**car**} package to get a full reproduction of book’s Figure 3.3.
+::: {.callout-warning #wrn-chap03-adaptive-kernel}
+##### Don't know how to inlcude adaptive kernel density estimation
+
+The {**car**} package has with `car::densityPlot()` an additional function, that both computes and draws density estimates with either a fixed or adaptive kernel. I do not know how to include the adaptive kernel density estimation from the {**car**} package to get a full reproduction of book’s Figure 3.3 with {**ggplot2**}.
+:::
+
+
+
 
 ###### my_hist_dnorm()
 
@@ -398,7 +443,9 @@ Histogram with density estimation and overlaid dnorm curve
 
 ***
 
-I have my own function my_hist_dnorm() changed by supplying the Freeman-Diaconis rule [-@freedman1981a] as default value for the number of bins.
+I have my own function `my_hist_dnorm()` adapted by supplying the Freeman-Diaconis rule [-@freedman1981a] as default value for the number of bins.
+
+Additionally I have written with `my_nbins()` another small functions which returns the number of bins according to the Freeman-Diaconis rule.
 
 ::::
 :::::
@@ -614,12 +661,33 @@ The	names shown	in the output are the cases that are labeled on the graph and ar
 ::::
 :::::
 
-###### ggplot2::geom_boxplot
+
+
+
+
+:::
+
+::::
+:::::
+
+The `ggplot2::geom_boxplot()` draws boxplots but has no options to label the outliers. To reproduce Figure 3.6 I need to add some code to the compute the outliers and label them with {**ggrepel**}. 
+
+:::::{.my-experiment}
+:::{.my-experiment-header}
+:::::: {#def-chap03-boxplot-outlier-labelled}
+: {ggplot2} boxplot with outlier labelled
+::::::
+:::
+::::{.my-experiment-container}
+
+::: {.panel-tabset}
+
+###### default
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
 :::::: {#cnj-chap03-boxplot-ggplot2}
-: ggplot2::geom_boxplot(): Boxplot of income
+: Boxplot of income (default)
 ::::::
 :::
 ::::{.my-r-code-container}
@@ -627,12 +695,14 @@ The	names shown	in the output are the cases that are labeled on the graph and ar
 ```{r}
 #| label: boxplot-ggplot2
 
+
+Prestige <- carData::Prestige
+
 Prestige |> 
     ggplot2::ggplot(
-        ggplot2::aes(x = income)
+        ggplot2::aes(y = income)
     ) +
-    ggplot2::geom_boxplot() +
-    ggplot2::coord_flip()
+    ggplot2::geom_boxplot() 
 ```
 
 Boxplot of income, plotted with `ggplot2::geom_boxplot()`
@@ -642,10 +712,64 @@ Boxplot of income, plotted with `ggplot2::geom_boxplot()`
 :::::
 
 
+###### outliers
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-compute-boxplot-outliers}
+: Boxplot of income with outliers labelled
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-compute-boxplot-outliers}  
+```{r}
+#| label: compute-boxplot-outliers
+
+my_find_boxpot_outlier <- function(x) {
+  return(x < quantile(x, .25) - 1.5*IQR(x) | x > quantile(x, .75) + 1.5*IQR(x))
+}
+
+
+prestige1 <- Prestige |> 
+  dplyr::mutate(outlier = my_find_boxpot_outlier(income)) |> 
+  tibble::rownames_to_column(var = "ID") |>
+  dplyr::mutate(outlier =
+        dplyr::case_when(outlier == TRUE ~ ID,
+                         outlier == FALSE ~ "")
+  )
+
+set.seed(42)
+
+prestige1 |> 
+    ggplot2::ggplot(
+        ggplot2::aes(y = income)
+    ) +
+    ggrepel::geom_text_repel(
+      ggplot2::aes(
+        x = 0,
+        label = outlier
+        ),
+      nudge_x      = 0.05,
+      direction    = "y",
+      hjust        = 0,
+    ) +
+    ggplot2::geom_boxplot()
+
+```
+
+Boxplot of income with outliers labelled plotted with `ggplot2::geom_boxplot()` and using `ggrepel::geom_text_repel()` 
 :::
 
 ::::
 :::::
+
+:::
+
+::::
+:::::
+
+***
+
 
 ## Examing relationships {#sec-chap03-2}
 
@@ -779,7 +903,8 @@ Prestige |>
     ) +
     ggplot2::stat_smooth(
         formula = 'y ~ x',
-        method = "lm"
+        method = "lm",
+        se = FALSE
     ) +
     ggplot2::coord_cartesian(
       xlim = c(0, 26000),
@@ -1031,6 +1156,103 @@ The {**car**} packages has the ability to display "extreme" points, mostly defin
 
 > The Mahalanobis distance (MD) is the distance between two points in multivariate space. In a regular Euclidean space, variables (e.g. x, y, z) are represented by axes drawn at right angles to each other; The distance between any two points can be measured with a ruler. For uncorrelated variables, the Euclidean distance equals the MD. However, if two or more variables are correlated, the axes are no longer at right angles, and the measurements become impossible with a ruler. In addition, if you have more than three variables, you can’t plot them in regular 3D space at all. The MD solves this measurement problem, as it measures distances between points, even correlated points for multiple variables. [@glenn2017]
 
+***
+
+:::::{.my-experiment}
+:::{.my-experiment-header}
+:::::: {#def-ID-text}
+: Numbered Experiment Title
+::::::
+:::
+::::{.my-experiment-container}
+
+::: {.panel-tabset}
+
+###### experiment1
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name}
+: Numbered R Code Title 1
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-listing-ID}
+```{r}
+#| label: experiment-1
+
+p <- carData::Prestige |> 
+    ggplot2::ggplot(
+        ggplot2::aes(
+            x = income,
+            y = prestige
+        )
+    ) +
+    ggplot2::geom_point(
+        shape = "circle open",
+        size = 2
+    ) +
+    ggplot2::stat_smooth(
+        formula = 'y ~ x',
+        method = "loess",
+        span = .75,
+        level = 0.95
+    ) +
+    ggplot2::stat_smooth(
+        formula = 'y ~ x',
+        method = "lm",
+        se = FALSE
+    ) +
+    ggplot2::coord_cartesian(
+      xlim = c(0, 26000),
+      ylim = c(10, 90),
+      expand = TRUE,
+      default = FALSE,
+      clip = "on"
+)
+
+ggExtra::ggMarginal(p, type = "boxplot")
+```
+  
+Title for listing
+:::
+
+::::
+:::::
+
+
+
+###### experiment2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-code-name-b}
+b: Numbered R Code Title (Tidyverse)
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-listing-ID}  
+```{r}
+#| label: text-b
+
+1 + 1
+```
+
+Title for listing
+:::
+
+::::
+:::::
+
+:::
+
+::::
+:::::
+
+***
+
+
+
 ### Parallel boxplots {#sec-chap03-2-2}
 
 :::::{.my-example}
@@ -1129,3 +1351,72 @@ Listing title
 
 ::::
 :::::
+
+
+## Point labelling and identification {#sec-chap03-5}
+
+Identifying extreme points can be especially valuable in graphs used for model building and diagnostics.
+    
+### The graphics::identify() function {#sec-chap03-5-1}
+
+The `graphics::identify()` function in base R has a (clumsy) interface for interactive marking of interesting points.
+
+:::::{.my-procedure}
+:::{.my-procedure-header}
+:::::: {#prp-chap03-graphics-identify}
+: Displaying interesting points with graphics::identify()
+::::::
+:::
+::::{.my-procedure-container}
+`graphics::identify()` is	interactive, so you can’t use	it	conveniently in R	Markdown or Quarto documents.
+
+1. Enter the plot command to create the graphics where you want to label interesting points. You have to do this at the console! For instance: `with(carData::Freedman, plot(density, crime))`. This command produces the graphic in the RStudio "Plots" tab. 
+2. Enter at the console the command for `graphics::identify()`. It needs at least three arguments: The x/y coordinates for the points and a vector with the labels. If the label vector is missing `identify()` uses the row number. The RStudio "Plots" tab is now interactive. You can see this as the message "Locator active (Esc to finish)" appears at the upper left of the RStudio "Plots" tab and a button "Finish" at the upper right. Additionally you see two icons at the upper right of the console window. When you hover over the green circle with the $\infty$ sign a tool tip appears: "Session suspend timeout paused: Waiting for event: locator_ completed R is executing". The other icon is a stop sign.
+3. Click at (or near) the points you want to label. 
+4. A “pin” icon flashes momentarily near the point, but point labels aren’t shown until you exit from point identification mode.
+5. After you have clicked on all points you are interested in, press "Esc" or the "Finish" button.
+6. The labels appear near the clicked positions and the console prints the row numbers of the points.
+7. To include the plot with the labelled points in your report you have either export the graph with the options "Save as image…", "Save as PDF… or "Copy to clipboard…" or to create  the graph programmatically (for instance using {**ggplot2**} and {**ggrepel**}).
+
+![Scatterplots	of	crime	by	population	density	for	Freedman’s	data, with a few high-density cities identified manually by the graphics::indentify() function](img/chap03-rplot-identify-min.png){#fig-rplot-identify
+fig-alt="Scatterplots of crime by population density for Freedman’s data, with a few high-density cities identified manually by the graphics::indentify() function"
+fig-align="center"}
+
+::::
+:::::
+### Automatic point labelling with car::showLabels() {#sec-chap03-5-2}
+
+The graphics functions in the {**car**} package employ a common general mechanism for point identification, using the `car::showLabels()` function to identify potentially noteworthy points.
+
+
+::: {#bul-ID-text}
+:::::{.my-bullet-list}
+:::{.my-bullet-list-header}
+Arguments of `car::showLabels()` function
+:::
+::::{.my-bullet-list-container}
+- **Point identification** is controlled by the `id` argument, which takes the values TRUE, FALSE, or a detailed list of specifications. In	most	cases,	the	user	only	needs	to	set	`id = TRUE`	or to	specify	the	number	of	points	to	be	identified, for	example,	`id = list(n = 5)`.
+- **labels**: By default, points are labeled with a data frame’s row labels or by row numbers if there are no row labels. You can use whatever point labels you like by setting labels to a character vector with the same number of elements as there are data points. 
+- **n**: the number of points to label. 
+- **cex**: the relative size of the labels; cex=0.5, for example, produces labels half the default size. 
+- **col**: the color of the labels; if not set, the color is determined automatically. 
+-**location**: where the labels are drawn. The default is `location = "lr"` to draw labels to the left of points in the right half of the graph and to the right of points in the left half. Another option is `location="ab"`, to draw labels above points below the middle of the graph and below points above the middle. Finally, `location="avoid"` tries to avoid overplotting labels. 
+- **method**: Setting `method = "identify"` (the default) enables interactive point identification, as with `graphics::identify()`. Several automatic methods are available for determining how interesting points are to be identified. For example, in `car::scatterplot()`, the default is `method = "mahal"`, in which the `r glossary("Mahalanobis")` distance of each point to the centriod (point of averages) is computed, and the identified points are those with the largest Mahalanobis distances. For `car::residualPlot()`, the default is `method = "r"`, selecting noteworthy points according to the absolute values of their vertical coordinates (i.e., the residuals) and labeling the points with the largest values. There are many other options for the method argument; see help ("showLabels") for their description and the help pages for particular car graphics functions for how they use `car::showLabels()`.
+::::
+:::::
+Arguments of car::showLabels() function
+:::
+
+
+::: {.callout-important #imp-chap03-show-labels-with-ggplot}
+##### Developing my own show_labels() command
+
+I am trying to replicate the labelling of interesting points with {**ggplot2**}. The main idea for this additional work is to use the {**tidyverse**} approach and to stick with the more exhaustive functionality of the grammar of graphics.
+
+This is not only programmatically a challenge but I have to learn and understand what type of graphics shows what type of "interesting" points (outliers, extreme values, high-leverage points) and how to compoute these points.
+
+So far I have code proposals for
+
+- outliers in boxplots (@lst-chap03-compute-boxplot-outliers) and
+- Mahalanobis distances in linear model (@lst-chap04-davis-ggrepel)
+:::

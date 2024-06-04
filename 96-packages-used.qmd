@@ -27,6 +27,49 @@ A tool that "multiply imputes" missing data in a single cross-section (such as a
 ::::
 :::::
 
+## aplpack
+
+:::::{.my-package}
+:::{.my-package-header}
+aplpack: Another Plot Package: 'Bagplots', 'Iconplots', 'Summaryplots', Slider Functions and Others 
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-aplpack}
+
+***
+
+{**aplpack**}: [Another Plot Package: 'Bagplots', 'Iconplots', 'Summaryplots', Slider Functions and Others](https://www.uni-bielefeld.de/fakultaeten/wirtschaftswissenschaften/fakultaet/lehrende-ehemalige/pwolf/wolf_aplpack/index.xml) [@aplpack]
+
+
+(*There is no hexagon logo for {**aplpack**} available*)
+
+Some functions for drawing some special plots: 
+
+- 'bagplot' plots a bagplot, 
+- 'faces' plots chernoff faces, 
+- 'iconplot' plots a representation of a frequency table or a data matrix, 
+- 'plothulls' plots hulls of a bivariate data set, 
+- 'plotsummary' plots a graphical summary of a data set, 
+- 'puticon' adds icons to a plot, 
+- 'skyline.hist' combines several histograms of a one dimensional data set in one plot, 
+- 'slider' functions supports some interactive graphics, 
+- 'spin3R' helps an inspection of a 3-dim point cloud, 
+- 'stem.leaf' plots a stem and leaf plot, 
+- 'stem.leaf.backback' plots back-to-back versions of stem and leaf plot.
+
+{**aplpack**}: Another Plot Package: 'Bagplots', 'Iconplots', 'Summaryplots', Slider Functions and Others
+:::
+
+<Other text not included in the package reference>
+
+***
+::::
+:::::
+
+
 
 ## car
 
