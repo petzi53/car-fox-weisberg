@@ -168,6 +168,39 @@ Graphical and tabular effect displays, e.g., of interactions, for various statis
 ::::
 :::::
 
+## ggExtra
+
+:::::{.my-package}
+:::{.my-package-header}
+ggExtra: Add Marginal Histograms to 'ggplot2', and More 'ggplot2' Enhancements 
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-ggExtra}
+
+***
+
+{**ggExtra**}: [Add Marginal Histograms to 'ggplot2', and More 'ggplot2' Enhancements](https://github.com/daattali/ggExtra) [@ggExtra]
+
+
+(*There is no hexagon logo for {**ggExtra**} available*)
+
+Collection of functions and layers to enhance {**ggplot2**}. The flagship function is `ggExtra::ggMarginal()`, which can be used to add marginal histograms/boxplots/density plots to {**ggplot2**} scatterplots.
+
+
+{**ggExtra**}: Add Marginal Histograms to 'ggplot2', and More 'ggplot2' Enhancements
+:::
+
+Several years ago there was a different package called ggExtra, by Baptiste (the author of {**gridExtra**}). That old ggExtra package was deleted in 2011, and this package has nothing to do with the old one.
+
+***
+::::
+:::::
+
+
+
 ## ggiraph
 
 :::::{.my-package}
@@ -510,6 +543,93 @@ Plotly.js can be used to produce dozens of chart types and visualizations, inclu
 ::::
 :::::
  
+## plotrix
+
+:::::{.my-package}
+:::{.my-package-header}
+plotrix: Various Plotting Functions 
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-plotrix}
+
+***
+
+{**plotrix**}: [Various Plotting Functions](https://plotrix.github.io/plotrix/) [@plotrix]
+
+(*There is no hexagon logo for {**plotrix**} available*)
+
+Lots of plots, various labeling, axis and color scaling functions. 
+
+:::
+
+A common plot in the scientific literature is a graph of group means with error bars showing ±1 SD around the means. This plot can be drawn conveniently using the `plotrix::plotCI()` function
+
+{**plotrix**}: Various Plotting Functions
+:::
+
+The author/maintainer Jim Lemon died in September 2023. Currently the package is being maintained by Duncan Murdoch.
+
+***
+::::
+:::::
+
+## rgl
+
+:::::{.my-package}
+:::{.my-package-header}
+rgl: 3D Visualization Using OpenGL 
+:::
+::::{.my-package-container}
+
+***
+
+::: {#pak-rgl}
+
+***
+
+{**rgl**}: [3D Visualization Using OpenGL](https://dmurdoch.github.io/rgl/) [@rgl]
+
+(*There is no hexagon logo for {**rgl**} available*)
+
+Provides medium to high level functions for 3D interactive graphics, including functions modelled on base graphics (`plot3d()`, etc.) as well as functions for constructing representations of geometric objects (`cube3d()`, etc.). Output may be on screen using [OpenGL](https://www.opengl.org/), or to various standard 3D file formats including [WebGL](https://www.khronos.org/webgl/), PLY, OBJ, STL as well as 2D image formats, including PNG, Postscript, SVG, PGF.
+
+**Features**
+
+- portable R package using OpenGL (if available) on macOS, Win32 and X11
+- can produce 3D graphics in web pages using WebGL
+- R programming interface
+- interactive viewpoint navigation
+- automatic data focus
+- geometry primitives: points, lines, triangles, quads, texts, point sprites
+- high-level geometry: surface, spheres
+- up to 8 light sources
+- alpha-blending (transparency)
+- side-dependent fill-mode rendering (dots, wired and filled)
+- texture-mapping with mipmapping and environment mapping support
+- environmental effects: fogging, background sphere
+- bounding box with axis ticks marks
+- undo operation: shapes and light-sources are managed on type stacks, where the top-most objects can be popped, or any item specified by an identifier can be removed
+
+**System requirements**
+
+- [OpenGL](https://www.opengl.org/) and 
+- GLU Library (Required for display in R. [for Windows, but not for MacOS???] See "Installing OpenGL support" in README.md. Not needed if only browser displays using `rglwidget()` are wanted.) See For [WebGL display](https://get.webgl.org) to get browser with WebGL enabled.
+- zlib (optional), 
+- libpng (>=1.2.9, optional), 
+- FreeType (optional).
+
+
+{**rgl**}: 3D Visualization Using OpenGL
+:::
+
+<Other text not included in the package reference>
+
+***
+::::
+:::::
 
 
 ## skimr

@@ -252,7 +252,7 @@ car::brief(davis_lm0)
 Brief summary of the lm object with `car::brief()`
 :::
 
-car::brief() for a `lm` object prints only the first two columns of the coefficients: `Estimate` and `Std. Error`.
+`car::brief()` for a `lm` object prints only the first two columns of the coefficients: `Estimate` and `Std. Error`.
 
 ::::
 :::::
@@ -441,7 +441,7 @@ As a consequence, the coefficient standard errors are also much smaller when the
 In the following experiment I am trying to reproduce book’s Figure 4.1. I have to solve two challenges:
 
 1. Calculating the Mahalanobis distances and returning the farest distances.
-2. Applying these values and printing out the rown names (ID numbers in this case) near the coordinates of the points the belong to.
+2. Applying these values and printing out the row names (ID numbers in this case) near the coordinates of the points the belong to.
 
 :::::{.my-experiment}
 :::{.my-experiment-header}

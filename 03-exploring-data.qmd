@@ -9,6 +9,7 @@
 base::source(file = "R/helper.R")
 ggplot2::theme_set(ggplot2::theme_bw())
 options(show.signif.stars = FALSE)
+options(rgl.useNULL = TRUE) # Suppress separate window opened by {rgl}.
 
 ```
 
@@ -30,11 +31,11 @@ Table of content (TOC)
 - Examing relationships (@sec-chap03-2)
     - Scatterplots (@sec-chap03-2-1)
     - Parallel boxplots (@sec-chap03-2-2)
-    - More in the plot function
-- Examining multivariate data
-    - Three-dimenional plots
-    - Scatterplot Matrices
-- Transforming data
+    - More on the plot function (@sec-chap03-2-3)
+- Examining multivariate data (@sec-chap03-3)
+    - Three-dimensional plots (@sec-chap03-3-1)
+    - Scatterplot Matrices (@sec-chap03-3-2)
+- Transforming data (@sec-chap03-4)
     - Logarithms
     - Power transformations
     - Transformations and EDA
@@ -230,7 +231,11 @@ Stem-and-leaf graphs can be produced with the `graphics::stem()` function or usi
 ::::::
 :::
 ::::{.my-resource-container}
-Looking at the {**aplpack**} package, I noticed that there are some interesting graphic funtions, which I should explore. For instance `aplpack::plotsummary()` is an interesting function that shows important characteristics of the variables of a data set. For each variable a plot is computed consisting of a barplot, an `r glossary("ecdf")`, a density trace and a boxplot. 
+##### Functions for drawing some special plots
+
+Besides plotting stem-and-leaf graphs with `aplpack::stem.leaf()` from the {**aplpack**} package, I noticed that there are some other interesting graphic functions in this package, which I should explore.
+
+For instance `aplpack::plotsummary()` is an interesting function that shows important characteristics of the variables of a data set. For each variable a plot is computed consisting of a `r glossary("Bar Charts", "barplot")`, an `r glossary("ecdf")`, a `r glossary("Density Plots", "density trace")` and a `r glossary("Boxplots", "boxplot")`. 
 
 See @pak-aplpack.
 ::::
@@ -248,9 +253,9 @@ See @pak-aplpack.
 
 *Nonparametric density estimation* often produces a more satisfactory representation of the distribution of a numeric variable than a traditional histogram. Unlike a histogram, a nonparametric density estimate is continuous and so it doesn’t dissect the range of a numeric variable into discrete bins.
 
-Kernel density estimation (KDE) is the application of kernel smoothing for probability density estimation. The bandwith controls	the	degree of smoothness of	the density	estimate:
+`r glossary("Kernel density estimation")` (KDE) is the application of kernel smoothing for probability density estimation. The bandwith controls	the	degree of smoothness of	the density	estimate:
 
-The bandwidth of a density estimate is the continuous analog of the bin width of a histogram: If the bandwidth is too large, then the density estimate is smooth but biased as an estimator of the true density, while if the bandwidth is too small, then bias is low but the estimate is too rough and the variance of the estimator is large. 
+The bandwidth of a density estimate is the continuous analog of the bin width of a histogram: If the bandwidth is too large, then the density estimate is smooth but biased as an estimator of the true density, while if the bandwidth is too small, then bias is low but the estimate is too rough and the variance of the estimator is large.
 
 The `adaptiveKernel()` function in the {**car**} package employs an algorithm that uses different bandwidths depending on the local observed density of the data, with smaller bandwidths in dense regions and larger bandwidths in sparse regions.
 
@@ -725,13 +730,13 @@ Boxplot of income, plotted with `ggplot2::geom_boxplot()`
 ```{r}
 #| label: compute-boxplot-outliers
 
-my_find_boxpot_outlier <- function(x) {
+my_find_boxplot_outlier <- function(x) {
   return(x < quantile(x, .25) - 1.5*IQR(x) | x > quantile(x, .75) + 1.5*IQR(x))
 }
 
 
 prestige1 <- Prestige |> 
-  dplyr::mutate(outlier = my_find_boxpot_outlier(income)) |> 
+  dplyr::mutate(outlier = my_find_boxplot_outlier(income)) |> 
   tibble::rownames_to_column(var = "ID") |>
   dplyr::mutate(outlier =
         dplyr::case_when(outlier == TRUE ~ ID,
@@ -883,8 +888,9 @@ In @lst-chap03-scatterplot-car the least squares line cannot match the obvious c
 ::: {#lst-chap03-scatterplot-ggplot2}
 ```{r}
 #| label: scatterplot-ggplot2
+#| results: hold
 
-Prestige |> 
+gg_Prestige <- carData::Prestige |> 
     ggplot2::ggplot(
         ggplot2::aes(
             x = income,
@@ -912,14 +918,19 @@ Prestige |>
       expand = TRUE,
       default = FALSE,
       clip = "on"
-)
+    )
+
+save_data_file("chap03", gg_Prestige, "gg_Prestige.rds")
+
+gg_Prestige
+
 ```
 
 Scatterplot of `prestige` versus `income` produced by different functions of the {**ggplot2**} package. 
 :::
 ***
 
-The default smoother employed by `ggplot2::geom_smooth()` dpends on the size of the largest group. `stats::loess()` would have been used here because we have less than 1,000 observation. But I have applied the `loess() `function explicitly to prevent a arning message.
+The default smoother employed by `ggplot2::geom_smooth()` depends on the size of the largest group. `stats::loess()` would have been used here because we have less than 1,000 observation. But I have applied the `loess() `function explicitly to prevent a warning message.
 
 The span in loess is the fraction of the data used to determine the fitted value of y at each x. A larger span therefore produces a smoother result, and too small a span produces a fitted curve with too much wiggle. The trick is to select the smallest span that produces a sufficiently smooth regression mean function. The default span of 2/3 works well most of the time but not always
 
@@ -1156,100 +1167,384 @@ The {**car**} packages has the ability to display "extreme" points, mostly defin
 
 > The Mahalanobis distance (MD) is the distance between two points in multivariate space. In a regular Euclidean space, variables (e.g. x, y, z) are represented by axes drawn at right angles to each other; The distance between any two points can be measured with a ruler. For uncorrelated variables, the Euclidean distance equals the MD. However, if two or more variables are correlated, the axes are no longer at right angles, and the measurements become impossible with a ruler. In addition, if you have more than three variables, you can’t plot them in regular 3D space at all. The MD solves this measurement problem, as it measures distances between points, even correlated points for multiple variables. [@glenn2017]
 
-***
+#### Scatterplots enhanced with marginal plots {#sec-chap03-2-1-1}
+
+To reproduce the marginal boxplots without {**car**} and using the {**tidyverse**} approach I learned about the {**ggExtra**} package.
+It now only allows scatterplots with marginal boxplots but also with histograms, density, densigram (a histogram overlaid with a density distribution) and violins.
 
 :::::{.my-experiment}
 :::{.my-experiment-header}
-:::::: {#def-ID-text}
-: Numbered Experiment Title
+:::::: {#def-chap03-marginal-plots}
+: Using {ggExtra} for adding marginal graphs to scatterplots
 ::::::
 :::
 ::::{.my-experiment-container}
 
 ::: {.panel-tabset}
 
-###### experiment1
+###### boxplot
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-code-name}
-: Numbered R Code Title 1
+:::::: {#cnj-chap03-marginal-boxplot}
+: Scatterplot of `prestige` versus `income` with marginal boxplots
 ::::::
 :::
 ::::{.my-r-code-container}
-::: {#lst-listing-ID}
+::: {#lst-chap03-marginal-boxplot}
 ```{r}
-#| label: experiment-1
+#| label: marginal-boxplot
 
-p <- carData::Prestige |> 
-    ggplot2::ggplot(
-        ggplot2::aes(
-            x = income,
-            y = prestige
-        )
-    ) +
-    ggplot2::geom_point(
-        shape = "circle open",
-        size = 2
-    ) +
-    ggplot2::stat_smooth(
-        formula = 'y ~ x',
-        method = "loess",
-        span = .75,
-        level = 0.95
-    ) +
-    ggplot2::stat_smooth(
-        formula = 'y ~ x',
-        method = "lm",
-        se = FALSE
-    ) +
-    ggplot2::coord_cartesian(
-      xlim = c(0, 26000),
-      ylim = c(10, 90),
-      expand = TRUE,
-      default = FALSE,
-      clip = "on"
-)
+gg_Prestige <- base::readRDS("data/chap03/gg_Prestige.rds")
 
-ggExtra::ggMarginal(p, type = "boxplot")
+
+ggExtra::ggMarginal(gg_Prestige, type = "boxplot")
 ```
   
-Title for listing
+Scatterplot of `prestige` versus `income` with marginal boxplots
 :::
+
 
 ::::
 :::::
 
-
-
-###### experiment2
+###### histogram
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-code-name-b}
-b: Numbered R Code Title (Tidyverse)
+:::::: {#cnj-chap03-marginal-histogram}
+: Scatterplot of `prestige` versus `income` with marginal histograms
 ::::::
 :::
 ::::{.my-r-code-container}
-::: {#lst-listing-ID}  
+::: {#lst-chap03-marginal-histogram}
 ```{r}
-#| label: text-b
+#| label: marginal-histogram
 
-1 + 1
+gg_Prestige <- base::readRDS("data/chap03/gg_Prestige.rds")
+
+
+ggExtra::ggMarginal(gg_Prestige, type = "histogram")
+```
+  
+Scatterplot of `prestige` versus `income` with marginal histograms
+:::
+
+
+::::
+:::::
+
+###### density
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-marginal-density}
+: Scatterplot of `prestige` versus `income` with marginal density distribution
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-marginal-density}
+```{r}
+#| label: marginal-density
+
+gg_Prestige <- base::readRDS("data/chap03/gg_Prestige.rds")
+
+
+ggExtra::ggMarginal(gg_Prestige, type = "density")
+```
+  
+Scatterplot of `prestige` versus `income` with marginal density distribution
+:::
+
+
+::::
+:::::
+
+###### densigram
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-marginal-densigram}
+: Scatterplot of `prestige` versus `income` with marginal densigrams
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-marginal-densigram}
+```{r}
+#| label: marginal-densigram
+
+gg_Prestige <- base::readRDS("data/chap03/gg_Prestige.rds")
+
+
+ggExtra::ggMarginal(gg_Prestige, type = "densigram")
+```
+  
+Scatterplot of `prestige` versus `income` with marginal densigrams
+:::
+
+I reported that `..density..` was deprecated since {**ggplot2**} 3.4.0. (See [my comment](https://github.com/daattali/ggExtra/issues/175#issuecomment-2149784674))
+
+
+::::
+:::::
+
+###### violin
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-marginal-violin}
+: Scatterplot of `prestige` versus `income` with marginal violin plots
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-marginal-violin}
+```{r}
+#| label: marginal-violin
+
+gg_Prestige <- base::readRDS("data/chap03/gg_Prestige.rds")
+
+
+ggExtra::ggMarginal(gg_Prestige, type = "violin")
+```
+  
+Scatterplot of `prestige` versus `income` with marginal violin plots
+:::
+
+
+::::
+:::::
+
+
+
+:::
+
+::::
+:::::
+
+#### Scatterplot enhanced with point labelling {#sec-chap03-2-1-2}
+
+The	`car::scatterplot()` function can	draw	scatterplots with	a	wide variety of enhancements and options. One enhancement is to include marginal plots as I have done with the use of {**ggExtra**} in the previous section @sec-chap03-2-1-1.
+
+Another enhancement is to label "extreme" points with different measures and in different conditions. I have already developed this enhancement for 
+
+- Outliers in boxplots using 1.5 times the `r glossary("IQR")`  subtracting to the lower quartile (.25) and adding to the upper quartile (.75) (see: @lst-chap03-compute-boxplot-outliers) and for
+- `r glossary("Mahalanobis")` distances using p-values < .001 (see: @lst-chap04-davis-ggrepel).
+
+Here now I will not use the `r glossary("p-value")` for the Mahalanobis distances but a fix amount of points to label. To go conform with the example I will at first apply a fixed `n = 4` but in the next challenge I will try to develop a general function that distinguishes between type (scatterplot, boxplot) and method (p-value, fixed number of points).
+
+:::::{.my-experiment}
+:::{.my-experiment-header}
+:::::: {#def-chap03-replicating-books-figure-3-8}
+: Label 4 points of farest Mahalanobis distances in scatterplots 
+::::::
+:::
+::::{.my-experiment-container}
+
+::: {.panel-tabset}
+
+
+
+###### labelled-4 
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-prestige-labelled-n-points}
+: Scatterplot	of	`prestige`	versus	`income`	with four	points	identified
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-prestige-labelled-n-points}
+```{r}
+#| label: prestige-labelled-4-points
+
+set.seed(420)
+df_temp <- carData::Prestige |> 
+  dplyr::select(prestige, income) |> 
+  tidyr::drop_na() 
+
+df <- df_temp |>
+  dplyr::mutate(mahal =
+        {
+          stats::mahalanobis(
+                df_temp,
+                base::colMeans(df_temp),
+                stats::cov(df_temp)
+                )
+        }
+  ) |>
+  dplyr::mutate(p =
+    pchisq(
+      q = mahal,
+      df = 1,
+      lower.tail = FALSE
+      )
+    ) |>
+  tibble::rownames_to_column(var = "ID") |>
+  dplyr::mutate(label = "") |> 
+  dplyr::arrange(desc(mahal)) |> 
+  dplyr::mutate(label =
+      dplyr::case_when(dplyr::row_number() <= 4 ~ ID)
+)
+  
+gg_enhanced <- df |>
+  ggplot2::ggplot(
+        ggplot2::aes(
+                x = income,
+                y = prestige
+        )
+  ) +
+  ggplot2::geom_point(
+    shape = 1,
+    size = 2
+  ) +
+  ggrepel::geom_text_repel(
+    ggplot2::aes(label = label),
+    na.rm = TRUE
+  ) +
+  ggplot2::stat_smooth(
+    ggplot2::aes(linetype = "solid"),
+    formula = y ~ x,
+    method = lm,
+    se = FALSE,
+    color = "black"
+  ) +
+    ggplot2::geom_smooth(
+      ggplot2::aes(
+          linetype = "dashed"
+        ),
+      formula = y ~ x,
+      method = loess,
+      se = TRUE,
+      color = "black"
+  ) +
+  ggplot2::scale_linetype_discrete(
+    name = "",
+    label = c(
+      "Least Squares",
+      "Unbiased Reporting   "
+    )
+  ) +
+  ggplot2::guides(
+    linetype = ggplot2::guide_legend(position = "inside")
+  ) +
+  ggplot2::theme(
+    legend.title = ggplot2::element_blank(),
+    legend.position.inside = c(.8, .15),
+    legend.box.background = ggplot2::element_rect(
+                              color = "black",
+                              linewidth = 1
+                              )
+                 )
+
+ggExtra::ggMarginal(p = gg_enhanced, type = "boxplot")
 ```
 
-Title for listing
+Replication of book’s Figure 3.8 with {**ggplot2**}, {**ggrepel**} and {**ggExtra**}.
 :::
-
-::::
-:::::
-
-:::
-
-::::
-:::::
-
 ***
+
+This is my attempt to replicate book’s Figure 3.8. Instead of using functions of tthe he {**car**} package I used packages from the {**tidyverse**} approach: {**gplot2**} with {**ggrepel**} and {**ggExtra**} (see @pak-ggrepel and @pak-ggExtra). 
+
+
+
+::::
+:::::
+
+Using the `r glossary("p-value")` of .001 we would get 5 (instead of 4) points labelled.
+
+###### function
+
+**Still to do!**
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-ID-text}
+: Numbered R Code Title
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chaplisting-ID}
+```{r}
+#| label: code-chunk-name
+#| eval: false
+
+my_find_boxplot_outlier <- function(df) {
+  return(df < quantile(df, .25) - 1.5*IQR(df) | df > quantile(df, .75) + 1.5*IQR(df))
+  
+my_find_boxplot_outlier(carData::Prestige$income)
+
+prestige1 <- Prestige |> 
+  dplyr::mutate(outlier = my_find_boxplot_outlier(income)) |> 
+  tibble::rownames_to_column(var = "ID") |>
+  dplyr::mutate(outlier =
+        dplyr::case_when(outlier == TRUE ~ ID,
+                         outlier == FALSE ~ "")
+  )
+
+}
+
+# label_points <-  function(
+#     df, 
+#     n = 2, 
+#     type = c("scatterplot", "boxplot"),
+#     output = c("dataframe", "labels", "both")
+#     ) {
+#     if (type == "scatterplot") {
+#           df |>
+#           dplyr::mutate(mahal =
+#                 {
+#                   stats::mahalanobis(
+#                         df,
+#                         base::colMeans(df),
+#                         stats::cov(df)
+#                         )
+#                 }
+#           )
+#       } |>
+#     if (n == 0) ( {
+#         dplyr::mutate(p =
+#           pchisq(
+#             q = mahal,
+#             df = 1,
+#             lower.tail = FALSE
+#             )
+#           ) 
+#       } ) |>
+#       tibble::rownames_to_column(var = "ID") |>
+#       dplyr::mutate(label = "") |> 
+#       dplyr::arrange(desc(mahal)) |> 
+#       if (n != 0) (
+#         dplyr::mutate(
+#           label = dplyr::case_when(dplyr::row_number() <= 4 ~ ID)
+#           )
+#       ) 
+# }
+
+
+set.seed(420)
+df_temp <- carData::Prestige |> 
+  dplyr::select(prestige, income) |> 
+  tidyr::drop_na()
+
+test <-  label_points(
+  df = df_temp,
+  n = 4,
+  type = "scatterplot",
+  output = "dataframe")
+```
+
+Listing title
+:::
+
+::::
+:::::
+
+
+
+:::
+
+::::
+:::::
 
 
 
@@ -1308,6 +1603,8 @@ Boxplots with `car::Boxplot()` of `vocabulary` separately for each value of year
 :::
 
 ***
+This command draws a separate boxplot for vocabulary for all cases with the same value of education, so we condition on the value of education. The formula has the response variable on the left of the `~` and a discrete conditioning variable — typically, but not necessarily, a factor — on the right.
+
 Setting `id = FALSE` prevents labelling up to ten outliers, which would be very distracting because of the many boxplots. Therefore we get using `car::Boxplot()` an identical graph as in @lst-chap03-parallel-boxplot-base-r with the base R version of `graphics::boxplot()`.
 
 With `xtabs(~ education, data = Vocab)` we get the distribution of education:
@@ -1320,23 +1617,164 @@ xtabs(~ education, data = Vocab)
 ::::
 :::::
 
+In this example, the conditioning predictor education is a discrete numeric variable. For the subsamples with larger sample sizes, 8 ≤ education ≤ 18, rather than a steady increase in vocabulary with education, there appear to be jumps every 2 or 3 years, at years 10, 12, 15, and 18.
+
+###### Ornstein
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-canadian-directorats}
+: Interlocking directorates	among	248	major	Canadian	corporations
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-canadian-directorats}
+```{r}
+#| label: canadian-directorats
+
+car::brief(carData::Ornstein)
+```
+
+Brief summary of the Ornstein data set about "Interlocking Directorates Among Major Canadian Firms"
+:::
+
+***
+
+The variables in the data set include the assets of each corporation, in millions of dollars; the corporation’s sector of operation, a factor with 10 levels; the factor nation, indicating the country in which the firm is controlled, with levels "CAN" (Canada), "OTH" (other), "UK", and "US"; and interlocks, the number of interlocking directorate and executive positions maintained between each company and others in the data set.
+
+::::
+:::::
+
+###### boxplot
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-ornstein-boxplot}
+: Parallel boxplots of interlocks by nation of control
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-ornstein-boxplot}
+```{r}
+#| label: ornstein-boxplot
+#| results: hold
+
+
+Ornstein <- carData::Ornstein
+
+car::Boxplot(
+  interlocks ~ nation, 
+  data = Ornstein, 
+  main = "(a)")
+
+
+
+```
+
+Parallel boxplots of interlocks by nation of control, for Ornstein’s interlocking-directorate data.
+:::
+
+***
+
+Because the names of the companies are not given in the original data source, the points are labeled by case numbers. The firms are in descending order by assets, and thus the identified points are among the largest companies.
+
+::::
+:::::
+
+###### errorbars
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-plotrix-errorbars}
+: A mean/standard deviation plot
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-plotrix-errorbars}
+```{r}
+#| label: plotrix-errorbars
+
+means <- car::Tapply(interlocks ~ nation, mean, data = Ornstein)
+sds <- car::Tapply(interlocks ~ nation, sd, data = Ornstein)
+
+plotrix::plotCI(
+  1:4,
+  means,
+  sds,
+  xaxt = "n",
+  xlab = "Nation of Control",
+  ylab = "interlocks",
+  main = "(b)",
+  ylim = range(Ornstein$interlocks)
+)
+lines(1:4, means)
+axis(1, at = 1:4, labels = names(means))
+```
+
+A mean/standard deviation plot for Ornstein’s interlocking-directorate data
+:::
+
+***
+
+- The `car::Tapply()` function adds a formula interface to the standard `base::tapply()` function. 
+- The first call to `car::Tapply()` computes the mean of interlocks for each level of nation, and the second computes within-nation standard deviations. 
+- The basic graph is drawn by `plotrix::plotCI()`. The first argument to this function specifies the coordinates on the horizontal axis, the second the coordinates on the vertical axis, and the third the vector of SDs. 
+- The standard graphical argument `xaxt="n"` suppresses the x-axis tick marks and labels, and the ylim argument is used here to match the vertical axis of panel (b) to that of panel (a). 
+- The `graphics::lines()` function joins the means, and the `graphics::axis()` function labels the horizontal axis with the names of the groups. 
+- The first argument to `graphics::axis()` specifies the side of the graph where the axis is to be drawn: `side = 1` (as in the example) is below the graph, 2 at the left, 3 above, and 4 at the right.
+
+::::
+:::::
+
+We discourage the use of bar charts for means because interpretation of the length of the bars, and therefore the visual metaphor of the graph, depends on whether or not a meaningful origin (zero) exists for the measured variable and whether or not the origin is included in the graph. 
+
+The error bars can also lead to misinterpretation, because neither standard-error bars nor standard-deviation bars are the appropriate measure of variation for comparing means between groups: They make no allowance or correction for multiple testing, among other potential problems.
+
+So is the mean/SD graph misleading because rather than showing the outliers, the graph inflates both the means and the SDs, particularly for Canada, and disguises the skewness that is obvious in the boxplots.
+
+
+
 :::
 
 ::::
 :::::
 
-***
+### More on the graphics::plot() command {#sec-chap03-2-3}
+
+- There are different option to call the plot() function:
+  - **Basic scatterplot**: `plot(y ~ x)` or `plot(x, y)` with x on the horizontal and y on the vertical axis. 
+  - **Including reference to data**: `plot(y ~ x, data = D)`,	`plot(D$x, D$y)`,	or	`with(D, plot(x, y)`.
+  - **Index plot**: `plot(x)` produces a scatterplot with x on the *vertical* axis and case numbers of the horizontal axis.
+  - **Boxplot**: `plot(y ~ factor)` is the same as `boxplot(y ~ factor)` using the standard `graphics::boxplot()` function and not  `car::Boxplot()`.
+  -**Model plots**: Depending on the type of object, for instance with a `lm`-object `plot(model-object)` draws several graphs that are commonly associated with linear regression models fit by least squares. In contrast, `plot(density(x))` draws a plot of the density estimate for the numeric variable x.
+  
+The `plot()` function can take many additional optional arguments that control the appearance of the graph, the labeling of its axes, the fonts used, and so on. We can set some of these options globally with the `par()` function or just for the current graph via arguments to the `plot()` function. But the parameter names are not very intuitive (e.g., `cex` (magnifying plotting text and symbols, or `crt` rotating of single characters etc.) 
+
+Plots can be built up sequentially by first creating a basic graph and then adding to it. 
+
+::: {.callout-note #nte-chap03-plot-vs.ggplot2}
+Generally I prefer the {**ggplot2**} over the base R `plot()` function. But it is important to be able to understand graphs developed with `graphics::plot()` as they appear quite often in examples and textbooks.
+:::
+
+## Examining multivariate data {#sec-chap03-3}
+
+Because we can only perceive objects in three spatial dimensions, examining multivariate data is intrinsically more difficult than examining univariate or bivariate data.
+
+### Three-dimensional plots {#sec-chap03-3-1}
+
+Perspective, motion, and illumination can convey a sense of depth, enabling us to examine data in three dimensions on a two-dimensional computer display. The most effective software of this kind allows the user to rotate the display, to mark points, and to plot surfaces such as regression mean functions. The {**rgl**} package (@rgl) links R to the [OpenGL](https://www.opengl.org/) threedimensional graphics library often used in animated films. The `car::scatter3d()` function {**rgl**} to provide a three-dimensional generalization of the `car::scatterplot()` function.
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-ID-text}
-: Numbered R Code Title
+:::::: {#cnj-chap03-3d-scatter}
+: Three-dimensional	scatterplot
 ::::::
 :::
 ::::{.my-r-code-container}
-::: {#lst-chaplisting-ID}
+::: {#lst-chap03-3d-scatter}
 ```{r}
-#| label: code-chunk-name
+#| label: 3d-scatter
+#| results: hold
 
 Duncan <- carData::Duncan
 
@@ -1344,13 +1782,211 @@ car::scatter3d(prestige	~ income + education,
                data = Duncan,	
                id = list(n = 3)
                )
+rgl::rglwidget()
 ```
 
-Listing title
+Three-dimensional scatterplot for Duncan’s occupational-prestige data, showing the least-squares regression plane. Three unusual points were labeled automatically.
+:::
+
+::: {.callout-warning #wrn-chap03-3d-xquartz}
+The graph with the proposed code of the book is in my macOS installation shown with an extra XQuartz window only inside RStudio.
+:::
+
+:::::{.my-solution}
+:::{.my-solution-header}
+:::::: {#sol-chap03-3d-rgl}
+: How to embed 3d graphics into Quarto
+::::::
+:::
+::::{.my-solution-container}
+I found a solution from a [StackOverflow post](https://stackoverflow.com/a/63597059/7322615) to embed the 3D-graph into the Quarto document. The post refers to a R Markdown document. Reading the comments I learned that there may be some glitches with Quarto. But luckily I did not experience these mentioned problems.
+
+My solution:
+
+- `options(rgl.useNULL = TRUE)` to prevent opening an extra window with Xquartz.
+- using `rgl::rglwidget()` after the code for the 3D-plot.
+
+(I did not try the option with calling `rgl::setupKnitr(autoprint = TRUE)` as the first line.)
+::::
+:::::
+
+
+The graph shows the least-squares regression plane for the regression of the variable on the vertical or y-axis, `prestige`, on the two variables on the horizontal (or x- and z-) axes, `income` and `education`; three cases (minister, conductor, and railroad engineer) are identified as the most unusual based on their `r glossary("Mahalanobis")` distances from the centroid (i.e., the point of means) of the three variables. The three-dimensional scatterplot can be rotated by left-clicking and dragging with the mouse. Color is used by default, with perspective, sophisticated lighting, translucency, and fog-based depth cueing.
+
+::::
+:::::
+
+The `car::scatter3d()` function 
+
+- can also plot other regression surfaces (e.g., nonparametric regressions), 
+- can identify points interactively and according to other criteria, 
+- can plot concentration ellipsoids, and 
+- can rotate the plot automatically. 
+
+Because three-dimensional dynamic graphs depend on color, perspective, motion, and so on for their effectiveness, it is important to read the help file for `car::scatter3d()` and to experiment with the examples therein. 
+
+:::::{.my-resource}
+:::{.my-resource-header}
+:::::: {#lem-chap03-3d-plots}
+: 3-dimensional graphic packages in R
+::::::
+:::
+::::{.my-resource-container}
+Besides several functions for 3D graphics in {**car**} there are also facilities in R for drawing static three-dimensional graphs:
+
+- `graphics::pers()` draws perspective plots of a surface over the x–y plane.
+- {**lattice**} has generic functions to draw static 3d scatter plot and surfaces `cloud()` and `wireframe()`
+
+{**rggobi**} is also mentionded and should link R to the [GGobi](http://ggobi.org/index.html) system for visualizing data in three and more dimensions. See also the [GGobi book](http://ggobi.org/book.html). But I believe that {**rggobi**} and the GGobi system is outdated, because {**rggobi**} is archived and not at CRAN anymore and links from the [GGobi page](http://ggobi.org/index.html) are rotten. But maybe [GGally](https://ggobi.github.io/ggally/) is the successor, because it is on the same GitHub account and the URL stats with "ggobi".
+::::
+:::::
+
+### Scatterplot matrices {#sec-chap03-3-2}
+
+`r glossary("ScatterplotMatrix", "Scatterplot matrices")` are graphical analogs of correlation matrices, displaying bivariate scatterplots of all pairs of numeric variables in a data set as a twodimensional graphical array. Because the panels of a scatterplot matrix are just two-dimensional scatterplots, each panel is the appropriate summary graph for the regression of the y-axis variable on the x-axis variable.
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap03-scatterplot-matrices}
+: Scatterplot Matrices
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### graphics::pairs
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-scatterplot-matrices-pairs}
+: Scatterplot matrices with `graphics::pairs()`
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-scatterplot-matrices-pairs}
+```{r}
+#| label: scatterplot-matrices-pairs
+
+graphics::pairs(
+  formula = ~ prestige + income + education + women,
+  data = carData::Prestige
+)
+```
+Scatterplot matrix for the Canadian occupational-prestige data plotted with `graphics::pairs()`
 :::
 
 ::::
 :::::
+
+
+###### lattice::splom()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-scatterplot-matrices-lattice-splom}
+: Scatterplot matrices with `lattice::splom()`
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-scatterplot-matrices-lattice-splom}  
+```{r}
+#| label: scatterplot-matrices-lattice-splom
+#| fig-width: 7
+#| fig-height: 7
+
+lattice::splom(
+  x = ~ Prestige[1:4],
+  data = carData::Prestige
+)
+```
+
+Scatterplot matrix for the Canadian occupational-prestige data plotted with `lattice::splom()`
+:::
+
+::::
+:::::
+
+###### car::scatterplotMatrix()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-scatterplot-matrices-car-scatterplotMatrix}
+: Scatterplot matrices with `car::scatterplotMatrix()`
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-scatterplot-matrices-car-scatterplotMatrix}
+```{r}
+#| label: scatterplot-matrices-car-scatterplotMatrix
+
+car::scatterplotMatrix( ~ prestige + income + education + women,
+                   data = carData::Prestige)
+```
+
+Scatterplot matrix for the Canadian occupational-prestige data plotted with `car::scatterplotMatrix()` with density estimates on the diagonal
+:::
+
+As in `car::scatterplot()` (@lst-chap03-scatterplot-car), mean and variability smoothers and a least-squares regression line are added by default to each panel of a scatterplot matrix and are controlled respectively by optional `smooth` and `regLine` arguments. (The `car::scatterplot()` and `car::scatterplotMatrix()` functions have many other arguments in common.)
+
+The `id` argument for marking points is also the same for both functions, except that interactive point-marking isn’t supported for scatterplot matrices. 
+
+The diagonal argument to car::scatterplotMatrix() controls the contents of the diagonal panels. ()
+
+
+::::
+:::::
+
+###### GGally::ggpairs()
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-scatterplot-matrices-GGally-ggpairs}
+: Scatterplot matrices with `GGally::ggpairs()
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-scatterplot-matrices-GGally-ggpairs}
+```{r}
+#| label: scatterplot-matrices-GGally-ggpairs
+
+carData::Prestige |> 
+  dplyr::select(4, 2, 1, 3) |> 
+  GGally::ggpairs()
+```
+
+Scatterplot matrix for the Canadian occupational-prestige data plotted with `GGally::ggpairs()` with density estimates on the diagonal and correlation coefficients on the upper half of the panel.
+:::
+
+In contrast to the `car::scatterplotMatrix()` function `GGally::ggpairs()` also shows the correlation coefficients instead of reverting x/y axis for the other half of the scatterplots.
+
+::::
+:::::
+
+:::::{.my-resource}
+:::{.my-resource-header}
+:::::: {#lem-chap03-GGally}
+: Scatterplot matrices with {**GGally**}
+::::::
+:::
+::::{.my-resource-container}
+
+- For theroetical background see "The Generalized Pairs Plot" [@emerson2013].
+- For practical usage: [Extra - Scatterplot Matrices With GGally](https://unc-libraries-data.github.io/R-Open-Labs/Extras/ggally/ggally.html) 
+- For the general function `GGally::ggmatrix()` for managing multiple plots in a matrix-like layout: [ggmatrix(): Plot matrix](https://ggobi.github.io/ggally/articles/ggmatrix.html)
+
+
+::::
+:::::
+
+
+
+:::
+
+::::
+:::::
+
+## Transforming data {#sec-chap03-4}
 
 
 ## Point labelling and identification {#sec-chap03-5}
