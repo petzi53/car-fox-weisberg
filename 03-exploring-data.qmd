@@ -36,7 +36,7 @@ Table of content (TOC)
     - Three-dimensional plots (@sec-chap03-3-1)
     - Scatterplot Matrices (@sec-chap03-3-2)
 - Transforming data (@sec-chap03-4)
-    - Logarithms
+    - Logarithms (@sec-chap03-4-1)
     - Power transformations
     - Transformations and EDA
     - Transforming resticted-range variables
@@ -1987,6 +1987,345 @@ In contrast to the `car::scatterplotMatrix()` function `GGally::ggpairs()` also 
 :::::
 
 ## Transforming data {#sec-chap03-4}
+
+### Logarithms {#sec-chap03-4-1}
+
+#### Introduction
+
+Logarithmic scale corresponds to viewing variation through relative or percentage changes, rather than through absolute changes. In many instances humans perceive relative changes rather than absolute changes, and so logarithmic scales are often theoretically appropriate as well as useful in practice.
+
+There are different types of logarithms (abbreviated as "logs"):
+
+- Natural logs have as base $e \approx 2.718$.
+- Common logs have as base 10.
+- Others, for instance with base 2.
+
+For many important aspects of statistical analyses, such as fitted values, tests, and model selection, the base of logarithms is inconsequential, in that identical conclusions will be reached regardless of the base selected. The interpretation of regression coefficients, however, may be simpler or more complicated depending on the base. For example, increasing the log base-2 of x by 1 implies doubling x, but increasing the natural log of x by 1 implies multiplying x by e.
+
+The	R	functions	`base::log()`,	`base::log10()`,	and	`base::log2()`	compute	the	natural,	base-10,	and base-2	logarithms,	respectively. Some examples with 7
+
+- Natural log = `log(7)` = `r log(7)`.
+- Common log = `log10(7)` = `r log10(7)`.
+- Base 2-log = `log2(7)` = `r log2(7)`.
+- General form = `log(x, base = exp(1))` or `logb(x, base = exp(1))` for instance: 
+  - `log10(7) = log(x = 7, base = 10) = log(7,10)` = `r log(x = 7, base = 10)`
+- The exponential function `base::exp()` computes powers of $e$, and thus `exp(1)` = $e$ = `r exp(1)`. 
+- Exponentiating is the inverse of taking logarithms, and so the equalities `x = exp(log(x))` = `log(exp(x))` and hold for any positive number x and base b, for instance 
+  - `exp(log(50))` = `r exp(log(50))`,
+  - `log(exp(50))` = `r log(exp(50))`,
+  - `10^(log10(50))` = `r 10^(log10(50))`
+  - `log10(10^50)` = `r log10(10^50)`
+
+The various log functions in R can be applied to numbers, numeric vectors, numeric matrices, and numeric data frames. They return 
+
+- NA for missing values, 
+- NaN (Not a Number) for negative values, and 
+- -Inf (-$\infty$) for zeros.
+
+::: {.callout-important #imp-chap03-log-rule}
+##### A rule for using logarithms
+
+For any strictly positive variable with no fixed upper bound whose values cover two or more orders of magnitude (that is, powers of 10), replacing the variable by its log is likely to be helpful. 
+
+Conversely, if the range of a variable is considerably less than an order of magnitude, then transformation by logarithms, or indeed any simple transformation, is unlikely to make much of a difference. 
+
+Variables that are intermediate in range may or may not benefit from a log or other transformation.
+:::
+
+#### Practice
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap03-log-transformations}
+: Log transformations
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### car (Ornstein)
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-car-assets-ornstein}
+: Distribution of assets in the Ornstein data set
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-car-assets-ornstein}
+```{r}
+#| label: car-assets-ornstein
+#| results: hold
+#| fig-height: 5
+
+graphics::par(mfrow = c(1, 2), mar = c(5, 4, 6, 2) + 0.1)
+
+car::densityPlot( ~ assets,
+             data = carData::Ornstein,
+             xlab = "assets",
+             main = "(a)"
+             )
+car::densityPlot(
+          ~ base::log10(assets),
+          data = carData::Ornstein,
+          adjust = 0.65,
+          xlab = base::expression(log[10] ~ "(assets)"),
+          main = "(b)"
+          )
+car::basicPowerAxis(
+      0,
+      base = 10,
+      side = "above",
+      at = 10 ^ (2:5),
+      axis.title = ""
+      )
+```
+Distribution of assets (millions of dollars) in the Ornstein data set (a) before and (b) after log transformation.
+:::
+
+***
+
+- The command `graphics::par(mfrow=c (1, 2))` sets the global graphics parameter `mfrow`, which divides the graphics window into an array of subplots with one row and two columns. 
+- We also set the `mar` (margins) graphics parameter to increase space at the top of the plots and 
+- call the `car::basicPowerAxis()` function to draw an additional horizontal axis at the top of panel (b) showing the original units of assets. 
+- The `xlab` argument in the second command is set equal to an expression, allowing us to typeset 10 as the subscript of log.
+
+::::
+:::::
+
+###### ggplot2 (Ornstein)
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-ggplot2-assets-ornstein}
+: Distribution of assets in the Ornstein data set
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-ggplot2-assets-ornstein}
+```{r}
+#| label: ggplot2-assets-ornstein
+#| fig-height: 3
+
+gg1 <- carData::Ornstein |> 
+  ggplot2::ggplot(
+    ggplot2::aes(x = assets)
+  ) +
+  ggplot2::geom_density() +
+  ggplot2::ylab("Density") +
+  ggplot2::geom_rug() +
+  ggplot2::ggtitle("(a)") +
+  ggplot2::theme_bw()
+
+gg2 <- carData::Ornstein |> 
+  ggplot2::ggplot(
+    ggplot2::aes(x = base::log10(assets))
+  ) +
+  ggplot2::geom_density(
+    adjust = 0.65
+  ) +
+  ggplot2::labs(
+    y = "Density",
+    x = base::expression(log[10](assets))
+  ) +
+  ggplot2::geom_rug() +
+  ggplot2::scale_x_continuous(
+    sec.axis = ggplot2::sec_axis(
+      transform = ~ 10^.,
+      breaks = c(100, 1000, 1e+5),
+      labels = \(x) ifelse(x <= 1000, x, scales::scientific(x))
+      )
+    ) +
+  ggplot2::theme_bw()
+
+
+gridExtra::grid.arrange(gg1, gg2, ncol = 2)
+
+```
+
+Distribution of assets (millions of dollars) in the Ornstein data set (a) before and (b) after log transformation.
+:::
+
+***
+ @lst-chap03-ggplot2-assets-ornstein is my try to replicate Figure 3.15 with {**ggplot2**}. At first I didn't succeed because I used as formula for the transformation `.^10` instead of `10^.`. I have to confess that this was not a typo as the [answer in SO](https://stackoverflow.com/a/78620195/7322615) supposed, but I didn't understand what the formula effectively meant.
+
+
+::::
+:::::
+
+
+###### car (UN)
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-car-infant-mortality-un}
+: Infant mortality rate and gross domestic product per capita, from the UN data set, produced with {car}
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-car-infant-mortality-un}  
+```{r}
+#| label: car-infant-mortality-un
+
+car::scatterplot(
+  infantMortality ~ ppgdp,
+  data = carData::UN,
+  xlab = "GDP per Capita",
+  ylab = "Infant Mortality Rate (per 1000 births)",
+  main = "(a)"
+)
+
+car::scatterplot(
+  infantMortality ~ ppgdp,
+  data = carData::UN,
+  xlab = "GDP per capita",
+  ylab = "Infant Mortality Rate (per 1000 births)",
+  main = "(b)",
+  log = "xy",
+  id = list(n = 3)
+)
+
+
+```
+
+Infant mortality rate and gross domestic product per capita, from the UN data set: (a) untransformed data and (b) both variables log-transformed, using the {car} package.
+:::
+
+***
+The UN data set in the {**carData**} package, for example, contains data obtained from the United Nations on several characteristics of 213 countries and other geographic areas recognized by the UN around 2010; the data set includes the infant mortality rate (`infantMortality`, infant deaths per 1,000 live births) and the per-capita gross domestic product (`ppgdp`, in U.S. dollars) of most of the countries. 
+
+There are only 193 countries in the UN data set with both variables observed. The R commands used here automatically reduce the data to the 193 fully observed cases on these two variables.
+
+::::
+:::::
+
+###### ggplot2 (UN)
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-ggplo2-infant-mortality-un}
+: Infant mortality rate and gross domestic product per capita, from the UN data set, produced with {ggplot2}
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-ggplo2-infant-mortality-un}
+```{r}
+#| label: ggplo2-infant-mortality-un
+#| fig-height: 10
+
+gg1_un <- carData::UN |> 
+  ggplot2::ggplot(
+    ggplot2::aes(
+      x = ppgdp,
+      y = infantMortality
+    ),
+  ) +
+  ggplot2::geom_point(na.rm = TRUE) +
+  ggplot2::geom_smooth(
+    formula = y ~ x,
+    na.rm = TRUE,
+    se = TRUE,
+    method = "lm"
+  ) +
+    ggplot2::geom_smooth(
+    formula = y ~ x,
+    na.rm = TRUE,
+    se = TRUE,
+    method = "loess"
+  ) +
+  ggplot2::labs(    title = "(a)") +
+  ggplot2::xlab("GDP per Capita") +
+  ggplot2::ylab("Infant Mortality Rate (per 1000 births)") +
+  ggplot2::scale_y_continuous(
+    limits = c(0, 120), 
+    breaks = seq(0, 120, by = 20)
+    ) +
+  ggplot2::scale_x_continuous(
+    limits = c(0, 1e+05), 
+    breaks = seq(0, 1e+05, by = 2e+04)
+    )
+
+gg2_un <- carData::UN |> 
+  ggplot2::ggplot(
+    ggplot2::aes(
+      x = log10(ppgdp),
+      y = log10(infantMortality)
+    ),
+  ) +
+  ggplot2::geom_point(na.rm = TRUE) +
+  ggplot2::geom_smooth(
+    formula = y ~ x,
+    na.rm = TRUE,
+    se = TRUE,
+    method = "lm"
+  ) +
+    ggplot2::geom_smooth(
+    formula = y ~ x,
+    na.rm = TRUE,
+    se = TRUE,
+    method = "loess"
+  ) +
+  ggplot2::labs(title = "(b)") +
+  ggplot2::xlab("GDP per Capita") +
+  ggplot2::ylab("Infant Mortality Rate (per 1000 births)") +
+  ggplot2::theme(
+    axis.title.y.right = ggplot2::element_blank(),
+    axis.ticks.y.right = ggplot2::element_blank()
+  ) +
+  ggplot2::scale_y_continuous(
+    position = "right",
+    breaks = log10(c(2, 5, 10, 20, 50, 100)),
+    labels = NULL,
+    # breaks = c(.3, .7, 1, 1.3, 1.7, 2),
+    sec.axis = ggplot2::sec_axis(
+      name = ggplot2::derive(),
+      transform = ~ 10^.,
+      breaks = c(2, 5, 10, 20, 50, 100)
+    )
+  ) +
+  ggplot2::scale_x_continuous(
+    position = "top",
+    breaks = log10(c(100, 500, 1000, 5000, 10000, 50000, 100000)),
+    labels = NULL,
+    sec.axis = ggplot2::sec_axis(
+      name = ggplot2::derive(),
+      transform = ~ 10^.,
+      breaks = c(100, 500, 1000, 5000, 10000, 50000, 100000)
+    )
+  )
+
+gg1 <- ggExtra::ggMarginal(gg1_un, type = "boxplot")
+gg2 <- ggExtra::ggMarginal(gg2_un, type = "boxplot")
+
+gridExtra::grid.arrange(gg1, gg2, nrow = 2)
+
+```
+Infant mortality rate and gross domestic product per capita, from the UN data set: (a) untransformed data and (b) both variables log-transformed, using {ggplot2}
+:::
+
+With the exception of showing the most interesting points is this my replication of Figure 3.16.
+
+This was maninly an exercise in adapting the axis. I learned several things:
+
+- adding a second axis with transformed values
+- adapting axis title and ticks
+- setting breaks and labels
+- positioning axes
+- learning about the many detailed parameters of the `ggplot2::theme()` function
+
+::::
+:::::
+
+
+
+
+:::
+
+::::
+:::::
+
+***
 
 
 ## Point labelling and identification {#sec-chap03-5}
