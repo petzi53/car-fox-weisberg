@@ -44,18 +44,18 @@ Chapter section list
 
 ## R Basics {#sec-chap01-2}
 
-- A novel feature of the R help system is the facility it provides to execute most examples in the help pages via the example() command: 
-$$example ('log')$$
+- A novel feature of the R help system is the facility it provides to execute most examples in the help pages via the `utils::example()` command: 
+$$example('log')$$
 
 - A quick way to determine the arguments of an R function is to use the `args()` function:
-$$args ('log')$$
+$$args('log')$$
 
 ::: {.callout-warning #wrn-help-generig-functions}
-The `args()` and `help()` functions may not be very helpful with generic functions.
+`args()` and `help()` functions may not be very helpful with generic functions.
 :::
 
 - For the full set of reserved symbols in R, see 
-$$help ('Reserved')$$
+$$help('Reserved')$$
 
 - There are two types of logical operators: 
     - vectorizes: $\&$ and $|$ vectorized resp. 

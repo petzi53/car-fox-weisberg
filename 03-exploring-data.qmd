@@ -37,10 +37,10 @@ Table of content (TOC)
     - Scatterplot Matrices (@sec-chap03-3-2)
 - Transforming data (@sec-chap03-4)
     - Logarithms (@sec-chap03-4-1)
-    - Power transformations
-    - Transformations and EDA
-    - Transforming resticted-range variables
-    - Other transformations
+    - Power transformations (@sec-chap03-4-2)
+    - Transformations and Exploarative Data Analysis (EDA) {@sec-chap03-4-3}
+    - Transforming resticted-range variables (@sec-chap03-4-4)
+    - Other transformations (@sec-chap03-4-5)
 - Point labelling and identification (@sec-chap03-5)
     - The identify() function (@sec-chap03-5-1)
     - Automatic point labelling with car::showLabels() (@sec-chap03-5-2)
@@ -596,7 +596,7 @@ The argument `df = 3` to `car::qqPlot()` is passed by it to the `stats::dchisq()
 
 The `car::qqPlot()` function can be used to plot the data against any reference distribution for which there are `r glossary("quantile")` and density function in R. You have simply to specify the root word for the distribution. For	example, the root	for	the	normal distribution is "norm", with	density	function	`stats::dnorm()` and quantile function `stats::qnorm()`. See also [chapter 8](https://rstudio.github.io/r-manuals/r-intro/Probability-distributions.html) of the the Quarto manual of [An Introduction to R](https://rstudio.github.io/r-manuals/r-intro/). [@rcoreteam2024]
 
-![Probability functions in R](img/r-probability-functions.png){#fig-03-1 
+![Probability functions in R](img/chap03-r-probability-functions.png){#fig-03-1 
 fig-alt='List of probability functions in R as a two part table with five columns: It shows the name of the "Distribution" (column 1), such as "normal" or "chi-square", the "Design or Mass Function" (column 2), such as "dnorm(x, mean = 0, sd = 1)" or "qchisq(n, df)", the "Quantile Function" (column 3), such as "qnorm(p, mean = 0, sd = 1)" the "Distribution Function" column 4), such as "pnorm(q, mean = 0, sd = 1)" or "pchisq(q, df)" and the "Random Number Function" (column 5), such as "rnorm(n, mean = 0, sd = 1)" or "rchisq(n, df)"' fig-align="center" 
 width="70%"}
 
@@ -1465,7 +1465,7 @@ Using the `r glossary("p-value")` of .001 we would get 5 (instead of 4) points l
 ::::{.my-r-code-container}
 ::: {#lst-chaplisting-ID}
 ```{r}
-#| label: code-chunk-name
+#| label: function-missing
 #| eval: false
 
 my_find_boxplot_outlier <- function(df) {
@@ -1992,25 +1992,37 @@ In contrast to the `car::scatterplotMatrix()` function `GGally::ggpairs()` also 
 
 #### Introduction
 
-Logarithmic scale corresponds to viewing variation through relative or percentage changes, rather than through absolute changes. In many instances humans perceive relative changes rather than absolute changes, and so logarithmic scales are often theoretically appropriate as well as useful in practice.
+Logarithmic scale corresponds to viewing variation through relative or percentage changes, rather than through absolute changes. In many instances humans perceive relative changes rather than absolute changes, and so logarithmic scales are often theoretically appropriate as well as useful in practice [@varshney2013].
 
-There are different types of logarithms (abbreviated as "logs"):
+- The log of a positive number x to the base b (where b is also a positive number), written $log_{b}x$, is the exponent to which b must be raised to produce x. That is, if $y = log_{b}x$, then $b_{y} = x$. 
+- Thus, for example, 
+  - $log_{10} 100 = 2$ because $10^2 = 100$; 
+  - $log_{10} 0.01 = −2$ because $10^{−2} = 1/10^2 = 0.01$; 
+  - $log_{2} 8 = 3$ because $2^3 = 8$; and 
+  - $log_{2} 1/8 = −3$ because $2^{−3} = 1/8$. 
+- So-called **natural logs** use the base $e \approx 2.71828$. 
+- Thus, for example, $log_{e} e = 1$ because $e^1 = e$. 
+- Logs to the bases 2 and 10 are often used in data analysis, because powers of 2 and 10 are familiar. Logs to the base 10 are called **common logs**.
+- Regardless of the base b, $log_{b} 1 = 0$, because $b^0 = 1$. 
+- Regardless of the base, the log of zero is undefined (or taken as log 0 = −∞), and the logs of negative numbers are undefined.
 
-- Natural logs have as base $e \approx 2.718$.
-- Common logs have as base 10.
-- Others, for instance with base 2.
+Summarizing we can say that there are different types of logarithms (abbreviated as "logs"):
 
-For many important aspects of statistical analyses, such as fitted values, tests, and model selection, the base of logarithms is inconsequential, in that identical conclusions will be reached regardless of the base selected. The interpretation of regression coefficients, however, may be simpler or more complicated depending on the base. For example, increasing the log base-2 of x by 1 implies doubling x, but increasing the natural log of x by 1 implies multiplying x by e.
+- **Natural logs** have as base $e \approx 2.718$.
+- **Common logs** have as base 10.
+- **Others**, for instance with base 2.
 
-The	R	functions	`base::log()`,	`base::log10()`,	and	`base::log2()`	compute	the	natural,	base-10,	and base-2	logarithms,	respectively. Some examples with 7
+The	R	functions	`base::log()`,	`base::log10()`,	and	`base::log2()`	compute	the	natural,	base-10,	and base-2	logarithms,	respectively. 
+
+Some examples with 7
 
 - Natural log = `log(7)` = `r log(7)`.
 - Common log = `log10(7)` = `r log10(7)`.
 - Base 2-log = `log2(7)` = `r log2(7)`.
 - General form = `log(x, base = exp(1))` or `logb(x, base = exp(1))` for instance: 
   - `log10(7) = log(x = 7, base = 10) = log(7,10)` = `r log(x = 7, base = 10)`
-- The exponential function `base::exp()` computes powers of $e$, and thus `exp(1)` = $e$ = `r exp(1)`. 
-- Exponentiating is the inverse of taking logarithms, and so the equalities `x = exp(log(x))` = `log(exp(x))` and hold for any positive number x and base b, for instance 
+- The **exponential function** `base::exp()` computes powers of $e$, and thus `exp(1)` = $e$ = `r exp(1)`. 
+- Exponentiating is the inverse of taking logarithms, and so the equalities `x = exp(log(x))` = `log(exp(x))` hold for any positive number x and base b, for instance 
   - `exp(log(50))` = `r exp(log(50))`,
   - `log(exp(50))` = `r log(exp(50))`,
   - `10^(log10(50))` = `r 10^(log10(50))`
@@ -2025,11 +2037,17 @@ The various log functions in R can be applied to numbers, numeric vectors, numer
 ::: {.callout-important #imp-chap03-log-rule}
 ##### A rule for using logarithms
 
+**Although it isn’t necessarily true that linearizing transformations also stabilize variation and make marginal distributions more symmetric, in practice, this is often the case.**
+
 For any strictly positive variable with no fixed upper bound whose values cover two or more orders of magnitude (that is, powers of 10), replacing the variable by its log is likely to be helpful. 
 
 Conversely, if the range of a variable is considerably less than an order of magnitude, then transformation by logarithms, or indeed any simple transformation, is unlikely to make much of a difference. 
 
 Variables that are intermediate in range may or may not benefit from a log or other transformation.
+
+For many important aspects of statistical analyses, such as fitted values, tests, and model selection, **the base of logarithms is inconsequential**, in that identical conclusions will be reached regardless of the base selected. 
+
+The interpretation of regression coefficients, however, may be simpler or more complicated depending on the base. For example, increasing the log base-2 of x by 1 implies doubling x, but increasing the natural log of x by 1 implies multiplying x by e.
 :::
 
 #### Practice
@@ -2197,6 +2215,11 @@ The UN data set in the {**carData**} package, for example, contains data obtaine
 
 There are only 193 countries in the UN data set with both variables observed. The R commands used here automatically reduce the data to the 193 fully observed cases on these two variables.
 
+***
+
+- The argument `log="xy"`, which also works with `graphics::plot()` and `car::scatterplotMatrix()`, uses logs on both axes but labels the axes in the units of the original variables.
+- The optional argument `id=list(n=3)` causes the three most “unusual” points according to the Mahalanobis distances of the data points to the means of the two variables to be labeled with their row names. These are three African countries that have relatively large infant mortality rates for their levels of percapita GDP. The names of the identified points and their row numbers in the data set are printed in the R console.
+
 ::::
 :::::
 
@@ -2204,14 +2227,14 @@ There are only 193 countries in the UN data set with both variables observed. Th
 
 :::::{.my-r-code}
 :::{.my-r-code-header}
-:::::: {#cnj-chap03-ggplo2-infant-mortality-un}
+:::::: {#cnj-chap03-ggplot2-infant-mortality-un}
 : Infant mortality rate and gross domestic product per capita, from the UN data set, produced with {ggplot2}
 ::::::
 :::
 ::::{.my-r-code-container}
-::: {#lst-chap03-ggplo2-infant-mortality-un}
+::: {#lst-chap03-ggplot2-infant-mortality-un}
 ```{r}
-#| label: ggplo2-infant-mortality-un
+#| label: ggplot2-infant-mortality-un
 #| fig-height: 10
 
 gg1_un <- carData::UN |> 
@@ -2249,8 +2272,8 @@ gg1_un <- carData::UN |>
 gg2_un <- carData::UN |> 
   ggplot2::ggplot(
     ggplot2::aes(
-      x = log10(ppgdp),
-      y = log10(infantMortality)
+      x = log(ppgdp),
+      y = log(infantMortality)
     ),
   ) +
   ggplot2::geom_point(na.rm = TRUE) +
@@ -2275,25 +2298,26 @@ gg2_un <- carData::UN |>
   ) +
   ggplot2::scale_y_continuous(
     position = "right",
-    breaks = log10(c(2, 5, 10, 20, 50, 100)),
+    breaks = base::log(c(2, 5, 10, 20, 50, 100)),
     labels = NULL,
-    # breaks = c(.3, .7, 1, 1.3, 1.7, 2),
     sec.axis = ggplot2::sec_axis(
       name = ggplot2::derive(),
-      transform = ~ 10^.,
+      transform = ~ base::exp(1)^ .,
       breaks = c(2, 5, 10, 20, 50, 100)
     )
-  ) +
+  )  +
   ggplot2::scale_x_continuous(
     position = "top",
-    breaks = log10(c(100, 500, 1000, 5000, 10000, 50000, 100000)),
+    breaks = log(c(100, 500, 1000, 5000, 10000, 50000, 100000)),
     labels = NULL,
     sec.axis = ggplot2::sec_axis(
       name = ggplot2::derive(),
-      transform = ~ 10^.,
+      transform = ~ exp(1)^ .,
       breaks = c(100, 500, 1000, 5000, 10000, 50000, 100000)
     )
   )
+
+
 
 gg1 <- ggExtra::ggMarginal(gg1_un, type = "boxplot")
 gg2 <- ggExtra::ggMarginal(gg2_un, type = "boxplot")
@@ -2304,9 +2328,11 @@ gridExtra::grid.arrange(gg1, gg2, nrow = 2)
 Infant mortality rate and gross domestic product per capita, from the UN data set: (a) untransformed data and (b) both variables log-transformed, using {ggplot2}
 :::
 
-With the exception of showing the most interesting points is this my replication of Figure 3.16.
+***
 
-This was maninly an exercise in adapting the axis. I learned several things:
+With the exception of showing the most interesting points is this my replication of Figure 3.16 or here in my notes of @lst-chap03-car-infant-mortality-un.
+
+To replicate Figure 2.16 I had to learn new things. Most of them was maninly an exercise in adapting the axes. I learned several things:
 
 - adding a second axis with transformed values
 - adapting axis title and ticks
@@ -2317,6 +2343,460 @@ This was maninly an exercise in adapting the axis. I learned several things:
 ::::
 :::::
 
+###### fit model
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-fit-model-log-data}
+: Fitting the linear regression model to the log-transformed data
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-fit-model-log-data}
+```{r}
+#| label: fit-model-log-data
+
+car::brief(
+  stats::lm(
+    base::log(infantMortality) ~ base::log(ppgdp), 
+    data = carData::UN)
+  )
+
+```
+
+Summary	of the log-data	fitted model
+:::
+
+***
+
+Larger values of `ppgdp` are associated with smaller values of `infantMortality`, as indicated by the negative sign of the coefficient for `log(ppgdp)`.
+
+
+
+::::
+:::::
+
+Take for instance a hypothetical increase in `ppgdp` in a country of 1%, to $1.01 \times ppgdp$, the expected `infantMortality` would be (approximately):
+
+$$
+\alpha_{0}(1.01 \times ppgdp)^{\beta_{1}} = 1.01^{\beta_{1}} \times \alpha_{0}(ppgdp^{\beta_{1}})
+$$
+
+For the estimated slope $b^1 = −0.617$, we have $1.01−0.617 = 0.994%, and so the estimated infantMortality would be 0.6% smaller — a substantial amount.
+
+:::
+
+::::
+:::::
+
+### Power transformation {#sec-chap03-4-2}
+
+#### Introduction
+
+Transformations have four different goals:
+
+1. **Approximating linearity** as demonstrated in @lst-chap03-car-infant-mortality-un and @lst-chap03-ggplot2-infant-mortality-un. Particularly in multiple linear regression, data with approximately linear mean functions for all 2D plots of the response and regressors, and among the regressors, are very useful.
+2. **Smoothing variablity**, again seen in @lst-chap03-car-infant-mortality-un and @lst-chap03-ggplot2-infant-mortality-un.
+3. **Inducing a simpler structure** to get a better understanding of the model. See later examples.
+4. **Approaching normality** so that the transformed data are as close to normally distributed as possible. This can be useful for statistical methods such as factor analysis that depend on multivariate normality for their justification.
+
+**Simple Power Transformation**
+
+We define a simple power transformation as the replacement of a variable x by $x^λ$, where, in the current general context, x can be either a response variable or a numeric predictor variable, and where λ is a power to be selected based on the data, usually in the range [−1, 1] but occasionally in the range [−3, 3]. The simple power transformations require that all elements of x be strictly positive, x > 0.
+
+This use of power transformations is distinct from **polynomial regression**. In polynomial regression, the highest-order power, say p, is a small positive integer, usually 2 or 3, and rather than replacing a predictor x by $x^p$, we also include all lower-order powers of x in the regression model. For example, for p = 3, we would include the regressors x, $x^2$, and $x^3$ . Polynomial regression in R can be accomplished with the `stats::poly()` function.
+
+The power $λ = −1$ is the **reciprocal or inverse transformation**, 1/x. If, for example, x represents the time to completion of a task (e.g., in hours), then $x^{−1}$ represents the rate of completion (tasks completed per hour). The power λ = 1/3 can convert a volume measure (e.g., in cubic meters) to a linear measure (meters), which may be appropriate in some problems. Likewise, λ= 3 can convert a linear measure (meters) to a volume (cubic meters); λ= 1/2, an area (square meters) to a linear measure (meters); and λ = 2, a linear measure (meters) to an area (square meters).
+
+**Scaled Power Transformations**
+
+
+
+:::::{.my-theorem}
+:::{.my-theorem-header}
+:::::: {#thm-chap03-box-cox-transformation}
+: Scaled Power Transformation by Box & Cox
+::::::
+:::
+::::{.my-theorem-container}
+$$
+\begin{align*}
+T_{BC}(x, \lambda) = x^{(\lambda)} =& \\
+=& \frac{x^{\lambda}-1}{\lambda} \text{when }\lambda \ne 0 \\
+=& log(x) \text{when } \lambda = 0
+\end{align*}
+$$ {#eq-chap03-box-cox-transformation}
+
+***
+
+BC stands for Box-Cox power transformation [@box1964].
+
+- For $\lambda \ne 0$, the scaled power transformations are essentially $x^{\lambda}$, because the scaled-power family only subtracts 1 and divides by the constant $\lambda$. 
+- One can show that as $\lambda$ approaches zero, $T_{BC}(x, \lambda)$ approaches log(x), and so the scaled-power family includes the log transformation when λ = 0, even though the literal zeroth power, $x^0 = 1$, is useless as a transformation. 
+- Also, the scaled power $T_{BC}(x, \lambda)$ preserves the order of the x-values, while the basic powers preserve order only when λ is positive and reverse the order of x when λ is negative.
+::::
+:::::
+
+The scaled power family is generally called the **Box-Cox power family**. Usual practice is to use the Box-Cox power family to estimate the λ parameter of the transformation, but then to use in statistical modeling the equivalent simple power xλ if the selected value of λ is far from zero, and log(x) for λ close to zero. This estimation method is similar to the method of maximum likelihood.
+
+#### Practice
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-chap03-power-transformations}
+: Power transformations
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### p1
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-power-transformation-infant-mortality-un}
+: Demonstration of a transformation of the Box-Cox power family
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-power-transformation-infant-mortality-un}
+```{r}
+#| label: power-transformation-infant-mortality-un
+
+p1 <- car::powerTransform(
+  infantMortality ~ 1, 
+  data = carData::UN, 
+  family = "bcPower")
+summary(p1)
+
+```
+
+Estimating a normalizing transformation of `infantMortality` in the UN data
+
+:::
+
+***
+
+- The first argument to `car::powerTransform()` is a formula, with the variable to be transformed on the left of the ~ symbol and the variables, if any, for conditioning on the right. In this instance, there are no conditioning variables, indicated by 1 on the right, so we are simply transforming `infantMortality` unconditionally.
+- The argument `family = "bcPower"`, to specify the Box-Cox power family, isn’t strictly necessary because "bcPower" is the default.
+- Other transformations are: "bcnPower" for a two-parameter modification of the Box-Cox family that allows negative responses [@hawkins2017], and the "yjPower" family [@yeo2000], another modifiation of the Box-Cox family that allows a few negative values. 
+- All three families are documented at [Box-Cox, Box-Cox with Negatives Allowed, Yeo-Johnson and Basic Power Transformations](https://search.r-project.org/CRAN/refmans/car/html/bcPower.html).
+
+::::
+:::::
+
+The first part of the output gives information about the estimated power. 
+
+- **Est Power**: The value under "Est Power" is the point estimate found using the procedure suggested by Box and Cox. 
+- **Rounded Pwr**: The second value, labeled "Rounded Pwr", is a rounded version of the estimate. 
+- **Wald Lwr Bnd / Wald Upr Bnd**: The remaining two values are the bounds of the 95% Wald confidence interval for λ. The confidence interval includes $\lambda = 0$, which in turn suggests using a log-transform because of our preference for simple transformations. In the example, zero is included in the confidence interval, suggesting the use in practice of the log transformation.
+- **Tests**: The remainder of the output provides tests concerning λ, first testing `H0: λ= 0` for the log transformation and then testing `H0: λ= 1`, which is equivalent to no transformation. The test for the log transformation has a very large p-value, indicating that the log transformation is consistent with the data, while the tiny p-value for λ = 1 indicates that leaving `infantMortality` untransformed is inconsistent with the goal of making the variable normally distributed.
+
+
+###### λ = 0.5
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-test-transform-un}
+: Test UN data for trasnformation $\lambda = .5$
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-test-transform-un}  
+```{r}
+#| label: test-transform-un 
+
+car::testTransform(p1, lambda = 1/2)
+```
+
+Test for another value of $\lambda$, in this case $\lambda = .5$
+:::
+
+::::
+:::::
+
+The very small `r glossary("p-value")` for the test of λ = 1/2 suggests that we shouldn’t use this transformation.
+
+###### add variable
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-add-transformed-variable}
+: Add transformed variable to data set
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-add-transformed-variable}
+```{r}
+#| label: add-transformed-variable
+
+UN <- transform(
+  carData::UN, 
+  infantMortality.tran = infantMortality^p1$lambda
+  )
+
+skimr::skim(UN)
+```
+
+Add transformed variable to data set
+:::
+
+***
+
+- The updated UN data set contains all the variables in the original data set plus an additional variable called `infantMortality.tran`. 
+- The value of `p1$lambda` in `infantMortality^p1$lambda` is the estimated power transformation parameter.
+
+::::
+:::::
+
+###### p2
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-multivariate-transformation-prestige-data}
+: Mutivariate transformation
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-multivariate-transformation-prestige-data}
+```{r}
+#| label: multivariate-transformation-prestige-data
+
+base::summary(p2 <- car::powerTransform(
+  base::cbind(income, education) ~ 1,
+  data = carData::Prestige,
+  family = "bcPower"
+  )
+)
+```
+
+Multivariate transformation of `income` and `education` toward bivariate normality
+:::
+
+***
+
+Let $λ = (λ1, λ2)$ represent the vector of power transformation parameters. Looking at the likelihood-ratio tests, untransformed variables, corresponding to $λ = (1, 1)′$, and all logarithms, corresponding to $λ = (0, 0)′$, both have small p-values, implying that neither of these choices is appropriate. 
+
+The suggested procedure is to use the rounded values of the power parameters (1/3, 1) in further work.
+
+::::
+:::::
+
+The multivariate extension of Box-Cox power transformations was provided by Velilla [-@velilla1993] and is also implemented by the `car::powerTransform()` function.
+
+A useful early step in any regression analysis is considering transformations toward linearity and normality of all the quantitative predictors, without at this point including the response.
+
+###### λ = 1/3 and (1, 0)
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-test-transform-prestige}
+: Test UN data for transformation $\lambda = .33$ and log (0, 1)
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-test-transform-prestige}
+```{r}
+#| label: test-transform-prestige
+#| results: hold
+
+glue::glue(" ")
+glue::glue("############################################################")
+glue::glue("test transformation with lambda = 0.33")
+car::testTransform(p2, lambda = c(1/3, 1))
+
+glue::glue(" ")
+glue::glue("############################################################")
+glue::glue("test log transformation with lambda = (0, 1)")
+
+car::testTransform(p2, lambda = c(0, 1))
+```
+
+Test UN data for transformation $\lambda = .33$ and log (0, 1)
+:::
+
+***
+
+The nominal p-value is about 0.3, but interpreting this result is complicated by the use of the observed data to select the null hypothesis. As with a one dimensional transformation, the value of estimation and of the rounded estimates are stored respectively in `p2$lambda` (p2[["lambda"]][["income"]], p2[["lambda"]][["education"]] = 0.262, 0.424) and `p2$roundlam` (p2[["roundlam"]][["income"]], p2[["roundlam"]][["education"]] = 0.33, 1).
+
+Because we generally prefer logarithms we have also tried $\lambda = (0, 1)$.
+
+Interpretation of the p-values is again difficult because the data were used to generate the hypothesis.
+
+
+
+::::
+:::::
+
+The relatively small p-value suggests that the choice of $λ = (1/3, 1)$ is to be preferred to $λ = (0, 1)$.
+
+###### log
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-log-transformation-scatterplot}
+: Log transformation of `income`
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-log-transformation-scatterplot}
+```{r}
+#| label: log-transformation-scatterplot
+
+car::scatterplotMatrix(
+  ~ prestige + log(income) + education + women,
+  smooth = list(span = 0.7),
+  data = carData::Prestige
+)
+
+```
+
+Scatterplot matrix for variables in the Prestige data set, with log-transformed `income.`
+:::
+
+***
+The panels in this scatterplot matrix show little nonlinearity, although in the plot of `prestige` versus `log(income)` the two occupations with the lowest incomes appear not to fit the pattern in the rest of the data.
+
+::::
+:::::
+
+###### cube
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-cube-transformation-scatterplot}
+: Cube transformation of `income`
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-cube-transformation-scatterplot}
+```{r}
+#| label: cube-transformation-scatterplot
+
+car::scatterplotMatrix(
+  ~ prestige + income^3 + education + women,
+  smooth = list(span = 0.7),
+  data = carData::Prestige
+)
+
+```
+
+Scatterplot matrix for variables in the Prestige data set, with cube-transformed `income.`
+:::
+
+
+::::
+:::::
+
+###### p3
+
+The variable type in the Prestige data set is a factor that divides occupations into blue-collar ("bc"), white-collar ("wc"), and professional/managerial ("prof") categories. Examination of the data suggests that the distributions of the numeric variables in the data set vary by occupational type. We can then seek transformations of the numeric variables that make their within-group distributions as close as possible to multivariate normal with common covariance structure (i.e., similar variances and covariances within types of occupations).
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-prestige-types}
+: Conditioning on groups
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-prestige-types}
+```{r}
+#| label: prestige-types
+
+summary(p3 <- car::powerTransform(cbind(income, education) ~ type,
+                             data = carData::Prestige))
+
+car::testTransform(p3, c(0, 1))
+```
+
+Listing title
+:::
+
+::::
+:::::
+
+###### cond
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-scatterplot-cond-types}
+: Revised scatterplot matrix
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-scatterplot-cond-types}
+```{r}
+#| label: scatterplot-cond-types
+
+car::scatterplotMatrix(
+  ~ prestige + log(income) + education + women | type,
+  data = carData::Prestige,
+  smooth = FALSE,
+  ellipse = list(levels = 0.5),
+  legend = list(coords = "center")
+)
+```
+
+Scatterplot matrix with log-transformed income and conditioning on type of occupation, for the Prestige data set. The ellipse in each panel is a 50% concentration ellipse assuming bivariate normality.
+:::
+
+***
+
+- We suppress the loess smooths with the argument `smooth = FALSE` to minimize clutter in the graph. 
+- We move the legend from its default position in the top-right corner of the first diagonal panel to the center of the panel. 
+- We set the argument ellipse=list (levels=0.5) to get separate 50% concentration ellipses for the groups in the various off-diagonal panels of the plot (see, e.g., [@friendly2013]). --- If the data in a panel are bivariately normally distributed, then the ellipse encloses approximately 50% of the points.
+
+
+
+
+::::
+:::::
+
+- Approximate within-group linearity is apparent in most of the panels. 
+- The size of the ellipse in the vertical and horizontal directions reflects the standard deviations of the two variables, and its tilt reflects their correlation. The within-group variability of prestige, log (income), education, and women is therefore reasonably similar across levels of type; the tilts of the ellipses in each panel are somewhat more variable, suggesting some differences in within-group correlations. 
+-The least-squares lines in the panels also show some differences in within-group slopes. 
+- The plotted points are the same in @lst-chap03-log-transformation-scatterplot resp. @lst-chap03-cube-transformation-scatterplot and @lst-chap03-scatterplot-cond-types. Only the symbols used for the points, and the fitted lines, are different. In particular, the two points with low income no longer appear exceptional when we control for type. 
+- A small difference between the two graphs is that type is missing for four occupations, and thus @lst-chap03-scatterplot-cond-types has only 98 of the 102 points shown in @lst-chap03-log-transformation-scatterplot and @lst-chap03-cube-transformation-scatterplot.
+
+###### p4
+
+We may wish to apply the Box and Cox transformation methodology to a variable with a small number of zero or even negative values. For example, 28 of the 240 companies in the Ornstein data set maintained zero interlocking directors and officers with other firms; the numbers of interlocks for the remaining companies were positive, ranging between 1 and 107.
+
+The Box-Cox family with negatives [@hawkins2017] is defined to be the Box-Cox power family applied to z(x,γ) rather than to x: $T_{BCN} (x, λ,γ) = T_{BC} (z(x,γ),λ)$. If x is strictly positive and γ = 0, then z(x, 0) = x and the transformation reduces to the regular Box-Cox power family. The Box-Cox family with negatives is defined for any γ > 0 when x has nonpositive entries. 
+
+The important improvement of this method over just adding a start is that for any γ and large enough x, the transformed values with power λ can be interpreted as they would be if the Box-Cox family had been used and no nonpositive data were present.
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-special-transformation}
+: Transformations With a Few Negative or Zero Values
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-special-transformation}
+```{r}
+#| label: special-transformation
+
+p4 <-
+  car::powerTransform(
+    interlocks ~ 1, 
+    data = carData::Ornstein, 
+    family = "bcnPower")
+summary(p4)
+```
+
+Using car::powerTransform() with the "bcnPower" family, invoking the `car:::bcnPower()` function
+:::
+
+***
+
+Employing the "bcnPower" family estimates both the power λ and the shift γ transformation parameters using Box and Cox’s maximum-likehood-like method. 
+
+As is often the case with the "bcnPower" family, the estimate of the shift γ is very close to the boundary of zero, in which case `car::powerTransform()` fixes γ = 0.1 and then estimates the power λ. In the example, it is close to the cube root. The tests shown in the output are for the fixed value of γ = 0.1; had γ been estimated, the tests would have been based on the log-likelihood profile averaging over γ. 
+
+::::
+:::::
 
 
 
@@ -2325,8 +2805,302 @@ This was maninly an exercise in adapting the axis. I learned several things:
 ::::
 :::::
 
+
+### Transformations and EDA {#sec-chap03-4-3}
+
+#### Introduction
+
+Exploratory Data Analysis (`r glossary("ExDA")`) proposed by Tukey and Mosteller [@tukey1977; @mosteller2019], is a collection of method that can be used to understand data, mostly without requiring models.
+
+The {**car**} package implements some methods for selecting a transformation. These methods are of some continuing utility, and they can also help us to understand how, why, and when transformations work.
+
+Mosteller and Tukey characterize the family of power transformations $x^λ$ as a *ladder of powers and roots*, with no transformation, λ = 1, as the central rung of the ladder. Transformations like λ = 1/2 (square root), λ = 0 (taken, as in the BoxCox family, as the log transformation), and λ = −1 (the inverse transformation) entail moving successively down the ladder of powers, and transformations like λ = 2 (squaring) and λ = 3 (cubing) entail moving up the ladder.
+
+#### Transforming for symmetry
+
+Transformation down the ladder of powers serves to spread out the small values of a variable relative to the large ones and consequently can serve to correct a positive skew. Negatively skewed data are much less common but can be made more symmetric by transformation up the ladder of powers. The `symbox()` function in the {**car**} package implements a suggestion of Tukey and Mosteller to induce approximate symmetry by trial and error.
+
+See: @lst-chap03-symmetry.
+
+#### Transforming toward linearity
+
+If a relationship is nonlinear but monotone (i.e., strictly increasing or strictly decreasing) and simple (in the sense that the curvature of the regression function is relatively constant), then Mosteller and Tukey’s bulging rule, illustrated in Figure 3.20, can guide the selection of linearizing power transformations of the two variables. 
+
+When the bulge of the regression function in a scatterplot points *down* and to the *right*, for example — as suggested by the line in the lower-right quadrant of Figure 3.20 we move y *down* the ladder of powers, x *up* the ladder of powers, or both, to straighten the relationship between the two variables. The bulging rule generalizes to the other quadrants of Figure 3.20.
+
+![Mosteller and Tukey’s bulging rule for finding linearizing transformations](img/chap03-bulging-rule-min.png
+){#fig-bulgin-rule
+fig-alt="Circle shows the bulging rule: When the bulge points down, transform y down the ladder of powers; when the bulge points up, transform y up; when the bulge points left transform x down; when the bulge points right, transform x up."
+fig-align="center"}
+
+To illustrate, let's inspect @lst-chap03-car-infant-mortality-un once more:
+
+- The nonlinear relationship between `infantMortality` and `ppgdp` @lst-chap03-car-infant-mortality-un (a) is simple and monotone.
+- The bulge in the scatterplot points down and to the left, suggesting the transformation of `infantMortality` or `ppgdp`, or both, down the ladder of powers. 
+- In this case, the log transformation of both variables produces a nearly linear relationship, as shown in  @lst-chap03-car-infant-mortality-un (b).
+
+#### Transforming to equalize spread
+
+In @lst-chap03-parallel-boxplot-car, we examined the relationship between number of interlocks and nation of control among the 248 large Canadian corporations in Ornstein’s interlocking-directorate data. 
+
+That graph revealed an association between *level* and *spread*: Nations with a relatively high level of interlocks (Canada, other) evidence more variation than nations with fewer interlocks on average (United States, United Kingdom). The term **level** is meant to imply an average or typical value, such as the mean, and **spread** is meant to imply variability, as measured, for example, by the SD. 
+
+These terms are used in exploratory data analysis in place of more technical terms such as mean and SD because level and spread may be measured using other statistics that are resistant to outlying values. 
+
+A spread-level plot [@tukey1977] is a scatterplot of the logarithm of the interquartile range, which measures spread, versus the logarithm of the within-group median, which measures level. Interquartile ranges and medians are insensitive to a few outliers, and so the spread-level plot provides a robust representation of the dependence of spread on level. 
+
+- If there is an association between spread and level in the spread-level plot, Tukey suggested fitting a straight line to the plot, with estimated slope $b$, and then transforming the response variable $y$ by the power transformation $y^{1−b}$.
+- If $b \approx 1$, then a log transformation is used. 
+
+See: @lst-chap03-equalize-spread.
+
+### Transforming restricted-range variables {#sec-chap03-4-4}
+
+Variables with ranges bounded both below and above may require different transformations because of `r glossary("ceiling")` or `r glossary("floor")` effects, in which values tend to accumulate near the boundaries of the variable. 
+
+The most common kinds of restricted-range variables are percentages and proportions, but other variables, such as the number of questions correct on a test of fixed length, are also “disguised proportions.” 
+
+Because small changes in a proportion near zero or 1 are potentially much more important than small changes near 0.5, promising transformations spread out both large and small proportions relative to proportions near 0.5. If a proportion has a more limited observed range, say between 0.25 and 0.75, transformations are unlikely to be helpful. The idea is to transform proportions so the transformed values behave more like a sample from a normal distribution. Usual methods of statistical inference for normally distributed data can then be used with the transformed proportions as the response. 
+
+Statistical models specifically designed for proportion data — for example, logistic-regression and loglinear models (discussed in @sec-chap06) — are the preferred methods for working with proportions, and so transformation for normality is now rarely used with proportion response variables if the counts on which the proportions are based are available. 
+
+Transforming predictor variables that are expressed as proportions or percents may prove useful. Suppose that $u_{i}$ is a sample count of number of “successes” for the $i$th of $n$ cases and that $N_{i}$ is the corresponding number of trials. Each $u_{i}$ can have its own probability of success $θ_{i}$. From the binomial distribution, the standard deviation of the sample proportion $x_{i} = u_{i} / N_{i}$ is ????, and therefore varies depending on the value of $θ_{i}$. If we transform $x_{i} = u_{i} / N_{i}$ using the arcsine square root, then the SD of the transformed variable is approximately for any value of $θ_{i}$, and hence, $T_{asinsqrt}(x)$ is a variance-stabilizing transformation. 
+
+**Logistic regression** uses a different transformation of a proportion called the logit or log-odds transformation. The **logit transformation** is not defined for sample proportions exactly equal to zero or 1, however[^03-exploring-data-2]. 
+
+[^03-exploring-data-2]: This restriction does not affect logistic regression, where it is the probability of successθ, and not the observed sample proportion of successes x, that is transformed.
+
+We can get around this limitation if we want to use sample logits in a graph or statistical analysis by remapping proportions from the interval [0, 1] to [0.025, 0.975], for example, taking the logit of $0.025 + 0.95 \times x$ rather than the logit of x. The `logit()` function in the {**car**} package takes care of remapping proportions or percentages when there are zeros or ones—or 0% or 100% for percentage data — printing a warning if remapping is required.
+
+See: @lst-chap03-logit-transformation.
+
+This restriction does not affect logistic regression, where it is the *probability* of success θ, and not the observed sample *proportion* of successes x, that is transformed. Even better, if we have access to the original data from which the proportions are calculated, we can avoid proportions of zero or 1 by computing *empirical logits*, $log[(u + 1/2)/(N + 1)]$, where, as before, $u$ is the number of successes in $N$ trials. 
+
+To illustrate, we apply the logit and arcsine-square-root transformations to the distribution of the gender composition of occupations (percentage women) in the Prestige data set: See: @lst-chap03-transformation-restricted-range-variables.
+
+
+
+:::::{.my-example}
+:::{.my-example-header}
+:::::: {#exm-eda-transformation}
+: Transformation and Exploratory Data Analysis
+::::::
+:::
+::::{.my-example-container}
+
+::: {.panel-tabset}
+
+###### symmetry
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-symmetry}
+: Transforming for symmetry
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-symmetry}
+```{r}
+#| label: symmetry
+
+car::symbox( ~ ppgdp, data = carData::UN)
+
+```
+Boxplots of various power transformations of per-capita GDP in the United Nations data.
+:::
+
 ***
 
+By default, `car::symbox()` uses the function `car:::bcPower()` and displays boxplots of the transformed variable for several transformations down the ladder of powers. 
+
+::::
+:::::
+
+The graphic shows that the ubiquitous log transformation of `ppgdp` does the best job of making the distribution of the variable symmetric.
+
+###### equalize spread
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-equalize-spread}
+: Spread-level plot
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-equalize-spread}
+```{r}
+#| label: equalize-spread
+
+car::spreadLevelPlot(
+  interlocks + 1 ~ nation, 
+  data = carData::Ornstein)
+```
+
+Spread-level plot for the relationship between number of interlocks and nation of control in Ornstein’s interlocking-directorate data
+:::
+
+***
+
+- Because Tukey’s method requires a strictly positive response variable, we add a start of 1 to interlocks to avoid zero values. 
+- In addition to drawing a graph, the `car::spreadLevelPlot()` function prints a table showing the first quartile (Tukey’s lower hinge), median, third quartile (upper hinge), and interquartile range (hinge spread ) in each group, along with the suggested power transformation of interlocks + 1. 
+
+::::
+:::::
+
+In the example, the suggested power is p = 0.15, close to the log transformation.
+
+###### parallel boxplots
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-parallel-boxplots-ornstein}
+: Parallel boxplots for the log-transformed Ornstein data
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-parallel-boxplots-ornstein}
+```{r}
+#| label: parallel-boxplots-ornstein
+
+par(mar = c(5.1, 4.1, 4.1, 4.1))
+car::Boxplot(
+  log10(interlocks + 1) ~ nation, 
+  data = carData::Ornstein
+  )
+car::basicPowerAxis(
+  power = 0,
+  base = 10,
+  at = c(1, 3, 6, 11, 21, 51, 101),
+  start = 1,
+  axis.title = "Interlocks"
+)
+```
+
+Parallel boxplots for $log_{10}(interlocks + 1)$ by nation of control
+:::
+
+***
+
+- Many global graphics parameters in R are set or queried by the base::par() function. 
+- The "mar" setting is for the plot margins as a numberical vector of the form  `c(bottom, left, top, right)` which gives the number of lines of margin to be specified on the four sides of the plot. The default is `c(5, 4, 4, 2) + 0.1`.
+- We specify two arguments in the call to `car::Boxplot()`: 
+  - a formula with the base-10 logarithm of interlocks + 1 on the left-hand side and the factor nation on the right-hand side, and
+  - the argument data = carData::Ornstein, supplying the data frame in which these variables reside. 
+- The remaining commands make the graph more elaborate, first by increasing the right-side margin of the plot and then by adding a second axis on the right, labeled in the original units of interlocks, produced by the `car::basicPowerAxis()` function[^03-exploring-data-1]. 
+  - The argument `power = 0` to `car::basicPowerAxis()` specifies the log transformation; 
+  - `base = 10` gives the base used for the logs; 
+  - `at = c(1, 3, 6, 11, 21, 51, 101)` indicates where the tick marks are to appear on the interlocks + 1 scale; and 
+  - `start = 1` gives the start that was used, so that the tick labels can be adjusted to the original interlocks-scale.
+  
+[^03-exploring-data-1]: The functions `car:::bcPowerAxis()`, `car:::bcnPowerAxis()`, and `car:::probabilityAxis()` may be used similarly to produce axes on the untransformed scale corresponding to Box-Cox, Box-Cox with negatives, and logit transformations.
+
+::::
+:::::
+
+The spreads in the transformed data for the four groups are much more similar than the spreads in the untransformed data (shown in @lst-chap03-ornstein-boxplot). 
+
+###### logit
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-logit-transformation}
+: Logit transformation
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-logit-transformation}
+```{r}
+#| label: logit-transformation
+#| results: hold
+
+glue::glue(" ")
+glue::glue("############################################################")
+glue::glue("Logit transformation for the range 0.1 to 0.9")
+glue::glue("############################################################")
+car::logit(base::seq(0.1, 0.9, 0.1))
+glue::glue(" ")
+glue::glue("############################################################")
+glue::glue("Logit transformation for the range 0 to 1")
+glue::glue("############################################################")
+car::logit(base::seq(0, 1, 0.1))
+```
+
+Logit transformation with remapping proportions or percentages when there are zeros or ones
+:::
+
+::::
+:::::
+
+
+###### restricted range
+
+
+
+:::::{.my-r-code}
+:::{.my-r-code-header}
+:::::: {#cnj-chap03-transformation-restricted-range-variables}
+: Transformation of restricted-range Variables
+::::::
+:::
+::::{.my-r-code-container}
+::: {#lst-chap03-transformation-restricted-range-variables}
+```{r}
+#| label: transformation-restricted-range-variables
+#| results: hold
+
+graphics::par(mfrow = c(1, 3))
+
+car::densityPlot(
+  ~ women,
+  data = carData::Prestige,
+  from = 0,
+  to = 100,
+  main = "(a) Untransformed"
+  )
+
+car::densityPlot( ~ car::logit(women),
+             data = carData::Prestige,
+             adjust = 0.7,
+             main = "(b) Logit"
+             )
+
+car::densityPlot( ~ base::asin(base::sqrt(women / 100)),
+             data = carData::Prestige,
+             adjust = 0.7,
+             main = "(c) Arcsine square-root"
+             )
+
+```
+
+Distribution of women in the Canadian occupational-prestige data: (a) untransformed, (b) logit transformed, and (c) arcsine square root transformed.
+:::
+
+::::
+:::::
+
+
+:::
+
+::::
+:::::
+
+### Other transformations {#sec-chap03-4-5}
+
+The discussed transformation methods are my no means a complete catalogue. There are many other possible transformationsd, such as:
+
+- People’s height in cm and weight in kg are often combined in the body mass index, $BMI = weight / (height^2)$, which is intended to approximate body composition in units of $kg/cm^2$. 
+- A variable like month.number can be replaced in a regression model by two regressors, `sin(month.number/12)` and `cos(month.number/12)`, to model seasonal time trends. 
+- In a study of highway accident rates, a variable giving the number of traffic signals in a highway segment is converted to the number of signals per mile by dividing by the length of the segment. 
+
+::: {.callout-important #imp-cahp03-transformation-when-why}
+##### Lesson learned about transformations
+
+One should think carefully about how variables are expressed in the substantive context in which they are used in research.
+
+As a general rule, measures of total size often need to be converted to size per unit, for example converting GDP to a per-capita basis by dividing by population.
+
+Transformations are very important and there are many different options. The {**car**} package provides some tools to learn not only about the optimal method of transformations but also about parameters for it’s application.
+:::
 
 ## Point labelling and identification {#sec-chap03-5}
 
@@ -2359,17 +3133,22 @@ fig-align="center"}
 
 ::::
 :::::
+
+
 ### Automatic point labelling with car::showLabels() {#sec-chap03-5-2}
 
 The graphics functions in the {**car**} package employ a common general mechanism for point identification, using the `car::showLabels()` function to identify potentially noteworthy points.
 
+:::{.my-bulletbox}
+:::: {.my-bulletbox-header}
+::::: {.my-bulletbox-icon}
+:::::
+:::::: {#bul-chap03-arguments-showLabels}
+::::::
+: Arguments of `car::showLabels()` function
+::::
+:::: {.my-bulletbox-body}
 
-::: {#bul-ID-text}
-:::::{.my-bullet-list}
-:::{.my-bullet-list-header}
-Arguments of `car::showLabels()` function
-:::
-::::{.my-bullet-list-container}
 - **Point identification** is controlled by the `id` argument, which takes the values TRUE, FALSE, or a detailed list of specifications. In	most	cases,	the	user	only	needs	to	set	`id = TRUE`	or to	specify	the	number	of	points	to	be	identified, for	example,	`id = list(n = 5)`.
 - **labels**: By default, points are labeled with a data frame’s row labels or by row numbers if there are no row labels. You can use whatever point labels you like by setting labels to a character vector with the same number of elements as there are data points. 
 - **n**: the number of points to label. 
@@ -2377,10 +3156,11 @@ Arguments of `car::showLabels()` function
 - **col**: the color of the labels; if not set, the color is determined automatically. 
 -**location**: where the labels are drawn. The default is `location = "lr"` to draw labels to the left of points in the right half of the graph and to the right of points in the left half. Another option is `location="ab"`, to draw labels above points below the middle of the graph and below points above the middle. Finally, `location="avoid"` tries to avoid overplotting labels. 
 - **method**: Setting `method = "identify"` (the default) enables interactive point identification, as with `graphics::identify()`. Several automatic methods are available for determining how interesting points are to be identified. For example, in `car::scatterplot()`, the default is `method = "mahal"`, in which the `r glossary("Mahalanobis")` distance of each point to the centriod (point of averages) is computed, and the identified points are those with the largest Mahalanobis distances. For `car::residualPlot()`, the default is `method = "r"`, selecting noteworthy points according to the absolute values of their vertical coordinates (i.e., the residuals) and labeling the points with the largest values. There are many other options for the method argument; see help ("showLabels") for their description and the help pages for particular car graphics functions for how they use `car::showLabels()`.
+
+
 ::::
-:::::
-Arguments of car::showLabels() function
 :::
+
 
 
 ::: {.callout-important #imp-chap03-show-labels-with-ggplot}
@@ -2392,6 +3172,10 @@ This is not only programmatically a challenge but I have to learn and understand
 
 So far I have code proposals for
 
-- outliers in boxplots (@lst-chap03-compute-boxplot-outliers) and
-- Mahalanobis distances in linear model (@lst-chap04-davis-ggrepel)
+- all `r glossary("outliers")` in `r glossary("boxplots")` (@lst-chap03-compute-boxplot-outliers) and
+- `r glossary("Mahalanobis")` distances with `r glossary("p-value")` of .001 in a linear model (@lst-chap04-davis-ggrepel)
+
+I am still missing the option to display a certain number of extreme points.
+
+
 :::

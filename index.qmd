@@ -3,7 +3,7 @@
 ::: {.callout-note style="color: blue;"}
 #### This is work in progress
 
-I have finished until chapter 3.3 and additionally, 3.5, 4.1 and 4.2. I am currently working on 3.4 (Transforming Data).
+I have finished until chapter 3. Currently I am working on section 4.2 "Multiple linear regression".
 :::
 
 
